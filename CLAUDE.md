@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Academic research bench (UNIFEI, discipline EC343E) replicating a **PKES relay attack over BLE** for a paper (`marco3-pkes.pdf`). It is a study/proof-of-concept over Bluetooth Low Energy — not tooling against any real vehicle. The thesis: a relay transports the live challenge-response exchange, so it **forges distance, not identity**, which is why a nonce-based HMAC does not defeat it. The research goal is to measure the relay's RTT overhead against an honest baseline.
+Academic research bench (UNIFEI, discipline EC343E) replicating a **PKES relay attack over BLE** for a paper (`marco3-pkes.pdf`). It is a study/proof-of-concept over Bluetooth Low Energy — not tooling against any real vehicle. The thesis: a relay transports the live challenge-response exchange, so it **forges distance, not identity**, which is why a nonce-based HMAC does not defeat it. The research goal is to measure the relay's RTT overhead against an honest baseline. See `SCOPE.md` for the project's authorization, scope, and why the bench is self-contained.
 
 ## The three roles
 
