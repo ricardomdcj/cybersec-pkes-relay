@@ -2,6 +2,7 @@
 
 #include <string.h>
 #include "esp_log.h"
+#include "esp_idf_version.h"
 #include "esp_netif.h"
 #include "esp_event.h"
 #include "esp_wifi.h"
@@ -20,7 +21,14 @@ static void on_recv(const esp_now_recv_info_t *info, const uint8_t *data, int le
     s_cb((link_msg_type_t) data[0], data + 1, (size_t) (len - 1));
 }
 
+/* A assinatura do callback de envio do ESP-NOW mudou no IDF v5.4: o 1o argumento deixou
+ * de ser 'const uint8_t *mac' e passou a ser 'const esp_now_send_info_t *'. Mantemos as
+ * duas formas para compilar tanto no v5.x antigo quanto no v6.1 desta maquina. */
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 4, 0)
+static void on_sent(const esp_now_send_info_t *info, esp_now_send_status_t status)
+#else
 static void on_sent(const uint8_t *mac, esp_now_send_status_t status)
+#endif
 {
     if (status != ESP_NOW_SEND_SUCCESS) ESP_LOGW(TAG, "envio ESP-NOW falhou");
 }

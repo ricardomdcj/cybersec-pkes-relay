@@ -22,12 +22,23 @@
 #include "nimble/nimble_port_freertos.h"
 #include "host/ble_hs.h"
 #include "host/util/util.h"
-#include "mbedtls/md.h"
+#include "mbedtls/build_info.h"   /* define MBEDTLS_VERSION_NUMBER (v3.x e v4.x) */
+#if MBEDTLS_VERSION_NUMBER >= 0x04000000
+#include "psa/crypto.h"           /* mbedTLS 4.x (IDF v6.1): HMAC pela PSA Crypto */
+#else
+#include "mbedtls/md.h"           /* mbedTLS 3.x (IDF v5.4): API MD legada */
+#endif
 
 #include "ble_contract.h"
 
 #define ROUNDS       20     /* quantas rodadas de desafio-resposta por conexao */
 #define INTERVAL_MS  1000   /* intervalo entre rodadas */
+
+/* Rotulo da campanha, so para marcar as linhas de log/CSV (ex.: baseline vs relay).
+ * Trocavel na linha de comando: idf.py -DRUN_LABEL=baseline build  (ou =relay). */
+#ifndef RUN_LABEL
+#define RUN_LABEL "run"
+#endif
 
 static const char *TAG = "VEICULO";
 
@@ -55,8 +66,29 @@ static void send_challenge(void);
 static void hmac_sha256(const uint8_t *key, size_t kl,
                         const uint8_t *msg, size_t ml, uint8_t out[32])
 {
+#if MBEDTLS_VERSION_NUMBER >= 0x04000000
+    /* mbedTLS 4.x: a API MD legada (mbedtls_md_hmac) virou identificador privado; o
+     * caminho suportado para a app e a PSA Crypto. psa_crypto_init() roda no app_main. */
+    psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
+    psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_SIGN_MESSAGE);
+    psa_set_key_algorithm(&attr, PSA_ALG_HMAC(PSA_ALG_SHA_256));
+    psa_set_key_type(&attr, PSA_KEY_TYPE_HMAC);
+    psa_set_key_bits(&attr, kl * 8);
+
+    psa_key_id_t kid = 0;
+    if (psa_import_key(&attr, key, kl, &kid) != PSA_SUCCESS) {
+        ESP_LOGE(TAG, "psa_import_key falhou");
+        return;
+    }
+    size_t out_len = 0;
+    psa_status_t st = psa_mac_compute(kid, PSA_ALG_HMAC(PSA_ALG_SHA_256),
+                                      msg, ml, out, 32, &out_len);
+    if (st != PSA_SUCCESS) ESP_LOGE(TAG, "psa_mac_compute falhou (%d)", (int) st);
+    psa_destroy_key(kid);
+#else
     const mbedtls_md_info_t *info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
     mbedtls_md_hmac(info, key, kl, msg, ml, out);
+#endif
 }
 
 /* ---- descoberta GATT (encadeada por callbacks) -------------------------- */
@@ -68,7 +100,8 @@ static int on_subscribe(uint16_t conn, const struct ble_gatt_error *err,
         ESP_LOGE(TAG, "falha ao inscrever em notify (status=%d)", err->status);
         return 0;
     }
-    ESP_LOGI(TAG, "inscrito em notify; iniciando %d rodadas", ROUNDS);
+    ESP_LOGI(TAG, "inscrito em notify; iniciando %d rodadas (rotulo=%s)", ROUNDS, RUN_LABEL);
+    ESP_LOGI(TAG, "CSVHDR label,rodada,rtt_us,resultado,rssi_dbm");
     round_i = 0; ok_count = 0; fail_count = 0;
     rtt_sum = 0; rtt_min = INT64_MAX; rtt_max = 0;
     send_challenge();
@@ -178,16 +211,22 @@ static void handle_notify(struct ble_gap_event *event)
     if (rtt > rtt_max) rtt_max = rtt;
     rtt_sum += rtt;
 
-    ESP_LOGI(TAG, "rodada %d/%d: %s  RTT=%lld us",
-             round_i + 1, ROUNDS, ok ? "OK" : "FALHA", (long long) rtt);
+    int8_t rssi = 0;                                  /* 0 = indisponivel */
+    if (ble_gap_conn_rssi(g_conn, &rssi) != 0) rssi = 0;
+
+    ESP_LOGI(TAG, "rodada %d/%d: %s  RTT=%lld us  RSSI=%d dBm",
+             round_i + 1, ROUNDS, ok ? "OK" : "FALHA", (long long) rtt, rssi);
+    /* Linha parseavel para o dataset (uma por rodada); colunas em CSVHDR acima. */
+    ESP_LOGI(TAG, "CSV,%s,%d,%lld,%s,%d",
+             RUN_LABEL, round_i + 1, (long long) rtt, ok ? "OK" : "FALHA", rssi);
 
     round_i++;
     if (round_i < ROUNDS) {
         esp_timer_start_once(round_timer, (uint64_t) INTERVAL_MS * 1000);
     } else {
         ESP_LOGI(TAG,
-                 "=== BASELINE n=%d ok=%d falha=%d | RTT us: min=%lld avg=%lld max=%lld ===",
-                 round_i, ok_count, fail_count,
+                 "=== %s n=%d ok=%d falha=%d | RTT us: min=%lld avg=%lld max=%lld ===",
+                 RUN_LABEL, round_i, ok_count, fail_count,
                  (long long) rtt_min, (long long) (rtt_sum / round_i), (long long) rtt_max);
     }
 }
@@ -283,6 +322,10 @@ void app_main(void)
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
+
+#if MBEDTLS_VERSION_NUMBER >= 0x04000000
+    if (psa_crypto_init() != PSA_SUCCESS) { ESP_LOGE(TAG, "psa_crypto_init falhou"); return; }
+#endif
 
     ret = nimble_port_init();
     if (ret != ESP_OK) { ESP_LOGE(TAG, "nimble_port_init rc=%d", ret); return; }

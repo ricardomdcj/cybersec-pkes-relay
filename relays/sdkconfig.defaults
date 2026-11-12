@@ -3,5 +3,13 @@ CONFIG_BT_ENABLED=y
 CONFIG_BT_NIMBLE_ENABLED=y
 CONFIG_BT_NIMBLE_MAX_CONNECTIONS=1
 
+# Em modo BLE (RELAY_LINK_SELFTEST 0) o binario passa de 1 MB (BT+WiFi+NimBLE juntos) e
+# estoura a particao de app padrao, principalmente no ESP32-C3 (Relay B). A tabela
+# "single app large" da ~1.5 MB de app e cabe em 2 MB de flash.
+CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y
+
 # WiFi/ESP-NOW convivem com o BLE no mesmo radio 2.4 GHz (coexistencia por software).
 # Esse custo de coexistencia e proposital: vira dado de medida (overhead do enlace).
+# Habilita explicitamente a arbitragem por software (so atua quando WiFi e BT rodam juntos,
+# ou seja, em RELAY_LINK_SELFTEST 0; no autoteste o controlador BT nem sobe).
+CONFIG_ESP_COEX_SW_COEXIST_ENABLE=y
