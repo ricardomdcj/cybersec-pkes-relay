@@ -28,7 +28,19 @@ Flow: the car (central) enables notifications on the RESPONSE characteristic, wr
 
 ## Building the ESP-IDF firmware (`vehicle/`, `relays/`)
 
-ESP-IDF v5.4 is installed at `C:\Users\Ricardo\esp\v5.4`. From a subproject directory:
+ESP-IDF v5.4 is installed at `C:\Users\Ricardo\esp\v5.4` on the author's machine. **On the
+`Ricardo.Junior` workspace machine only ESP-IDF v6.1 exists** (`C:\esp\v6.1`, activated by
+`. C:\Espressif\tools\Microsoft.v6.1.PowerShell_profile.ps1`). The code builds on both, with two v6/mbedTLS-4 shims:
+- `relays/main/link.c` — the ESP-NOW send-callback signature changed in v5.4, so it is
+  selected by `ESP_IDF_VERSION`; `relays/main/CMakeLists.txt` carries the v6 `REQUIRES`
+  (`bt esp_wifi esp_netif esp_event nvs_flash esp_timer`).
+- `vehicle/main/main.c` — mbedTLS 4.x (bundled in IDF v6.1) makes the legacy one-shot
+  `mbedtls_md_hmac` a private identifier, so for `MBEDTLS_VERSION_NUMBER >= 0x04000000` the
+  HMAC is computed via **PSA Crypto** (`psa_crypto_init` + `psa_mac_compute`); v5.4 keeps the
+  old MD path. The relays don't compute HMAC (dumb pipes), so only the vehicle needed this.
+
+Role and self-test mode can be set on the command line:
+`idf.py -DRELAY_ROLE=1 -DRELAY_LINK_SELFTEST=0 build`. From a subproject directory:
 
 ```
 idf.py set-target <chip>      # see role/chip mapping below

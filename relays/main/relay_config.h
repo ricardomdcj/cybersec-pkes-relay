@@ -22,5 +22,9 @@
 #endif
 
 /* Autoteste do enlace: A e B trocam frames sem BLE, so para validar o tunel
- * ESP-NOW e medir seu overhead. Deixe 1 no esboco; volte para 0 quando o BLE entrar. */
+ * ESP-NOW e medir seu overhead (Milestone 1). Com BLE pronto (Milestone 2), ponha 0
+ * para rodar a cadeia real celular -> A -> B -> veiculo.
+ * Overridable na linha de comando: idf.py build -DRELAY_LINK_SELFTEST=0 */
+#ifndef RELAY_LINK_SELFTEST
 #define RELAY_LINK_SELFTEST 1
+#endif
