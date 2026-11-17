@@ -28,8 +28,41 @@
 
 #include <string.h>
 #include "esp_log.h"
+#include "esp_timer.h"
+
+#include "cyd_display.h"
+#include "cyd_led.h"
+#include "cyd_ui.h"
 
 static const char *TAG = "RELAY_A";
+
+/* Cor de destaque do Relay A (roxo) e indices dos cards na UI. */
+#define ACCENT 0x7C4DFF
+enum { F_TUNEL = 0, F_CHAVE = 1, F_LINK = 2 };
+
+/* Contadores mostrados no display (validos nos dois modos). */
+static uint32_t s_from_tunnel;   /* desafios recebidos do Relay B */
+static uint32_t s_from_key;      /* respostas vindas da chave (ou ecoadas no selfteste) */
+
+/* Monta display + LED + UI. Chamado no inicio de relay_a_start (ambos os modos). */
+static void relay_a_ui_init(void)
+{
+    cyd_display_init();
+    cyd_led_init();
+    cyd_display_set_backlight(90);
+    cyd_ui_cfg_t cfg = {
+        .title  = "RELAY A",
+        .accent = ACCENT,
+        .mascot = CYD_MASCOT_RELAY,
+        .fields = { "Do tunel", "Da chave", "Chave", NULL },
+        .hex0   = "nonce",
+        .hex1   = NULL,
+    };
+    cyd_ui_init(&cfg);
+    cyd_ui_set_field(F_TUNEL, "0");
+    cyd_ui_set_field(F_CHAVE, "0");
+    cyd_ui_set_field(F_LINK, "-");
+}
 
 #if !RELAY_LINK_SELFTEST
 
@@ -55,6 +88,12 @@ static uint16_t h_challenge, h_response, h_cccd;
 typedef struct { uint8_t data[NONCE_LEN]; uint8_t len; } chal_item_t;
 static QueueHandle_t chal_q;
 
+/* Medidas por rodada (paper): turnaround de A = desafio escrito na chave -> notify da
+ * chave (BLE A<->chave + calculo do HMAC). Nonce (4 B) correlaciona com os outros logs. */
+static int64_t  s_t_write_us;
+static uint8_t  s_nonce4[4];
+static uint32_t s_round;
+
 static void start_scan(void);
 static int  gap_event(struct ble_gap_event *event, void *arg);
 
@@ -72,8 +111,25 @@ static void handle_notify(struct ble_gap_event *event)
     uint8_t resp[RESPONSE_LEN];
     uint16_t olen = 0;
     ble_hs_mbuf_to_flat(event->notify_rx.om, resp, RESPONSE_LEN, &olen);
+
+    /* Turnaround local de A (desafio escrito na chave -> HMAC de volta): BLE A<->chave +
+     * calculo do HMAC na chave. Linha CSVA parseavel por rodada, correlacionada pelo nonce. */
+    int64_t turn = esp_timer_get_time() - s_t_write_us;
+    int8_t rssi = 0;
+    ble_gap_conn_rssi(g_conn, &rssi);
+    ESP_LOGI(TAG, "HOP A rx_resp rodada=%lu nonce=%02x%02x%02x%02x turnaround=%lld us rssi=%d dBm",
+             (unsigned long) s_round, s_nonce4[0], s_nonce4[1], s_nonce4[2], s_nonce4[3],
+             (long long) turn, rssi);
+    ESP_LOGI(TAG, "CSVA,%lu,%02x%02x%02x%02x,%lld,%d",
+             (unsigned long) s_round, s_nonce4[0], s_nonce4[1], s_nonce4[2], s_nonce4[3],
+             (long long) turn, rssi);
+
     ESP_LOGI(TAG, "HMAC da chave (%u B) -> tunel", olen);
     forward_response(resp, olen);
+
+    s_from_key++;
+    cyd_ui_set_field(F_CHAVE, "%lu", (unsigned long) s_from_key);
+    cyd_ui_pulse();
 }
 
 /* ---- descoberta GATT (encadeada por callbacks, igual ao vehicle) -------- */
@@ -172,6 +228,12 @@ static void write_worker(void *arg)
             ESP_LOGW(TAG, "desafio chegou mas a chave nao esta pronta; descarto");
             continue;
         }
+        s_t_write_us = esp_timer_get_time();
+        memcpy(s_nonce4, it.data, 4);
+        s_round++;
+        ESP_LOGI(TAG, "HOP A tx_chal rodada=%lu nonce=%02x%02x%02x%02x t=%lld us",
+                 (unsigned long) s_round, it.data[0], it.data[1], it.data[2], it.data[3],
+                 (long long) s_t_write_us);
         int rc = ble_gattc_write_flat(g_conn, h_challenge, it.data, it.len,
                                       on_write_challenge, NULL);
         if (rc != 0) ESP_LOGE(TAG, "ble_gattc_write_flat rc=%d", rc);
@@ -211,6 +273,8 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             svc_start = svc_end = 0;
             h_challenge = h_response = h_cccd = 0;
             ESP_LOGI(TAG, "conectado a chave (handle %u); descobrindo servico", g_conn);
+            cyd_ui_set_state("chave conectada", 0x1AA260);
+            cyd_ui_set_field(F_LINK, "ok");
             ble_gattc_disc_svc_by_uuid(g_conn, &SVC_UUID.u, on_disc_svc, NULL);
         } else {
             ESP_LOGE(TAG, "conexao falhou (status=%d)", event->connect.status);
@@ -222,6 +286,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
         ESP_LOGI(TAG, "chave desconectou (reason=%d); volto a escanear", event->disconnect.reason);
         g_conn = BLE_HS_CONN_HANDLE_NONE;
         h_challenge = h_response = h_cccd = 0;
+        cyd_ui_set_field(F_LINK, "-");
         start_scan();
         break;
 
@@ -242,7 +307,7 @@ static void start_scan(void)
     dp.passive = 0;
     int rc = ble_gap_disc(own_addr_type, BLE_HS_FOREVER, &dp, gap_event, NULL);
     if (rc != 0) ESP_LOGE(TAG, "ble_gap_disc rc=%d", rc);
-    else ESP_LOGI(TAG, "escaneando pelo servico da chave...");
+    else { ESP_LOGI(TAG, "escaneando pelo servico da chave..."); cyd_ui_set_state("procurando chave", ACCENT); }
 }
 
 /* ---- ciclo de vida do host ---------------------------------------------- */
@@ -271,10 +336,16 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
 {
     switch (type) {
     case LINK_MSG_CHALLENGE:
+        s_from_tunnel++;
+        cyd_ui_set_field(F_TUNEL, "%lu", (unsigned long) s_from_tunnel);
+        cyd_ui_set_hex(0, data, (int) len);
+        cyd_ui_pulse();
 #if RELAY_LINK_SELFTEST
         /* Autoteste: devolve a resposta na hora (finge ser a chave). */
         ESP_LOGI(TAG, "[selfteste] desafio recebido (%d B); ecoando resposta", (int) len);
         link_send(LINK_MSG_RESPONSE, data, len);
+        s_from_key++;   /* no selfteste o Relay A ecoa: conta como "resposta" */
+        cyd_ui_set_field(F_CHAVE, "%lu", (unsigned long) s_from_key);
 #else
     {
         /* Enfileira para a task worker escrever na chave (nao fazer GATT aqui). */
@@ -293,7 +364,10 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
 
 void relay_a_start(void)
 {
+    relay_a_ui_init();
 #if RELAY_LINK_SELFTEST
+    cyd_ui_set_state("selfteste do tunel", ACCENT);
+    cyd_ui_set_field(F_LINK, "echo");
     ESP_ERROR_CHECK(link_init(on_link_rx));
     ESP_LOGI(TAG, "Relay A iniciado (autoteste do tunel; ecoando desafios como se fosse a chave)");
 #else

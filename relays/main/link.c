@@ -70,3 +70,20 @@ esp_err_t link_send(link_msg_type_t type, const uint8_t *data, size_t len)
     if (len) memcpy(buf + 1, data, len);
     return esp_now_send(BCAST, buf, len + 1);
 }
+
+esp_err_t link_set_tx_power(int8_t power_qdbm)
+{
+    if (power_qdbm < 8)  power_qdbm = 8;    /* ~2 dBm (minimo) */
+    if (power_qdbm > 84) power_qdbm = 84;   /* ~20 dBm (maximo) */
+    esp_err_t e = esp_wifi_set_max_tx_power(power_qdbm);
+    ESP_LOGI(TAG, "TX power -> %d (0.25dBm) = %.2f dBm (rc=%d)",
+             power_qdbm, power_qdbm / 4.0, (int) e);
+    return e;
+}
+
+int8_t link_get_tx_power(void)
+{
+    int8_t p = 0;
+    esp_wifi_get_max_tx_power(&p);
+    return p;
+}

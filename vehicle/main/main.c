@@ -22,16 +22,15 @@
 #include "nimble/nimble_port_freertos.h"
 #include "host/ble_hs.h"
 #include "host/util/util.h"
-#include "mbedtls/build_info.h"   /* define MBEDTLS_VERSION_NUMBER (v3.x e v4.x) */
-#if MBEDTLS_VERSION_NUMBER >= 0x04000000
-#include "psa/crypto.h"           /* mbedTLS 4.x (IDF v6.1): HMAC pela PSA Crypto */
-#else
-#include "mbedtls/md.h"           /* mbedTLS 3.x (IDF v5.4): API MD legada */
-#endif
 
 #include "ble_contract.h"
+#include "pkes_hmac.h"      /* HMAC compartilhado com a chave (key/) */
+#include "cyd_display.h"
+#include "cyd_led.h"
+#include "cyd_ui.h"
+#include "serial_ota.h"
 
-#define ROUNDS       20     /* quantas rodadas de desafio-resposta por conexao */
+#define ROUNDS       50     /* quantas rodadas de desafio-resposta por conexao */
 #define INTERVAL_MS  1000   /* intervalo entre rodadas */
 
 /* Rotulo da campanha, so para marcar as linhas de log/CSV (ex.: baseline vs relay).
@@ -61,35 +60,9 @@ static void start_scan(void);
 static int  gap_event(struct ble_gap_event *event, void *arg);
 static void send_challenge(void);
 
-/* ---- cripto ------------------------------------------------------------- */
-
-static void hmac_sha256(const uint8_t *key, size_t kl,
-                        const uint8_t *msg, size_t ml, uint8_t out[32])
-{
-#if MBEDTLS_VERSION_NUMBER >= 0x04000000
-    /* mbedTLS 4.x: a API MD legada (mbedtls_md_hmac) virou identificador privado; o
-     * caminho suportado para a app e a PSA Crypto. psa_crypto_init() roda no app_main. */
-    psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
-    psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_SIGN_MESSAGE);
-    psa_set_key_algorithm(&attr, PSA_ALG_HMAC(PSA_ALG_SHA_256));
-    psa_set_key_type(&attr, PSA_KEY_TYPE_HMAC);
-    psa_set_key_bits(&attr, kl * 8);
-
-    psa_key_id_t kid = 0;
-    if (psa_import_key(&attr, key, kl, &kid) != PSA_SUCCESS) {
-        ESP_LOGE(TAG, "psa_import_key falhou");
-        return;
-    }
-    size_t out_len = 0;
-    psa_status_t st = psa_mac_compute(kid, PSA_ALG_HMAC(PSA_ALG_SHA_256),
-                                      msg, ml, out, 32, &out_len);
-    if (st != PSA_SUCCESS) ESP_LOGE(TAG, "psa_mac_compute falhou (%d)", (int) st);
-    psa_destroy_key(kid);
-#else
-    const mbedtls_md_info_t *info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
-    mbedtls_md_hmac(info, key, kl, msg, ml, out);
-#endif
-}
+/* Cor de destaque do veiculo (azul) e indices dos cards na UI. */
+#define ACCENT 0x2962FF
+enum { F_RODADA = 0, F_RTT = 1, F_OK = 2, F_FALHA = 3 };
 
 /* ---- descoberta GATT (encadeada por callbacks) -------------------------- */
 
@@ -101,7 +74,8 @@ static int on_subscribe(uint16_t conn, const struct ble_gatt_error *err,
         return 0;
     }
     ESP_LOGI(TAG, "inscrito em notify; iniciando %d rodadas (rotulo=%s)", ROUNDS, RUN_LABEL);
-    ESP_LOGI(TAG, "CSVHDR label,rodada,rtt_us,resultado,rssi_dbm");
+    ESP_LOGI(TAG, "CSVHDR label,rodada,nonce,rtt_us,resultado,rssi_dbm");
+    cyd_ui_set_state("medindo", ACCENT);
     round_i = 0; ok_count = 0; fail_count = 0;
     rtt_sum = 0; rtt_min = INT64_MAX; rtt_max = 0;
     send_challenge();
@@ -185,6 +159,8 @@ static void send_challenge(void)
     if (g_conn == BLE_HS_CONN_HANDLE_NONE || h_challenge == 0) return;
     esp_fill_random(last_nonce, NONCE_LEN);
     t_tx_us = esp_timer_get_time();
+    ESP_LOGI(TAG, "HOP V tx_chal nonce=%02x%02x%02x%02x t=%lld us",
+             last_nonce[0], last_nonce[1], last_nonce[2], last_nonce[3], (long long) t_tx_us);
     int rc = ble_gattc_write_flat(g_conn, h_challenge, last_nonce, NONCE_LEN,
                                   on_write_challenge, NULL);
     if (rc != 0) ESP_LOGE(TAG, "ble_gattc_write_flat rc=%d", rc);
@@ -203,7 +179,7 @@ static void handle_notify(struct ble_gap_event *event)
     ble_hs_mbuf_to_flat(event->notify_rx.om, got, RESPONSE_LEN, &got_len);
 
     uint8_t expected[32];
-    hmac_sha256(PSK, sizeof PSK, last_nonce, NONCE_LEN, expected);
+    pkes_hmac_response(PSK, sizeof PSK, last_nonce, NONCE_LEN, expected);
     bool ok = (got_len == RESPONSE_LEN) && (memcmp(got, expected, RESPONSE_LEN) == 0);
 
     if (ok) ok_count++; else fail_count++;
@@ -214,11 +190,24 @@ static void handle_notify(struct ble_gap_event *event)
     int8_t rssi = 0;                                  /* 0 = indisponivel */
     if (ble_gap_conn_rssi(g_conn, &rssi) != 0) rssi = 0;
 
-    ESP_LOGI(TAG, "rodada %d/%d: %s  RTT=%lld us  RSSI=%d dBm",
-             round_i + 1, ROUNDS, ok ? "OK" : "FALHA", (long long) rtt, rssi);
-    /* Linha parseavel para o dataset (uma por rodada); colunas em CSVHDR acima. */
-    ESP_LOGI(TAG, "CSV,%s,%d,%lld,%s,%d",
-             RUN_LABEL, round_i + 1, (long long) rtt, ok ? "OK" : "FALHA", rssi);
+    ESP_LOGI(TAG, "rodada %d/%d: %s  RTT=%lld us  RSSI=%d dBm  nonce=%02x%02x%02x%02x",
+             round_i + 1, ROUNDS, ok ? "OK" : "FALHA", (long long) rtt, rssi,
+             last_nonce[0], last_nonce[1], last_nonce[2], last_nonce[3]);
+    /* Linha parseavel para o dataset (uma por rodada); colunas em CSVHDR acima.
+     * O nonce (4 B) correlaciona esta rodada com os logs do Relay B, Relay A e da chave. */
+    ESP_LOGI(TAG, "CSV,%s,%d,%02x%02x%02x%02x,%lld,%s,%d",
+             RUN_LABEL, round_i + 1,
+             last_nonce[0], last_nonce[1], last_nonce[2], last_nonce[3],
+             (long long) rtt, ok ? "OK" : "FALHA", rssi);
+
+    /* Espelha a rodada no display. */
+    cyd_ui_set_field(F_RODADA, "%d/%d", round_i + 1, ROUNDS);
+    cyd_ui_set_field(F_RTT, "%lld", (long long) rtt);
+    cyd_ui_set_field(F_OK, "%d", ok_count);
+    cyd_ui_set_field(F_FALHA, "%d", fail_count);
+    cyd_ui_set_hex(0, last_nonce, NONCE_LEN);
+    cyd_ui_set_hex(1, got, got_len);
+    cyd_ui_pulse();
 
     round_i++;
     if (round_i < ROUNDS) {
@@ -228,6 +217,8 @@ static void handle_notify(struct ble_gap_event *event)
                  "=== %s n=%d ok=%d falha=%d | RTT us: min=%lld avg=%lld max=%lld ===",
                  RUN_LABEL, round_i, ok_count, fail_count,
                  (long long) rtt_min, (long long) (rtt_sum / round_i), (long long) rtt_max);
+        cyd_ui_set_state(fail_count == 0 ? "fim: tudo OK" : "fim: com falhas",
+                         fail_count == 0 ? 0x1AA260 : 0xD64545);
     }
 }
 
@@ -264,6 +255,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             svc_start = svc_end = 0;
             h_challenge = h_response = h_cccd = 0;
             ESP_LOGI(TAG, "conectado (handle %u); descobrindo servico", g_conn);
+            cyd_ui_set_state("conectado", 0x1AA260);
             ble_gattc_disc_svc_by_uuid(g_conn, &SVC_UUID.u, on_disc_svc, NULL);
         } else {
             ESP_LOGE(TAG, "conexao falhou (status=%d)", event->connect.status);
@@ -294,7 +286,7 @@ static void start_scan(void)
     dp.passive = 0;
     int rc = ble_gap_disc(own_addr_type, BLE_HS_FOREVER, &dp, gap_event, NULL);
     if (rc != 0) ESP_LOGE(TAG, "ble_gap_disc rc=%d", rc);
-    else ESP_LOGI(TAG, "escaneando pelo servico da chave...");
+    else { ESP_LOGI(TAG, "escaneando pelo servico da chave..."); cyd_ui_set_state("escaneando", ACCENT); }
 }
 
 /* ---- ciclo de vida do host ---------------------------------------------- */
@@ -323,9 +315,22 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
-#if MBEDTLS_VERSION_NUMBER >= 0x04000000
-    if (psa_crypto_init() != PSA_SUCCESS) { ESP_LOGE(TAG, "psa_crypto_init falhou"); return; }
-#endif
+    pkes_hmac_init();
+    serial_ota_init();   /* regravacao pela UART0 sem download mode (tools/serial_ota.py) */
+
+    /* Display/UI primeiro, para a tela acender antes mesmo do BLE. */
+    cyd_display_init();
+    cyd_led_init();
+    cyd_display_set_backlight(90);
+    cyd_ui_cfg_t cfg = {
+        .title  = "VEICULO",
+        .accent = ACCENT,
+        .mascot = CYD_MASCOT_CAR,
+        .fields = { "Rodada", "RTT us", "OK", "FALHA", NULL },
+        .hex0   = "nonce",
+        .hex1   = "resp",
+    };
+    cyd_ui_init(&cfg);
 
     ret = nimble_port_init();
     if (ret != ESP_OK) { ESP_LOGE(TAG, "nimble_port_init rc=%d", ret); return; }
