@@ -285,7 +285,20 @@ English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16
 > - Not checked: the animations on hardware and the real colours of the panel (the simulator writes the
 >   logical RGB; the ST7789 orientation and colour settings are not simulated).
 
-- [ ] **V-01. PKES layout map.** Write `components/cyd/LAYOUT.md` with the y bands and the position of each
+> **Status (2026-11-17, checkpoint 09):** docs and small cleanups. Built for esp32 (six configurations), not flashed.
+> - V-01 done: `components/cyd/LAYOUT.md` lists the vertical bands and every widget with its coordinates,
+>   in the format of deskrab's `layout.md`.
+> - Header: the campaign tag moved from x 116 to x 108 and the link indicators from x 182 to x 176 (the
+>   ESP spacing is unchanged). Measured in the simulator: the `ESP` text now ends at x 258, about 7 px from
+>   the mascot (it touched it before). In `BASELINE` mode the tag ends at x 181 and the BLE dot starts at x 189.
+>   The BLE text and the ESP dot are 3 px apart. Checked in the relay B and vehicle frames.
+> - `relays/main/relay_b.c`: `s_from_vehicle` is not unused. It is incremented in the BLE write handler, so
+>   it is now declared only in the BLE build. The warning is gone from the self-test build.
+> - `TASKS.md`: the toolchain item is done, listing the three v6.1 guards.
+> - Portuguese comments left in `relays/main/CMakeLists.txt` and in the `sdkconfig.defaults` files of
+>   `key/`, `vehicle/` and `relays/` are translated (comments only, no config value changed).
+
+- [x] **V-01. PKES layout map.** Write `components/cyd/LAYOUT.md` with the y bands and the position of each
   widget, in the format of deskrab's `layout.md`. **Acceptance:** every widget in `cyd_ui.c` is listed with
   its coordinates. **Depends on:** nothing.
 
@@ -487,6 +500,7 @@ branch is always a complete state of the code. A checkpoint is only created afte
 | `ckpt/06-english` | Full English translation (code, logs, docs, Android app text), `TESTING.md` rewritten, D-06 done, V-16 and V-18 dropped | built for esp32, not flashed |
 | `ckpt/07-simulator` | V-17a, V-17b (`tools/sim`); hex lines font 14 to 12 in `cyd_ui.c` | built for esp32 (6 configs), not flashed; frames in `tools/sim/out` |
 | `ckpt/08-analysis-plots` | D-01 (`data/utf8`, `data/README.md`), D-05a, D-05b (`tools/plot_runs.py`, SVG), `TESTING.md` step 6 | analysis tools only, no firmware change, so no esp32 build |
+| `ckpt/09-docs-cleanup` | V-01 (`components/cyd/LAYOUT.md`), header shift in `cyd_ui.c`, `relay_b.c` warning, toolchain doc, translated build-file comments | built for esp32 (6 configs), not flashed; header checked in the simulator |
 
 Branch names from checkpoints 01 to 05 keep their original spelling, since they already exist.
 

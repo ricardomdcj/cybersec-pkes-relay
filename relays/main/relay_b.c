@@ -46,8 +46,10 @@ static const char *TAG = "RELAY_B";
 #define ACCENT 0x00B8D4
 enum { F_CAR = 0, F_TUNNEL = 1, F_RTT = 2 };
 
-/* Counters shown on the display (valid in both modes). */
-static uint32_t s_from_vehicle;   /* challenges written by the vehicle -> tunnel */
+/* Counters shown on the display. */
+#if !RELAY_LINK_SELFTEST
+static uint32_t s_from_vehicle;   /* challenges written by the vehicle -> tunnel (BLE build only) */
+#endif
 static uint32_t s_from_tunnel;    /* responses coming from the tunnel -> notify to the vehicle */
 
 /* Label of the timing card: the tunnel RTT in the self-test; the turnaround of B over BLE (V-04). */

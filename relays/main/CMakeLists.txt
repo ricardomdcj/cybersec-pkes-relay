@@ -1,5 +1,5 @@
 # Explicit REQUIRES: in ESP-IDF 6.x the drivers/stacks live in separate components
-# e o componente main precisa lista-los. bt = controlador BT + host NimBLE;
+# The main component must list them. bt = BT controller + NimBLE host;
 # esp_wifi also brings esp_now.h; esp_timer is used by the tunnel self-test.
 idf_component_register(SRCS "main.c" "link.c" "relay_a.c" "relay_b.c"
                     INCLUDE_DIRS "."

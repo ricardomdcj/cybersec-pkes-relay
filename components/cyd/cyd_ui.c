@@ -359,11 +359,11 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     s_tag_lbl = lv_label_create(hdr);
     lv_obj_set_style_text_color(s_tag_lbl, lv_color_hex(0xffffff), 0);
     lv_obj_set_style_text_font(s_tag_lbl, &lv_font_montserrat_12, 0);
-    lv_obj_align(s_tag_lbl, LV_ALIGN_LEFT_MID, 116, 0);
+    lv_obj_align(s_tag_lbl, LV_ALIGN_LEFT_MID, 108, 0);   /* was 116: moved with the indicators (checkpoint 09) */
     lv_obj_add_flag(s_tag_lbl, LV_OBJ_FLAG_HIDDEN);
     static const char *link_names[2] = { "BLE", "ESP" };
     for (int i = 0; i < 2; i++) {
-        int x = 182 + i * 36;
+        int x = 176 + i * 36;   /* was 182 + i*36: 6 px left (checkpoint 09); the ESP text now ends ~7 px from the mascot */
         s_link_dot[i] = lv_obj_create(hdr);
         lv_obj_set_size(s_link_dot[i], 8, 8);
         lv_obj_clear_flag(s_link_dot[i], LV_OBJ_FLAG_SCROLLABLE);

@@ -13,18 +13,18 @@ CONFIG_BT_ENABLED=y
 CONFIG_BT_NIMBLE_ENABLED=y
 CONFIG_BT_NIMBLE_MAX_CONNECTIONS=1
 
-# Em modo BLE (RELAY_LINK_SELFTEST 0) o binario (BT+WiFi+NimBLE+LVGL) passa de 1 MB e
-# estoura a particao de app padrao. A tabela "single app large" da ~1.5 MB de app.
-# OTA serial precisa de dois slots de app (ver components/serial_ota)
+# In BLE mode (RELAY_LINK_SELFTEST 0) the binary (BT+WiFi+NimBLE+LVGL) grows past 1 MB and
+# overflows the default app partition. The "single app large" table gives about 1.5 MB of app.
+# Serial OTA needs two app slots (see components/serial_ota)
 CONFIG_PARTITION_TABLE_TWO_OTA_LARGE=y
 
-# WiFi/ESP-NOW convivem com o BLE no mesmo radio 2.4 GHz (coexistencia por software).
-# Esse custo de coexistencia e proposital: vira dado de medida (overhead do enlace).
+# WiFi/ESP-NOW share the 2.4 GHz radio with BLE (software coexistence).
+# That coexistence cost is intentional: it is measured data (the link overhead).
 CONFIG_ESP_COEX_SW_COEXIST_ENABLE=y
 
-# BT + WiFi + LVGL + driver UART (serial_ota) juntos estouram o IRAM do ESP32 classico
-# (.iram0.text nao cabe). Move as funcoes otimizadas do WiFi do IRAM para a flash: libera
-# IRAM de sobra (so custa um pouco de throughput no WiFi, irrelevante p/ frames ESP-NOW).
+# BT + WiFi + LVGL + the UART driver (serial_ota) together overflow the classic ESP32 IRAM
+# (.iram0.text does not fit). The optimised WiFi functions move from IRAM to flash, which frees
+# spare IRAM (it costs a little WiFi throughput, irrelevant for ESP-NOW frames).
 CONFIG_ESP_WIFI_IRAM_OPT=n
 CONFIG_ESP_WIFI_RX_IRAM_OPT=n
 

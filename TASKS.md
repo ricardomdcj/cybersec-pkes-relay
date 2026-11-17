@@ -80,6 +80,14 @@ then set `RELAY_LINK_SELFTEST 0` in `relays/main/relay_config.h`.
       source of truth; `relays/main/link.h` defines the tunnel frames; `phoneaskey/` must match
       the contract only if it is revived.
 - [x] Flash headroom: the BLE relay build fits the single-app large partition (~8 % free).
-- [ ] Toolchain: the code was written for ESP-IDF v5.4 but builds on v6.1 (`link.c` guards the
-      ESP-NOW send callback by `ESP_IDF_VERSION`; `relays/main/CMakeLists.txt` lists the v6
-      `REQUIRES`).
+- [x] Toolchain: the bench builds with ESP-IDF v6.1 (the version installed on the work machine). The
+      code was first written for v5.4, and the v5.4 paths stay behind three guards:
+      - `relays/main/link.c`: the ESP-NOW send callback changed signature in v5.4, so `on_sent` is
+        chosen by `#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 4, 0)`.
+      - `components/pkes_contract/pkes_hmac.c`: on mbedTLS 4 (IDF v6.1) `mbedtls_md_hmac` is a private
+        identifier, so the HMAC goes through PSA Crypto (`psa_import_key` + `psa_mac_compute`, after
+        `pkes_hmac_init()`); mbedTLS 3 keeps the MD path. Chosen by `MBEDTLS_VERSION_NUMBER >= 0x04000000`.
+      - `relays/main/CMakeLists.txt`: the explicit `REQUIRES` list (`bt esp_wifi esp_netif esp_event
+        nvs_flash esp_timer pkes_contract cyd serial_ota`); IDF 6 split the drivers into separate
+        components, so `main` must list them.
+      v5.4 was not rebuilt in checkpoint 09: its paths are kept but not checked since the v6.1 move.
