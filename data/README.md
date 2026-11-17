@@ -8,7 +8,7 @@ Raw captures from the bench. The original files are not modified.
 | `relayed_20261116-220429.log` | same session, full chain: key, Relay A, Relay B, vehicle | UTF-8 with BOM |
 
 Both were captured with the firmware of that day: label `run`, 20 rounds per capture, CSV v1 with the
-old Portuguese tags (`VEICULO`, `FALHA`). The analysis tools accept those tags.
+Portuguese column names (`rodada`, `resultado`) and the `VEICULO` log tag. The analysis tools accept both.
 
 - `utf8/`: UTF-8 copies (no BOM, line endings unchanged) of the two files above, made with
   `tools/recode_logs.py`. The text is the same as the originals, and `tools/analyze_runs.py` gives
