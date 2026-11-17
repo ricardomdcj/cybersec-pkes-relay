@@ -8,6 +8,31 @@ The firmware logs in English; the expected log lines below are quoted verbatim.
 
 ---
 
+## Before you start on a new machine
+
+1. Install ESP-IDF v6.1 with the Espressif Installation Manager. In a PowerShell window, load the environment:
+   `. C:\Espressif\tools\Microsoft.v6.1.PowerShell_profile.ps1`
+2. Get the code. The newest checkpoint is on `cyd-port`:
+   `git clone https://github.com/ricardomdcj/cybersec-pkes-relay.git pkes-relay`, then `git checkout cyd-port`.
+3. Generate the local configuration in each firmware folder. `sdkconfig` is gitignored and must not be copied
+   from another machine. In `key/`, `vehicle/` and `relays/`, run `idf.py set-target esp32`. Check that
+   `CONFIG_IDF_TARGET="esp32"` is in each `sdkconfig`. The first build downloads LVGL into `managed_components/`,
+   so it needs internet.
+4. Build each project once with `idf.py build`. The default relay build is role A with the self-test on.
+5. Find the COM ports in Device Manager. On the work machine COM4 and COM5 are Bluetooth serial ports; the
+   numbers on another PC will differ.
+6. Give each relay role its own build folder, so switching roles does not rebuild everything:
+   - key: `idf.py flash -p COMx` in `key/`
+   - vehicle: `idf.py flash -p COMx` in `vehicle/`
+   - Relay A: `idf.py -B %LOCALAPPDATA%\pkes_build\relay_a -DRELAY_ROLE=1 -DRELAY_LINK_SELFTEST=0 -p COMx flash` in `relays/`
+   - Relay B: the same, with `-DRELAY_ROLE=2` and `%LOCALAPPDATA%\pkes_build\relay_b`
+   The relay peer MAC can stay zero. The tunnel then uses broadcast, and the MAC-level ACK counts stay at zero.
+   Section 3 covers the peer MAC step if you want those counts.
+7. The first flash of each board uses the BOOT + RST sequence in `CLAUDE.md`. Later flashes can use
+   `python tools/serial_ota.py COMx <firmware>.bin`.
+8. Campaign captures go to `data/runs/`. Put them on their own branch (for example `data/campaign-YYYYMMDD`), not on a
+   checkpoint branch, and add them explicitly.
+
 ## 0. The three stages (and why)
 
 You build confidence bottom-up. Each stage is a prerequisite for the next:
