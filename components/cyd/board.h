@@ -1,9 +1,9 @@
 #pragma once
-// Pinos da CYD ESP32-2432S028 (micro-USB + USB-C), display ST7789, touch XPT2046.
-// Copiado da bancada deskrab; a bancada PKES usa so o display e o LED (view-only),
-// entao o touch fica declarado mas nao e inicializado.
+// CYD ESP32-2432S028 pins (micro-USB + USB-C), ST7789 display, XPT2046 touch.
+// Copied from the deskrab bench. The PKES bench uses only the display and the LED
+// (view-only), so the touch is declared here but not initialized.
 
-// Display (HSPI). MISO nao e usado: GPIO12 e pino de strapping
+// Display (HSPI). MISO is unused: GPIO12 is a strapping pin
 #define LCD_HOST        SPI2_HOST
 #define PIN_LCD_SCLK    14
 #define PIN_LCD_MOSI    13
@@ -15,14 +15,14 @@
 
 #define LCD_W           320
 #define LCD_H           240
-// Orientacao/cores do painel: ajustar se a imagem sair espelhada ou com cores trocadas
+// Panel orientation/colors: adjust if the image comes out mirrored or with swapped colors
 #define LCD_SWAP_XY     1
 #define LCD_MIRROR_X    1
 #define LCD_MIRROR_Y    0
 #define LCD_INVERT      0
 #define LCD_BGR         0
 
-// LED RGB (ativo em nivel baixo)
+// RGB LED (active low)
 #define PIN_LED_R       4
 #define PIN_LED_G       16
 #define PIN_LED_B       17

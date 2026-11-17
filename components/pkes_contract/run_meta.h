@@ -1,15 +1,15 @@
 #pragma once
 
 /*
- * Cabecalho de execucao (M-13): imprime a linha RUN_META no boot com o commit git da
- * fonte, o estado (+mod se houver mudancas nao commitadas) e a data do configure.
- * Serve para ligar cada captura ao codigo que a gerou (o manifesto da campanha, D-03,
- * le esta linha).
+ * Run header (M-13): prints the RUN_META line at boot with the git commit of the source,
+ * the state (+mod if there are uncommitted changes) and the configure date.
+ * It links each capture to the code that produced it (the campaign manifest, D-03, reads
+ * this line).
  *
- * O commit e lido pelo CMake na hora do configure. Depois de commitar, rode
- * `idf.py reconfigure` antes do build, senao a linha mostra o commit anterior.
+ * The CMake step reads the commit at configure time. After committing, run
+ * `idf.py reconfigure` before building, otherwise the line shows the previous commit.
  */
-void run_meta_print(const char *papel);
+void run_meta_print(const char *role);
 
-/* Commit curto da fonte (com +mod se houver mudancas), para o splash da tela (V-15). */
+/* Short commit of the source (with +mod if there are changes), for the screen splash (V-15). */
 const char *run_meta_commit(void);

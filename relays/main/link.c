@@ -10,18 +10,18 @@
 #include "esp_wifi.h"
 #include "esp_now.h"
 
-/* Canal 2.4 GHz fixo para os dois relays. Precisa ser o mesmo em A e B. */
+/* Fixed 2.4 GHz channel for both relays. Must be the same on A and B. */
 #define LINK_CHANNEL 1
 
 static const char *TAG = "LINK";
 static link_rx_cb_t s_cb;
 static const uint8_t BCAST[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
-/* Destino do tunel: MAC do outro relay (M-06b) se configurado, senao broadcast. */
+/* Tunnel destination: the other relay's MAC (M-06b) if configured, otherwise broadcast. */
 static uint8_t s_dst[6];
 static bool    s_unicast;
 
-/* Contadores de envio (M-07). Escritos no callback do WiFi e na chamada de link_send. */
+/* Send counters (M-07). Written in the WiFi callback and in link_send. */
 static volatile uint32_t s_tx_fail;
 static volatile uint32_t s_tx_total;
 
@@ -31,9 +31,9 @@ static void on_recv(const esp_now_recv_info_t *info, const uint8_t *data, int le
     s_cb((link_msg_type_t) data[0], data + 1, (size_t) (len - 1));
 }
 
-/* A assinatura do callback de envio do ESP-NOW mudou no IDF v5.4: o 1o argumento deixou
- * de ser 'const uint8_t *mac' e passou a ser 'const esp_now_send_info_t *'. Mantemos as
- * duas formas para compilar tanto no v5.x antigo quanto no v6.1 desta maquina. */
+/* The ESP-NOW send callback signature changed in IDF v5.4: its first argument stopped being
+ * 'const uint8_t *mac' and became 'const esp_now_send_info_t *'. Both forms are kept so the
+ * code builds on the older v5.x and on v6.1. */
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 4, 0)
 static void on_sent(const esp_now_send_info_t *info, esp_now_send_status_t status)
 #else
@@ -42,7 +42,7 @@ static void on_sent(const uint8_t *mac, esp_now_send_status_t status)
 {
     if (status != ESP_NOW_SEND_SUCCESS) {
         s_tx_fail++;
-        ESP_LOGW(TAG, "envio ESP-NOW falhou (falhas=%lu)", (unsigned long) s_tx_fail);
+        ESP_LOGW(TAG, "ESP-NOW send failed (failures=%lu)", (unsigned long) s_tx_fail);
     }
 }
 
@@ -66,14 +66,14 @@ esp_err_t link_init(link_rx_cb_t cb)
     ESP_ERROR_CHECK(esp_wifi_start());
     ESP_ERROR_CHECK(esp_wifi_set_channel(LINK_CHANNEL, WIFI_SECOND_CHAN_NONE));
 
-    /* M-08: sem power save o WiFi nao dorme entre frames; o padrao adiciona latencia. */
+    /* M-08: without power save the WiFi does not sleep between frames; the default adds latency. */
     esp_err_t ps_rc = esp_wifi_set_ps(WIFI_PS_NONE);
     ESP_LOGI(TAG, "power save WiFi = NONE (rc=%d)", (int) ps_rc);
 
-    /* M-06a: MAC desta placa, para colar no RELAY_PEER_MAC do outro relay. */
+    /* M-06a: this board's MAC, to paste into RELAY_PEER_MAC of the other relay. */
     uint8_t mac[6] = {0};
     if (esp_wifi_get_mac(WIFI_IF_STA, mac) == ESP_OK) {
-        ESP_LOGI(TAG, "MAC desta placa: %02x:%02x:%02x:%02x:%02x:%02x",
+        ESP_LOGI(TAG, "this board MAC: %02x:%02x:%02x:%02x:%02x:%02x",
                  mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     }
 
@@ -93,10 +93,10 @@ esp_err_t link_init(link_rx_cb_t cb)
     ESP_ERROR_CHECK(esp_now_add_peer(&peer));
 
     if (s_unicast) {
-        ESP_LOGI(TAG, "ESP-NOW pronto (canal %d), unicast para %02x:%02x:%02x:%02x:%02x:%02x",
+        ESP_LOGI(TAG, "ESP-NOW ready (channel %d), unicast to %02x:%02x:%02x:%02x:%02x:%02x",
                  LINK_CHANNEL, s_dst[0], s_dst[1], s_dst[2], s_dst[3], s_dst[4], s_dst[5]);
     } else {
-        ESP_LOGW(TAG, "ESP-NOW pronto (canal %d), RELAY_PEER_MAC nao configurado: usando broadcast",
+        ESP_LOGW(TAG, "ESP-NOW ready (channel %d), RELAY_PEER_MAC not set: using broadcast",
                  LINK_CHANNEL);
     }
     return ESP_OK;
@@ -111,13 +111,13 @@ esp_err_t link_send(link_msg_type_t type, const uint8_t *data, size_t len)
 
     s_tx_total++;
     esp_err_t rc = esp_now_send(s_dst, buf, len + 1);
-    if (rc != ESP_OK) s_tx_fail++;   /* erro sincrono: o callback nao vai rodar */
+    if (rc != ESP_OK) s_tx_fail++;   /* synchronous error: the callback will not run */
     return rc;
 }
 
-void link_tx_stats(uint32_t *falhas, uint32_t *total)
+void link_tx_stats(uint32_t *failures, uint32_t *total)
 {
-    if (falhas) *falhas = s_tx_fail;
+    if (failures) *failures = s_tx_fail;
     if (total)  *total  = s_tx_total;
 }
 

@@ -6,7 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Academic research bench (UNIFEI, discipline EC343E) replicating a **PKES relay attack over BLE** for a paper (`marco3-pkes.pdf`). It is a study/proof-of-concept over Bluetooth Low Energy — not tooling against any real vehicle. The thesis: a relay transports the live challenge-response exchange, so it **forges distance, not identity**, which is why a nonce-based HMAC does not defeat it. The research goal is to measure the relay's RTT overhead against an honest baseline. See `SCOPE.md` for the project's authorization, scope, and why the bench is self-contained.
 
-## The roles — now all CYD (ESP32-2432S028R)
+The project is written in **English** (code, comments, logs, documentation) for publication. The original working notes were in Portuguese; see the Conventions section.
+
+## The roles — all CYD (ESP32-2432S028R)
 
 The system models a key, a car, and a man-in-the-middle. **Every role runs on a CYD
 (ESP32-2432S028R, classic ESP32 with a 320×240 ST7789 display + XPT2046 touch + RGB LED).**
@@ -32,11 +34,13 @@ with a small animated mascot per role). The firmwares:
 Shared code lives in repo-level `components/` (pulled in by each project's root `CMakeLists.txt`
 via `set(EXTRA_COMPONENT_DIRS "${CMAKE_CURRENT_LIST_DIR}/../components")`):
 - **`components/pkes_contract/`** — the single source of truth for the GATT contract
-  (`ble_contract.h`) and the HMAC helper (`pkes_hmac.c`, PSA on mbedTLS 4 / MD on 3).
+  (`ble_contract.h`), the HMAC helper (`pkes_hmac.c`, PSA on mbedTLS 4 / MD on 3), the BLE
+  connection helpers (`ble_link*`) and the run header (`run_meta*`, the `RUN_META` line).
 - **`components/cyd/`** — `board.h`, `cyd_display`, `cyd_led`, `cyd_ui` (+ LVGL 8.3 via its
   `idf_component.yml`).
+- **`components/serial_ota/`** — the serial OTA receiver shared by the firmwares.
 
-## Protocol contract — now a single shared header
+## Protocol contract — a single shared header
 
 The GATT protocol (service/characteristic UUIDs, nonce/response lengths, the pre-shared key, and
 the `HMAC-SHA256(PSK, nonce)` truncated to RESPONSE_LEN) lives in **one** place that all three C
@@ -50,6 +54,10 @@ you ever revive that app, keep it matching this header, otherwise there is now a
 truth and nothing to hand-sync.
 
 Flow: the car (central) enables notifications on the RESPONSE characteristic, writes a fresh nonce to CHALLENGE, and the key notifies back the HMAC. The nonce changes each round, so naive replay fails — the relay works only by carrying the live exchange.
+
+The **tunnel frames** between the relays (`relays/main/link.h`) are a separate contract:
+CHALLENGE `[seq:4][nonce:16]` and RESPONSE `[seq:4][turnaround of A:4][hmac:16]`. The `seq` is the
+round number assigned by Relay B. Both relays must run the same build.
 
 ## Building the ESP-IDF firmware (`key/`, `vehicle/`, `relays/`)
 
@@ -72,8 +80,12 @@ idf.py set-target esp32
 idf.py build flash monitor
 ```
 
-**Relay role** is chosen at build time (both roles are now the **same** `esp32` CYD — the old
-ESP32-S3/ESP32-C3 split is gone). Edit `RELAY_ROLE` in `relays/main/relay_config.h` or pass it:
+**Stale `sdkconfig` trap:** the checked-in `sdkconfig.defaults` say `esp32`, but a local
+`sdkconfig` generated earlier can still say `esp32s3` or `esp32c3` (this happened to `vehicle/`
+and `relays/`). Check `CONFIG_IDF_TARGET` in `sdkconfig` before flashing. If it is wrong, run
+`idf.py set-target esp32` in that folder.
+
+**Relay role** is chosen at build time (both roles are the **same** `esp32` CYD). Edit `RELAY_ROLE` in `relays/main/relay_config.h` or pass it:
 
 | Role | `RELAY_ROLE` | Chip | set-target |
 |------|--------------|------|------------|
@@ -117,6 +129,11 @@ idf.py fullclean      # when switching target on an already-built tree
 idf.py build
 ```
 
+**Bench commands and the campaign (UART0):** the vehicle takes `RUN label=<label> dist=<meters>`
+(tags the CSV and the display) and `START` (runs the rounds; only after the key is subscribed).
+A disconnection stops the campaign, so send `START` again after reconnecting. The relays take
+`TXPOW <n>`. The CSV format and the procedure are in `TESTING.md`.
+
 ## Relay bring-up is staged via `RELAY_LINK_SELFTEST`
 
 `relays/main/relay_config.h` has `RELAY_LINK_SELFTEST` (default `1`):
@@ -143,9 +160,15 @@ Package `com.tripper.phone_as_key`. The app only needs the `ble/` package to act
 
 ## Conventions
 
-- READMEs and code comments are in **Portuguese**; follow suit when editing them.
-- **On-screen LVGL strings avoid accents** — the built-in Montserrat fonts only carry ASCII +
-  symbols (no Latin-1 accents), so UI labels are written without them. Comments/READMEs keep
-  normal Portuguese accents.
-- `relays/README.md` and `vehicle/README.md` carry the milestone plan and expected monitor output — read them before changing firmware behavior.
+- **Everything is in English**: code, comments, log messages, on-screen text, READMEs, `TESTING.md`,
+  `TASKS.md`, `SCOPE.md`, commit messages and this file. The project is meant for publication.
+  The files are kept in ASCII where practical: the on-screen font has no accented characters.
+- **Protocol tokens are fixed** and must not be translated: `OTA:*` lines, `CSV`, `CSVA`,
+  `CSVB`, `CSVHDR`, `RUN`, `START`, `TXPOW`, `RUN_META`, the `=== ... ===` summary, and the
+  `RELAY_A:`/`RELAY_B:`/`VEHICLE:`/`KEY` log tags. The tools parse them. `tools/analyze_runs.py`
+  and `tools/capture_run.py` also accept the older Portuguese tags (`VEICULO`, `FALHA`,
+  `papel`) so that the early captures can still be read.
+- On-screen labels stay ASCII (the built-in Montserrat fonts have no accented letters).
+- Commit messages are in English and end with the `Co-Authored-By` line the workflow asks for.
 - Build output (`build/`, `.cxx/`, `managed_components/`), `local.properties`, and regenerated `sdkconfig` are gitignored; keep them out of commits.
+- Progress is kept in `IMPROVEMENTS.md` (tasks and checkpoints) and `TASKS.md` (milestones).

@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
-"""Captura uma campanha do veiculo pela UART0 e grava o manifesto (D-02 e D-03).
+"""Captures one vehicle campaign from UART0 and writes its manifest (D-02 and D-03).
 
-Cada campanha vai para data/runs/<AAAAmmdd-HHMMSS>_<rotulo>/, com:
-  capture_<porta>.log   linhas da UART0 em UTF-8, prefixadas pela hora do host
-  manifest.json         rotulo, distancia, commit do firmware (RUN_META), resultado
+Each campaign goes to data/runs/<YYYYmmdd-HHMMSS>_<label>/, containing:
+  capture_<port>.log   UART0 lines in UTF-8, prefixed with the host time
+  manifest.json        label, distance, firmware commit (RUN_META), result summary
 
-Uso (Python do venv do ESP-IDF; -I ignora scripts vizinhos):
+Usage (ESP-IDF Python; -I ignores neighbouring scripts):
   C:\\Espressif\\tools\\python\\v6.1\\venv\\Scripts\\python.exe -I tools/capture_run.py ^
       --port COM6 --label relay --dist 3.0 --start
 
-  --start      espera a chave ser inscrita e envia START (sem isso a campanha nao roda)
-  --no-reset   nao pulsa o RTS (por padrao a placa reinicia e o RUN_META entra no log)
-  --max-s      tempo maximo de captura em segundos (padrao 900)
+  --start      waits for the key to be subscribed and then sends START (without it, the
+               campaign does not run)
+  --no-reset   do not pulse RTS (by default the board restarts and RUN_META enters the log)
+  --max-s      maximum capture time in seconds (default 900)
 
-Modo offline, reconstroi o manifesto de uma pasta ja capturada:
-  python -I tools/capture_run.py --manifest-only data/runs/<pasta>
+Offline mode, rebuilds the manifest of a folder that was already captured:
+  python -I tools/capture_run.py --manifest-only data/runs/<folder>
 
-Antes de rodar: feche qualquer monitor que esteja segurando a porta (ver TESTING.md §7).
+Before running: close any monitor that is holding the port (see TESTING.md, section 7).
 """
 
 import argparse
@@ -30,15 +31,15 @@ import time
 REPO = pathlib.Path(__file__).resolve().parent.parent
 DEFAULT_OUT = REPO / "data" / "runs"
 
-RE_RUN_META = re.compile(r"RUN_META: papel=(\S+) fw=(\S+) build=(.+)$")
+RE_RUN_META = re.compile(r"RUN_META: (?:role|papel)=(\S+) fw=(\S+) build=(.+)$")
 RE_CSVHDR_V2 = re.compile(r"CSVHDR v2")
-RE_SUMMARY = re.compile(r"=== (.+?) dist=(\S+) n=(\d+) ok=(\d+) falha=(\d+) timeout=(\d+) "
-                        r"desconexoes=(\d+) \|")
-RE_VEH_CSV = re.compile(r"VEICULO: CSV,(.*)$")
+RE_VEH_CSV = re.compile(r"(?:VEHICLE|VEICULO): CSV,(.*)$")
+RE_RUN_LOG = re.compile(r"(?:VEHICLE|VEICULO): RUN label=")
+SUBSCRIBED_MARKERS = ("subscribed to notify", "inscrito em notify")   # new and old firmware
 
 
 def parse_log(lines):
-    """Extrai do log o que o manifesto precisa. Tolerante a log incompleto."""
+    """Extracts what the manifest needs from a log. Tolerant of incomplete logs."""
     info = {
         "fw": None, "build": None, "csv_schema": None,
         "summary": None, "rows": 0, "rows_ok": 0, "rows_timeout": 0,
@@ -46,13 +47,13 @@ def parse_log(lines):
     }
     for line in lines:
         m = RE_RUN_META.search(line)
-        if m and info["fw"] is None and "veiculo" in m.group(1):
+        if m and info["fw"] is None and m.group(1) in ("vehicle", "veiculo"):
             info["fw"], info["build"] = m.group(2), m.group(3).strip()
         if RE_CSVHDR_V2.search(line):
             info["csv_schema"] = "v2"
-        if "VEICULO: RUN label=" in line:
+        if RE_RUN_LOG.search(line):
             info["run_cmd_seen"] = True
-            tail = line.split("VEICULO: RUN ", 1)[1]
+            tail = re.split(r"RUN ", line, maxsplit=1)[1]
             for tok in tail.split():
                 if tok.startswith("label="):
                     info["run_label_log"] = tok[6:]
@@ -62,21 +63,21 @@ def parse_log(lines):
         if m:
             fields = m.group(1).strip().split(",")
             info["rows"] += 1
-            # v2: label,dist,rodada,nonce,t_tx,rtt,resultado,rssi,itvl,mtu (resultado = [6])
-            # v1: label,rodada,nonce,rtt,resultado,rssi            (resultado = [4])
-            resultado = fields[6] if len(fields) >= 10 else fields[4]
-            if resultado == "OK":
+            # v2: label,dist,round,nonce,t_tx,rtt,result,rssi,itvl,mtu  (result = [6])
+            # v1: label,round,nonce,rtt,result,rssi                    (result = [4])
+            result = fields[6] if len(fields) >= 10 else fields[4]
+            if result in ("OK",):
                 info["rows_ok"] += 1
-            elif resultado == "TIMEOUT":
+            elif result == "TIMEOUT":
                 info["rows_timeout"] += 1
-        if " === " in line and "VEICULO:" in line:
-            info["summary"] = line.split("VEICULO: ", 1)[1].strip()
+        if " === " in line and ("VEHICLE:" in line or "VEICULO:" in line):
+            info["summary"] = re.split(r"(?:VEHICLE|VEICULO): ", line, maxsplit=1)[1].strip()
     return info
 
 
 def build_manifest(run_dir, port=None, label=None, dist=None, reset=None, cmds=None,
                    started=None, ended=None):
-    """Escreve manifest.json na pasta da campanha, lendo o capture_*.log dela."""
+    """Writes manifest.json in the campaign folder, reading the capture_*.log files in it."""
     run_dir = pathlib.Path(run_dir)
     logs = sorted(run_dir.glob("capture_*.log"))
     lines = []
@@ -116,7 +117,7 @@ def build_manifest(run_dir, port=None, label=None, dist=None, reset=None, cmds=N
 
 
 def capture(args):
-    import serial  # pyserial do venv do ESP-IDF
+    import serial  # pyserial from the ESP-IDF venv
 
     run_stamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
     run_dir = pathlib.Path(args.out) / f"{run_stamp}_{args.label}"
@@ -129,11 +130,11 @@ def capture(args):
     if not args.no_reset:
         ser.setRTS(False)
         time.sleep(0.1)
-        ser.setRTS(True)          # pulso de reset: o boot (RUN_META) entra no log
+        ser.setRTS(True)          # reset pulse: the boot (RUN_META) goes into the log
 
     buf = b""
     started_at = time.time()
-    armed_at = time.time() + 4.0   # tempo para o boot terminar antes dos comandos
+    armed_at = time.time() + 4.0   # give the boot time to finish before sending commands
     run_sent = start_sent = subscribed = False
     summary_seen_at = None
 
@@ -147,7 +148,7 @@ def capture(args):
         while True:
             now = time.time()
             if now - started_at > args.max_s:
-                f.write(f"{dt.datetime.now():%H:%M:%S.%f}[HOST] tempo maximo atingido\n")
+                f.write(f"{dt.datetime.now():%H:%M:%S.%f}[HOST] maximum capture time reached\n")
                 break
             chunk = ser.read(4096)
             if chunk:
@@ -157,13 +158,13 @@ def capture(args):
                     line = raw.decode("utf-8", errors="replace").rstrip("\r")
                     f.write(f"{dt.datetime.now():%H:%M:%S.%f} {line}\n")
                     f.flush()
-                    if "inscrito em notify" in line:
+                    if any(marker in line for marker in SUBSCRIBED_MARKERS):
                         subscribed = True
-                    if " === " in line and "VEICULO:" in line:
+                    if " === " in line and ("VEHICLE:" in line or "VEICULO:" in line):
                         summary_seen_at = now
             if now < armed_at:
                 continue
-            # RUN vai sempre: traz o rotulo e a distancia para o CSV e o display.
+            # RUN is always sent: it carries the label and the distance for the CSV and the display.
             if not run_sent:
                 send(f, f"RUN label={args.label} dist={args.dist or '-'}")
                 run_sent = True
@@ -177,23 +178,23 @@ def capture(args):
     m = build_manifest(run_dir, port=args.port, label=args.label,
                        dist=args.dist if args.dist else "-", reset=not args.no_reset,
                        cmds=cmds, started=started, ended=ended)
-    print(f"campanha gravada em {run_dir}")
-    print(f"linhas CSV: {m['rows_received']} (OK {m['rows_ok']}, TIMEOUT {m['rows_timeout']}); "
-          f"resumo: {'sim' if m['complete'] else 'NAO (captura interrompida)'}")
+    print(f"campaign saved to {run_dir}")
+    print(f"CSV rows: {m['rows_received']} (OK {m['rows_ok']}, TIMEOUT {m['rows_timeout']}); "
+          f"summary: {'yes' if m['complete'] else 'NO (capture interrupted)'}")
     return 0
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--port", help="porta COM do veiculo, ex. COM6")
-    ap.add_argument("--label", default="run", help="rotulo da campanha (ex.: baseline, relay)")
-    ap.add_argument("--dist", help="distancia em metros (ex.: 3.0)")
-    ap.add_argument("--start", action="store_true", help="envia START quando a chave estiver inscrita")
-    ap.add_argument("--no-reset", action="store_true", help="nao pulsa o RTS no inicio")
-    ap.add_argument("--max-s", type=float, default=900.0, help="tempo maximo de captura (s)")
-    ap.add_argument("--out", default=str(DEFAULT_OUT), help="pasta raiz das campanhas")
-    ap.add_argument("--manifest-only", metavar="PASTA",
-                    help="so reconstroi manifest.json de uma pasta ja capturada")
+    ap.add_argument("--port", help="COM port of the vehicle, e.g. COM6")
+    ap.add_argument("--label", default="run", help="campaign label (e.g. baseline, relay)")
+    ap.add_argument("--dist", help="distance in meters (e.g. 3.0)")
+    ap.add_argument("--start", action="store_true", help="send START once the key is subscribed")
+    ap.add_argument("--no-reset", action="store_true", help="do not pulse RTS at the start")
+    ap.add_argument("--max-s", type=float, default=900.0, help="maximum capture time (s)")
+    ap.add_argument("--out", default=str(DEFAULT_OUT), help="root folder of the campaigns")
+    ap.add_argument("--manifest-only", metavar="FOLDER",
+                    help="only rebuild manifest.json of a folder that was already captured")
     args = ap.parse_args(argv)
 
     if args.manifest_only:
@@ -201,7 +202,7 @@ def main(argv=None):
         print(json.dumps(m, indent=2, ensure_ascii=False))
         return 0
     if not args.port:
-        ap.error("--port e obrigatorio para capturar (ou use --manifest-only)")
+        ap.error("--port is required to capture (or use --manifest-only)")
     return capture(args)
 
 

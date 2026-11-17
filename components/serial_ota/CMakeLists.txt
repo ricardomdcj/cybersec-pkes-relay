@@ -1,4 +1,4 @@
-# OTA serial pela UART0, compartilhado por key/, vehicle/ e relays/.
+# Serial OTA over UART0, shared by key/, vehicle/ and relays/.
 # app_update = esp_ota_ops; esp_app_format = esp_app_get_description; mbedtls = base64.
 idf_component_register(SRCS "serial_ota.c"
                     INCLUDE_DIRS "."

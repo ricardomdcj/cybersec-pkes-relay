@@ -1,485 +1,478 @@
-﻿# Melhorias do bench PKES: medição e visual
+﻿# PKES bench improvements: measurement and visuals
 
-Lista de tarefas derivadas de dois pontos: a análise dos logs de 2026-11-16 (`data/`) e do
-código de `vehicle/`, `relays/` e `key/`; e as ideias de tela inspiradas no `deskrab`.
+Task list derived from two sources: the analysis of the 2026-11-16 logs (`data/`) and of the
+code in `vehicle/`, `relays/` and `key/`; and the screen ideas inspired by `deskrab`.
 
-Cada item é uma tarefa independente. Quando uma tarefa era grande demais, ela foi quebrada
-em duas (`a` e `b`). Nada disto foi compilado nem gravado nas placas ainda. A validação de
-cada item é `idf.py build`, leitura do monitor serial ou o simulador de tela (V-17).
+Each item is an independent task. When a task was too large, it was split into two (`a` and
+`b`). None of this has been flashed to a board yet. Each item is validated by `idf.py build`, by
+reading the serial monitor, or by the screen simulator (V-17).
 
-Convenções: cada item traz **Arquivos**, **Aceite** e **Depende de**. As telas continuam sem
-acentos (regra do `CLAUDE.md`), a menos que V-16b mude isso.
+Conventions: each item lists **Files**, **Acceptance** and **Depends on**. The project is in
+English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16).
 
 ---
 
-## Parte 1: Medição
+## Part 1: Measurement
 
-### A. Validade da rodada (fazer primeiro)
+### A. Round validity (do this first)
 
-> **Status (2026-11-17):** implementado e compilado, sem validação em hardware ainda.
-> Compilacao: a primeira rodada saiu com o alvo errado (sdkconfig local desatualizado: vehicle esp32s3, relays esp32c3). Recompilado com `esp32` em 2026-11-17: todos passam (vehicle, relays BLE A e B, selftest A e B).
-> (um aviso antigo: `s_from_vehicle` não usado no selftest, já existia antes).
-> **Os dois relays precisam ser regravados juntos:** o formato do túnel mudou
-> (ver `relays/main/link.h`), e um relay antigo não conversa com um novo.
+> **Status (2026-11-17):** implemented and compiled, not yet validated on hardware.
+> Build: the first build used the wrong target (stale local sdkconfig: vehicle esp32s3, relays
+> esp32c3). Rebuilt for `esp32` on 2026-11-17: all pass (vehicle, relays BLE A and B, self-test A
+> and B).
+> (an older warning: `s_from_vehicle` unused in the self-test, already there before.)
+> **Both relays must be reflashed together:** the tunnel format changed (see `relays/main/link.h`),
+> and an old relay cannot talk to a new one.
 >
-> Decisões tomadas na implementação:
-> - **M-02:** em `TIMEOUT` o `rtt_us` vai como `-1`. No display, o card de falha virou
->   `Falha / tmo` com o valor `falhas / timeouts`.
-> - **M-03:** o `seq` é um contador atribuído pelo Relay B a cada desafio (não os 4 B do nonce).
->   Frame B->A: `[seq:4][nonce:16]`. Frame A->B: `[seq:4][turnaround A:4][hmac:16]`.
-> - **M-04:** resposta descartada aparece no log com o contador `atrasadas`. Ainda não tem
->   campo no display (vai com V-04/V-06).
-> - **M-05:** veio no mesmo frame da M-03. A linha `CSVB` ganhou uma última coluna com o
->   turnaround de A.
-> - **A verificar em hardware:** no timeout, o veículo chama `ble_gap_conn_rssi` e
->   `ble_gattc_write_flat` a partir da task do `esp_timer`. É o mesmo padrão que o timer de
->   rodada já usava, mas precisa ser confirmado com o NimBLE rodando.
+> Decisions made during implementation:
+> - **M-02:** on `TIMEOUT` the `rtt_us` is sent as `-1`. On the display the failure card became
+>   `Fail / tmo`, with the value `failures / timeouts`.
+> - **M-03:** `seq` is a counter that Relay B assigns to each challenge (not the 4 bytes of the
+>   nonce). B->A frame: `[seq:4][nonce:16]`. A->B frame: `[seq:4][turnaround A:4][hmac:16]`.
+> - **M-04:** a discarded response appears in the log with the counter `late`. It has no display
+>   field yet (that comes with V-04/V-06).
+> - **M-05:** it came in the same frame as M-03. The `CSVB` line gained a last column with A's
+>   turnaround.
+> - **To verify on hardware:** on timeout, the vehicle calls `ble_gap_conn_rssi` and
+>   `ble_gattc_write_flat` from the `esp_timer` task. It is the same pattern the round timer already
+>   used, but it needs confirming with NimBLE running.
 
-- [x] **M-01. Timeout por rodada no veículo.** Hoje o próximo desafio só sai dentro do handler
-  de notify. Se a resposta se perde, a campanha trava para sempre. Adicionar um timer de espera
-  (constante `ROUND_TIMEOUT_MS`, sugestão 2 s) que marca a rodada como perdida e segue.
-  **Arquivos:** `vehicle/main/main.c`. **Aceite:** com o relay desligado no meio da campanha, o
-  veículo registra rodadas perdidas e continua, sem reiniciar. **Depende de:** nada.
+- [x] **M-01. Per-round timeout on the vehicle.** Today the next challenge only goes out inside the
+  notify handler. If the response is lost, the campaign stalls forever. Add a wait timer (constant
+  `ROUND_TIMEOUT_MS`, suggested 2 s) that marks the round as lost and moves on.
+  **Files:** `vehicle/main/main.c`. **Acceptance:** with the relay switched off in the middle of a
+  campaign, the vehicle records lost rounds and carries on without restarting. **Depends on:** nothing.
 
-- [x] **M-02. Resultado TIMEOUT separado de FALHA.** `FALHA` hoje é só HMAC errado. Acrescentar
-  `TIMEOUT` (sem resposta no prazo) como resultado próprio, com contador próprio no CSV e na
-  linha `===`. **Arquivos:** `vehicle/main/main.c`. **Aceite:** uma rodada perdida aparece como
-  `TIMEOUT` no CSV e é contada à parte no resumo. **Depende de:** M-01.
+- [x] **M-02. TIMEOUT result, separate from FAIL.** Today `FAIL` only means a wrong HMAC. Add
+  `TIMEOUT` (no response in time) as its own result, with its own counter in the CSV and in the `===`
+  line. **Files:** `vehicle/main/main.c`. **Acceptance:** a lost round shows up as `TIMEOUT` in the CSV
+  and is counted separately in the summary. **Depends on:** M-01.
 
-- [x] **M-03. ID da rodada no frame de resposta do túnel.** `LINK_MSG_RESPONSE` leva só o HMAC
-  de 16 B. Sem ID, a resposta é casada com o desafio pela ordem de chegada. Acrescentar 4 B do
-  nonce (ou um contador) ao frame. **Arquivos:** `relays/main/link.h`, `relays/main/relay_a.c`,
-  `relays/main/relay_b.c`. **Aceite:** cada frame de resposta traz o ID do desafio que o gerou.
-  **Depende de:** nada.
+- [x] **M-03. Round ID in the tunnel response frame.** `LINK_MSG_RESPONSE` carries only the 16-byte
+  HMAC. Without an ID, the response is matched to its challenge by arrival order. Add 4 bytes of the
+  nonce (or a counter) to the frame. **Files:** `relays/main/link.h`, `relays/main/relay_a.c`,
+  `relays/main/relay_b.c`. **Acceptance:** every response frame carries the ID of the challenge that
+  produced it. **Depends on:** nothing.
 
-- [x] **M-04. Relay B descarta resposta tardia.** Com M-03, B compara o ID recebido com o desafio
-  pendente. Se não bater, descarta e conta em "atrasadas". Sem isso, uma resposta que chega depois
-  do timeout cai na rodada seguinte e vira um `FALHA` falso. **Arquivos:** `relays/main/relay_b.c`.
-  **Aceite:** com atraso forçado no túnel, o contador "atrasadas" sobe e o veículo não registra
-  `FALHA`. **Depende de:** M-03.
+- [x] **M-04. Relay B discards late responses.** With M-03, B compares the received ID with the pending
+  challenge. If they differ, it discards the response and counts it under "late". Without this, a
+  response that arrives after the timeout lands in the next round and becomes a false `FAIL`.
+  **Files:** `relays/main/relay_b.c`. **Acceptance:** with a forced delay on the tunnel, the "late"
+  counter goes up and the vehicle does not record a `FAIL`. **Depends on:** M-03.
 
-- [x] **M-05. Relay A devolve o próprio turnaround.** Junto da resposta (M-03), A envia o
-  `turnaround` que já mede (linha `CSVA`). Assim B consegue decompor o tempo sem depender de log.
-  **Arquivos:** `relays/main/relay_a.c`, `relays/main/link.h`. **Aceite:** B recebe e registra o
-  turnaround de A na mesma rodada. **Depende de:** M-03.
+- [x] **M-05. Relay A returns its own turnaround.** Along with the response (M-03), A sends the
+  `turnaround` it already measures (the `CSVA` line). That way B can break the time down without
+  depending on logs. **Files:** `relays/main/relay_a.c`, `relays/main/link.h`. **Acceptance:** B
+  receives and records A's turnaround in the same round. **Depends on:** M-03.
 
-### B. Túnel ESP-NOW
+### B. ESP-NOW tunnel
 
-> **Status (2026-11-17):** implementado e compilado para `esp32`; falta validar no hardware.
-> M-06a: o MAC de cada relay sai no log de boot (`MAC desta placa`). M-06b: enquanto
-> `RELAY_PEER_MAC` (em `relay_config.h`) estiver zerado, o enlace segue em broadcast, que nao
-> tem ACK e nao mostra perdas. M-07: a ultima coluna de `CSVA` e `CSVB` e o contador
-> cumulativo de falhas de envio. M-08: o log mostra `power save WiFi = NONE`.
+> **Status (2026-11-17):** implemented and compiled for `esp32`; to be validated on hardware.
+> M-06a: each relay's MAC is printed in the boot log (`this board MAC`). M-06b: while
+> `RELAY_PEER_MAC` (in `relay_config.h`) stays zeroed, the link uses broadcast, which has no ACK and
+> shows no losses. M-07: the last column of `CSVA` and `CSVB` is the cumulative count of send
+> failures. M-08: the log shows `power save WiFi = NONE`.
 
-- [x] **M-06a. Ler e mostrar o MAC de cada placa.** Imprimir o MAC no boot (`esp_wifi_get_mac`) e
-  mostrar no display. **Arquivos:** `relays/main/link.c`, `relays/main/main.c`. **Aceite:** o MAC
-  de A e de B aparece no log de boot. **Depende de:** nada.
+- [x] **M-06a. Read and show each board's MAC.** Print the MAC at boot (`esp_wifi_get_mac`) and show it
+  on the display. **Files:** `relays/main/link.c`, `relays/main/main.c`. **Acceptance:** A's and B's
+  MACs appear in the boot log. **Depends on:** nothing.
 
-- [x] **M-06b. Peers unicast.** Trocar o `BCAST` por MAC de peer fixo, configurado em
-  `relay_config.h`. Assim o envio passa a ter ACK da camada MAC. **Arquivos:**
-  `relays/main/link.c`, `relays/main/relay_config.h`. **Aceite:** frames vão só ao peer, sem
-  tráfego de terceiros no canal. **Depende de:** M-06a.
+- [x] **M-06b. Unicast peers.** Replace `BCAST` with a fixed peer MAC, set in `relay_config.h`. The
+  send then gets MAC-layer ACKs. **Files:** `relays/main/link.c`, `relays/main/relay_config.h`.
+  **Acceptance:** frames go only to the peer, with no third-party traffic on the channel.
+  **Depends on:** M-06a.
 
-- [x] **M-07. Contar falhas de envio do túnel.** Com broadcast, o callback de envio não reporta
-  perda de forma útil. Com unicast (M-06b), o status vira informação real. Contar as falhas e
-  expô-las no CSV e no resumo. **Arquivos:** `relays/main/link.c`, `relays/main/relay_a.c`,
-  `relays/main/relay_b.c`. **Aceite:** uma falha de envio forçada (peer desligado) sobe o
-  contador. **Depende de:** M-06b.
+- [x] **M-07. Count tunnel send failures.** With broadcast, the send callback does not usefully report
+  loss. With unicast (M-06b), the status becomes real information. Count the failures and expose them
+  in the CSV and in the summary. **Files:** `relays/main/link.c`, `relays/main/relay_a.c`,
+  `relays/main/relay_b.c`. **Acceptance:** a forced send failure (peer switched off) raises the counter.
+  **Depends on:** M-06b.
 
-- [x] **M-08. Desligar o power save do Wi-Fi.** Configurar `esp_wifi_set_ps(WIFI_PS_NONE)` em
-  `link_init` e registrar o modo ativo no log. O padrão pode adicionar latência. Medir o RTT do
-  túnel antes e depois. **Arquivos:** `relays/main/link.c`. **Aceite:** o log mostra PS=NONE.
-  **Depende de:** nada.
+- [x] **M-08. Turn off Wi-Fi power save.** Set `esp_wifi_set_ps(WIFI_PS_NONE)` in `link_init` and log the
+  active mode. The default can add latency. Measure the tunnel RTT before and after. **Files:**
+  `relays/main/link.c`. **Acceptance:** the log shows PS=NONE. **Depends on:** nothing.
 
-### C. Conexão BLE
+### C. BLE connection
 
-> **Status (2026-11-17):** implementado e compilado para `esp32`; falta validar no hardware.
-> Os parametros de `components/pkes_contract/ble_link_params.h` sao os **padroes do NimBLE**
-> (30-50 ms, latencia 0, supervisao 2,56 s). Esta etapa nao muda o comportamento: so o torna
-> explicito e registrado. Mudar esses valores afeta baseline e relays ao mesmo tempo. Linhas
-> `CONN` e `MTU` no log; o intervalo entra no CSV v2. M-12 conta desconexoes (cada uma gera
-> uma reconexao) e aparece no resumo `===`.
+> **Status (2026-11-17):** implemented and compiled for `esp32`; to be validated on hardware.
+> The parameters in `components/pkes_contract/ble_link_params.h` are the **NimBLE defaults**
+> (30-50 ms, latency 0, supervision 2.56 s). This step does not change behaviour: it only makes the
+> values explicit and logged. Changing these values affects the baseline and the relays at the same
+> time. `CONN` and `MTU` lines in the log; the interval goes into CSV v2. M-12 counts disconnections
+> (each one causes a reconnection) and shows up in the `===` summary.
 
-- [x] **M-09a. Header com parâmetros de conexão.** Criar
-  `components/pkes_contract/ble_link_params.h` com intervalo mínimo e máximo, latência e timeout
-  de supervisão. **Arquivos:** novo header. **Depende de:** nada.
+- [x] **M-09a. Header with the connection parameters.** Create `components/pkes_contract/ble_link_params.h`
+  with the minimum and maximum interval, latency and supervision timeout. **Files:** the new header.
+  **Depends on:** nothing.
 
-- [x] **M-09b. Aplicar os parâmetros no connect.** Passar os parâmetros em `ble_gap_connect`
-  (hoje é `NULL`, então vale o padrão do NimBLE, que não sabemos). **Arquivos:**
-  `vehicle/main/main.c`, `relays/main/relay_a.c`. **Depende de:** M-09a.
+- [x] **M-09b. Apply the parameters at connect.** Pass the parameters to `ble_gap_connect` (today it is
+  `NULL`, so the NimBLE default applies, which we do not know). **Files:** `vehicle/main/main.c`,
+  `relays/main/relay_a.c`. **Depends on:** M-09a.
 
-- [x] **M-10. Logar os parâmetros negociados.** Na conexão e em cada `BLE_GAP_EVENT_CONN_UPDATE`,
-  imprimir intervalo, latência e timeout efetivos numa linha `CONN,...`. **Arquivos:**
-  `vehicle/main/main.c`, `relays/main/relay_a.c`. **Aceite:** a linha `CONN` aparece em toda
-  conexão. **Depende de:** M-09b.
+- [x] **M-10. Log the negotiated parameters.** At connect and on every `BLE_GAP_EVENT_CONN_UPDATE`, print
+  the effective interval, latency and timeout on a `CONN,...` line. **Files:** `vehicle/main/main.c`,
+  `relays/main/relay_a.c`. **Acceptance:** a `CONN` line appears on every connection. **Depends on:** M-09b.
 
-- [x] **M-11. Logar MTU e PHY.** Negociar o MTU e registrar MTU e PHY na linha `CONN`. **Arquivos:**
-  `vehicle/main/main.c`, `relays/main/relay_a.c`, `relays/main/relay_b.c`. **Depende de:** M-10.
+- [x] **M-11. Log MTU and PHY.** Negotiate the MTU and record the MTU and PHY on the `CONN` line.
+  **Files:** `vehicle/main/main.c`, `relays/main/relay_a.c`, `relays/main/relay_b.c`. **Depends on:** M-10.
 
-- [x] **M-12. Motivo de desconexão e contador de reconexões.** O log já mostra `reason=520` no
-  início (provavelmente timeout de conexão, 0x08 do HCI). Registrar o motivo e contar as
-  reconexões no CSV ou no resumo. **Arquivos:** `vehicle/main/main.c`, `relays/main/relay_a.c`,
-  `relays/main/relay_b.c`, `key/main/main.c`. **Depende de:** nada.
+- [x] **M-12. Disconnect reason and reconnection counter.** The log already shows `reason=520` at the
+  start (probably a connection timeout, HCI 0x08). Record the reason and count the reconnections in the
+  CSV or in the summary. **Files:** `vehicle/main/main.c`, `relays/main/relay_a.c`,
+  `relays/main/relay_b.c`, `key/main/main.c`. **Depends on:** nothing.
 
-### D. Cabeçalho da execução e rotulagem
+### D. Run header and labelling
 
-> **Status (2026-11-17):** implementado e compilado para `esp32`; falta validar no hardware.
-> Mudancas de comportamento que afetam a bancada:
-> - `RUN label=<rotulo> dist=<metros>` e `START` sao comandos na UART0 (mesma porta do OTA).
-> - A campanha **nao comeca mais sozinha**: envie `START` depois de `inscrito em notify`. Uma
->   queda interrompe a campanha; e preciso `START` de novo apos reconectar.
-> - Sem `RUN`, o rotulo fica `run` e a distancia `-`, com aviso no log.
-> - A grade de rodadas e fixa: uma a cada 1 s, contada a partir do envio anterior.
-> - CSV v2 (`CSVHDR v2`): `label,dist_m,rodada,nonce,t_tx_us,rtt_us,resultado,rssi_dbm,itvl_1_25ms,mtu`.
-> - `RUN_META` sai no boot com o commit do momento do configure. Depois de commitar, rode
->   `idf.py reconfigure` antes do build, senao a linha mostra o commit anterior.
-> - Ferramentas: `tools/capture_run.py` (captura e manifesto) e `tools/analyze_runs.py` (junta
->   por nonce, separa as pernas e calcula estatistica). O analisador foi testado com as
->   capturas antigas e com um log sintetico v2. A captura real ainda nao foi testada.
+> **Status (2026-11-17):** implemented and compiled for `esp32`; to be validated on hardware.
+> Behaviour changes that affect the bench:
+> - `RUN label=<label> dist=<meters>` and `START` are commands on UART0 (the same port as OTA).
+> - The campaign **no longer starts on its own**: send `START` after `subscribed to notify`. A
+>   disconnection stops the campaign; `START` is needed again after reconnecting.
+> - Without `RUN`, the label is `run` and the distance is `-`, with a warning in the log.
+> - The round grid is fixed: one round every 1 s, counted from the previous send.
+> - CSV v2 (`CSVHDR v2`): `label,dist_m,round,nonce,t_tx_us,rtt_us,result,rssi_dbm,itvl_1_25ms,mtu`.
+> - `RUN_META` is printed at boot with the commit at the time of configure. After committing, run
+>   `idf.py reconfigure` before the build, otherwise the line shows the previous commit.
+> - Tools: `tools/capture_run.py` (capture and manifest) and `tools/analyze_runs.py` (joins by nonce,
+>   splits the legs and computes statistics). The analyzer was tested with the old captures and with a
+>   synthetic v2 log. A real capture has not been tested yet.
 
-- [x] **M-13a. Metadados de build.** Gerar no CMake o commit git e a data de build
-  (`-DRUN_GIT_COMMIT=...`). Imprimir a linha `RUN_META` no boot, junto do SHA256 do ELF.
-  **Arquivos:** `vehicle/CMakeLists.txt`, `vehicle/main/main.c`. **Depende de:** nada.
+- [x] **M-13a. Build metadata.** Generate the git commit and the build date in CMake
+  (`-DRUN_GIT_COMMIT=...`). Print the `RUN_META` line at boot, together with the SHA256 of the ELF.
+  **Files:** `vehicle/CMakeLists.txt`, `vehicle/main/main.c`. **Depends on:** nothing.
 
-- [x] **M-13b. Replicar `RUN_META` nos relays e na chave.** Mesma linha em `relays/` e `key/`.
-  **Arquivos:** `relays/main/main.c`, `key/main/main.c`. **Depende de:** M-13a.
+- [x] **M-13b. Replicate `RUN_META` on the relays and the key.** The same line in `relays/` and `key/`.
+  **Files:** `relays/main/main.c`, `key/main/main.c`. **Depends on:** M-13a.
 
-- [x] **M-14a. Comando serial de execução.** Interpretar uma linha
-  `RUN label=relay dist=3.0` vinda do UART0. O `serial_ota` já lê linhas `OTA:*` nesse canal.
-  **Arquivos:** `components/serial_ota/serial_ota.c` ou um parser novo. **Depende de:** nada.
+- [x] **M-14a. Run command over serial.** Parse a line `RUN label=relay dist=3.0` arriving on UART0. The
+  `serial_ota` component already reads `OTA:*` lines on that channel. **Files:**
+  `components/serial_ota/serial_ota.c` or a new parser. **Depends on:** nothing.
 
-- [x] **M-14b. Usar rótulo e distância da execução.** Trocar o `RUN_LABEL` de build pelo valor do
-  comando, no CSV, no resumo e no display. Sem comando, usar o padrão e avisar no log.
-  **Arquivos:** `vehicle/main/main.c`. **Depende de:** M-14a.
+- [x] **M-14b. Use the run's label and distance.** Replace the build-time `RUN_LABEL` with the command's
+  value in the CSV, the summary and the display. Without a command, use the default and log a warning.
+  **Files:** `vehicle/main/main.c`. **Depends on:** M-14a.
 
-- [x] **M-15. Início sob comando.** A campanha só começa com `START` (ou logo após `RUN`). Assim
-  não sobram rodadas de aquecimento sem marcação. **Arquivos:** `vehicle/main/main.c`.
-  **Depende de:** M-14a.
+- [x] **M-15. Start on command.** The campaign only starts with `START` (or right after `RUN`). This way
+  there are no unmarked warm-up rounds. **Files:** `vehicle/main/main.c`. **Depends on:** M-14a.
 
-- [x] **M-16. Grade fixa de rodadas.** Agendar o desafio a cada `INTERVAL_MS` a partir do início,
-  em vez de 1 s depois de cada notify. Assim o período não deriva com o RTT. **Arquivos:**
-  `vehicle/main/main.c`. **Depende de:** M-01.
+- [x] **M-16. Fixed round grid.** Schedule the challenge every `INTERVAL_MS` from the start, instead of
+  1 s after each notify. The period then does not drift with the RTT. **Files:** `vehicle/main/main.c`.
+  **Depends on:** M-01.
 
-- [x] **M-17. Timestamp absoluto no CSV.** Incluir `t_tx` (µs desde o boot) em cada linha, para
-  cruzar com os logs e montar uma linha do tempo. **Arquivos:** `vehicle/main/main.c`.
-  **Depende de:** nada.
+- [x] **M-17. Absolute timestamp in the CSV.** Include `t_tx` (µs since boot) on each line, to match the
+  logs and build a timeline. **Files:** `vehicle/main/main.c`. **Depends on:** nothing.
 
-- [x] **M-18. Schema CSV v2.** Fixar as colunas (rótulo, distância, rodada, nonce, `t_tx_us`,
-  `rtt_us`, resultado, RSSI, e o que mais for necessário) no `CSVHDR` e documentar. **Arquivos:**
-  `vehicle/main/main.c`. **Depende de:** M-02, M-14b, M-17.
+- [x] **M-18. CSV v2 schema.** Fix the columns (label, distance, round, nonce, `t_tx_us`, `rtt_us`,
+  result, RSSI, and whatever else is needed) in `CSVHDR` and document them. **Files:**
+  `vehicle/main/main.c`. **Depends on:** M-02, M-14b, M-17.
 
-### E. Captura e análise (ferramentas no PC)
+### E. Capture and analysis (PC tools)
 
-- [ ] **D-01. Padronizar o encoding dos logs.** Os arquivos de `data/` estão em UTF-16
-  (baseline) e UTF-8 com BOM (relayed), e isso quebra o `grep`. Converter para UTF-8 sem BOM e
-  registrar isso num README da pasta. **Arquivos:** `data/`. **Depende de:** nada.
+- [ ] **D-01. Standardise the log encoding.** The files in `data/` are UTF-16 (baseline) and UTF-8 with
+  BOM (relayed), which breaks `grep`. Convert them to UTF-8 without BOM and record this in a README in
+  the folder. **Files:** `data/`. **Depends on:** nothing. *Deferred: see Pause.*
 
-- [x] **D-02. Script de captura `tools/capture_run.py`.** Captura não interativa com pyserial (o
-  mesmo procedimento do `TESTING.md` §6), gravando UTF-8 em
-  `data/runs/<data>_<rotulo>/capture_<porta>.log`. Rodar com o Python do venv do ESP-IDF e `-I`.
-  **Depende de:** nada.
+- [x] **D-02. Capture script `tools/capture_run.py`.** Non-interactive capture with pyserial (the same
+  procedure as `TESTING.md` section 6), writing UTF-8 to `data/runs/<date>_<label>/capture_<port>.log`.
+  Run it with the ESP-IDF venv Python and `-I`. **Depends on:** nothing.
 
-- [x] **D-03. Manifesto da execução.** O mesmo script gera `manifest.json` com rótulo, distância,
-  data, commit e SHA, lidos das linhas `RUN_META` e `RUN`. **Arquivos:** `tools/capture_run.py`.
-  **Depende de:** D-02, M-13a, M-14b.
+- [x] **D-03. Run manifest.** The same script writes `manifest.json` with the label, distance, date, commit
+  and SHA, read from the `RUN_META` and `RUN` lines. **Files:** `tools/capture_run.py`. **Depends on:**
+  D-02, M-13a, M-14b.
 
-- [x] **D-04a. Junção por nonce.** `tools/analyze_runs.py` junta as linhas do veículo, do Relay A
-  e do Relay B pelo nonce e gera uma tabela por perna (veículo↔B, túnel, A↔chave). **Depende
-  de:** D-01, M-05.
+- [x] **D-04a. Join by nonce.** `tools/analyze_runs.py` joins the vehicle, Relay A and Relay B lines by
+  nonce and produces a table per leg (vehicle<->B, tunnel, A<->key). **Depends on:** D-01, M-05.
 
-- [x] **D-04b. Estatísticas.** Mediana, IQR, p90, IC bootstrap do overhead e taxa de sucesso por
-  distância com IC de Wilson. Saída em CSV e Markdown. **Depende de:** D-04a.
+- [x] **D-04b. Statistics.** Median, IQR, p90, bootstrap CI for the overhead, and success rate by distance
+  with a Wilson CI. Output in CSV and Markdown. **Depends on:** D-04a.
 
-- [ ] **D-05a. Gráfico de série temporal.** RTT por rodada, com cor por resultado (OK, FALHA,
-  TIMEOUT) e marcação das trocas de condição. Matplotlib. **Depende de:** D-04a.
+- [ ] **D-05a. Time-series chart.** RTT per round, coloured by result (OK, FAIL, TIMEOUT), with markers
+  where the conditions change. Matplotlib. **Depends on:** D-04a. *Deferred: needs your decision on
+  installing matplotlib (see Pause).*
 
-- [ ] **D-05b. Histograma e boxplot baseline × relay.** **Depende de:** D-04b.
+- [ ] **D-05b. Histogram and boxplot, baseline vs relay.** **Depends on:** D-04b. *Deferred, same as D-05a.*
 
-- [ ] **D-06. Atualizar o `TESTING.md`.** O documento ainda diz 20 rodadas, celular como chave,
-  S3 e C3 como placas. Atualizar para ROUNDS atual, placas CYD, chave CYD, comandos novos e
-  schema CSV v2. **Depende de:** M-18, D-03.
+- [x] **D-06. Update `TESTING.md`.** Done in checkpoint 06: `TESTING.md` was rewritten for the current
+  procedure (three stages, `RUN`/`START`, CSV v2, relay peer MAC, bench photos). It must still be
+  checked against the first real campaign. **Depends on:** M-18, D-03.
 
 ---
 
-## Parte 2: Visual
+## Part 2: Visual
 
-### Inspiração no deskrab (anotada)
+### Inspiration from deskrab (annotated)
 
-| Elemento no deskrab | Onde está | Como usar no PKES |
+| Element in deskrab | Where it is | How to use it in PKES |
 |---|---|---|
-| Faixas de y fixas: topo 0–27, cena 28–107, texto 112–168, dados 172–230 | `deskrab/.claude/skills/cyd-animation/references/layout.md` | Mesma divisão, documentada (V-01). Hoje as posições estão espalhadas em `cyd_ui.c`. |
-| Barra de topo com status à direita | `deskrab/main/ui.c`, `layout.md` | Modo e indicadores de enlace (V-06). |
-| Mascote que reage a eventos (`event = true`) | `deskrab/main/skits.c` (`s_defs`) | Reação a OK, FALHA e TIMEOUT (V-09a, V-09b). |
-| Balão `say()` e nuvem de pensamento | `skits.c`, `layout.md` | Balão com o RTT da rodada (V-09b). |
-| Cena de fundo que conta a história | `deskrab/main/scene.c`, README "Adding a scenario" | Carro e chave na distância real (V-14a, V-14b). |
-| Efeito contínuo ligado ao estado | `deskrab/main/fx.c` | Pacote andando no enlace, com tempo real (V-12b). |
-| LED que respira na cor do estado | `deskrab/main/led.c` | Pulso por resultado (V-10). |
-| Simulador que desenha o painel em BMP | `deskrab/tools/sim/`, `CLAUDE.md` "Screen simulator" | Pré-visualizar e gravar telas sem placa (V-17). |
-| Fontes com acentos geradas a partir do Montserrat | `deskrab/tools/gen_latin_fonts.py` | Opcional (V-16). |
-| Pipeline de vídeo | `deskrab/tools/anuncio/` (`telas.py`, `compose.py`, `video.py`) | Montagem do vídeo (V-18). |
+| Fixed y bands: top 0–27, scene 28–107, text 112–168, data 172–230 | `deskrab/.claude/skills/cyd-animation/references/layout.md` | Same split, documented (V-01). Today the positions are spread across `cyd_ui.c`. |
+| Top bar with status on the right | `deskrab/main/ui.c`, `layout.md` | Mode and link indicators (V-06). |
+| Mascot that reacts to events (`event = true`) | `deskrab/main/skits.c` (`s_defs`) | Reaction to OK, FAIL and TIMEOUT (V-09a, V-09b). |
+| `say()` bubble and thought cloud | `skits.c`, `layout.md` | Bubble with the round's RTT (V-09b). |
+| Background scene that tells the story | `deskrab/main/scene.c`, README "Adding a scenario" | Car and key at the real distance (V-14a, V-14b). |
+| Continuous effect tied to the state | `deskrab/main/fx.c` | Packet moving along the link, in real time (V-12b). |
+| LED that breathes in the state's colour | `deskrab/main/led.c` | Pulse per result (V-10). |
+| Simulator that draws the panel to BMP | `deskrab/tools/sim/`, `CLAUDE.md` "Screen simulator" | Preview and record screens without a board (V-17). |
+| Accented fonts generated from Montserrat | `deskrab/tools/gen_latin_fonts.py` | Not needed: the project is in English (V-16, dropped). |
+| Video pipeline | `deskrab/tools/anuncio/` (`telas.py`, `compose.py`, `video.py`) | Video assembly (V-18, dropped). |
 
-### Tarefas
+### Tasks
 
-> **Status (2026-11-17):** implementado e compilado para `esp32` (vehicle, key, relays BLE A e B,
-> selftest A e B); nao visto na tela.
-> - V-06: cabecalho com o modo e dois indicadores, BLE e ESP, entre o titulo e o mascote (x 116
->   a 250). Veiculo: modo = rotulo do RUN, so BLE. Chave: so BLE. Relays: modo `CADEIA` (ou
->   `SELFTEST`), BLE quando ha conexao e ESP quando o link sobe (no selftest o BLE fica escondido).
-> - V-08: linha `min ... med ... max ... ms` abaixo dos cards, com a mediana das rodadas
->   respondidas. Atualiza a cada rodada; antes da primeira resposta mostra `-`.
-> - A linha fica em y 178, logo abaixo da segunda linha de cards (que termina em y 174).
-> **Status (2026-11-17, checkpoint 04):** implementado e compilado para `esp32` (vehicle, key,
-> relays BLE A e B, selftest A e B); nao visto na tela.
-> - Layout: a linha de estatistica passou para fonte 12 com 200 px de largura, em y 180. A
->   sparkline ocupa x 212..314, y 178..196. Os cards nao mudaram.
-> - V-07a: sparkline das ultimas 30 rodadas (linha, em decimos de ms). Timeout nao vira ponto: aparece
->   como marca vermelha na base da coluna correspondente.
-> - V-07b: faixa do baseline em branco translucido atras da linha. Vem de `BASELINE_BAND_MIN_US` e
->   `BASELINE_BAND_MAX_US` no veiculo (padrao 0 = sem faixa). Preencher com o min e o max do baseline medido.
-> - V-09a: expressao do mascote por 1,5 s. OK: olhos fechados e sorriso. FALHA: olhos vermelhos e boca
->   reta. TIMEOUT: olhos grandes e boca de surpresa.
-> - V-09b: balao com `91.2 ms OK`, `... FALHA` ou `TIMEOUT` sobre o banner por 1,2 s, a esquerda do
->   mascote. Ele cobre o estado do banner por um instante.
-> - Limite: a escala da sparkline e recalculada a cada rodada. Vale conferir na placa se a faixa e a
-> **Status (2026-11-17, checkpoint 05):** implementado e compilado para `esp32` (vehicle, key, relays
-> BLE A e B, selftest A e B); nao visto na tela.
-> - V-11: ao fim da campanha, a grade de cards e trocada por um painel com 3 linhas (OK e
->   falhas, mediana e IQR, min e max) e um histograma de 10 faixas. Alterna a cada 5 s. O `START`
->   volta para a grade.
-> - V-12: o enlace A-B ocupa a metade direita da segunda linha de cards (o 3o card vai para a
->   esquerda). Cada desafio desenha um ponto indo de B para A; cada resposta, de A para B. O texto
->   sob o enlace traz o tempo real do trecho. **Desvio do plano:** a animacao dura 350 ms fixos,
->   nao o tempo real, porque 22 ms no tunel e invisivel a olho. O tempo real esta no texto.
-> - V-13: barra empilhada na linha de estatistica do Relay B: tunel | A<->chave, com a proporcao
->   da rodada. Relay A nao mostra a barra, porque nao conhece o tunel.
-> - V-14: ao receber `RUN dist=...`, a tela mostra o carro e a chave por 5 s. A chave fica em
->   110 px para 0 m e 260 px para 10 m (limite x 280). **Desvio:** a cena some depois de 5 s, nao
->   fica durante a campanha, porque a grade precisa das linhas de cards.
-> - V-15: splash de 2 s no boot com o titulo do papel e o commit (`fw ...`). **Desvio:** sem
->   mascote no splash, para evitar desenhar o mascote duas vezes. Ele fica no fundo.
-> - Limite: a animacao de V-12 e o balao de V-09b podem cobrir o banner por instantes. Conferir
->   na placa.
->   marca vermelha ficam legiveis em 102 px.
+> **Status (2026-11-17, checkpoint 02):** implemented and compiled for `esp32`; not yet seen on screen.
+> - V-06: header with the mode and two indicators, BLE and ESP, between the title and the mascot
+>   (x 116 to 250). Vehicle: mode = the RUN label, BLE only. Key: BLE only. Relays: mode `CHAIN` (or
+>   `SELFTEST`), BLE when connected and ESP when the link comes up (in self-test the BLE indicator is
+>   hidden).
+> - V-08: `min ... med ... max ms` line below the cards, with the median of answered rounds. Updates each
+>   round; shows `-` before the first answer.
+> - The line sits at y 178, just below the second row of cards (which ends at y 174).
+>
+> **Status (2026-11-17, checkpoint 03):** see the checkpoint 02 block above for V-06 and V-08 (they are
+> in the same checkpoint range; kept here for the record).
+>
+> **Status (2026-11-17, checkpoint 04):** implemented and compiled for `esp32`; not yet seen on screen.
+> - Layout: the statistics line moved to font 12 with 200 px width, at y 180. The sparkline occupies
+>   x 212..314, y 178..196. The cards did not change.
+> - V-07a: sparkline of the last 30 rounds (line, in tenths of ms). A timeout is not a point: it appears
+>   as a red mark at the base of its column.
+> - V-07b: baseline band as a translucent white area behind the line. It comes from `BASELINE_BAND_MIN_US`
+>   and `BASELINE_BAND_MAX_US` on the vehicle (default 0 = no band). Fill it with the min and max of the
+>   measured baseline.
+> - V-09a: mascot expression for 1.5 s. OK: closed eyes and a smile. FAIL: red eyes and a flat mouth.
+>   TIMEOUT: wide eyes and an "oh" mouth.
+> - V-09b: bubble with `91.2 ms OK`, `... FAIL` or `TIMEOUT` over the banner for 1.2 s, to the left of the
+>   mascot. It covers the banner's state for a moment.
+> - Limit: the sparkline scale is recalculated each round. Check on the board that the band and the red
+>   marks are readable at 102 px.
+>
+> **Status (2026-11-17, checkpoint 05):** implemented and compiled for `esp32`; not yet seen on screen.
+> - V-11: at the end of the campaign, the card grid is replaced by a panel with 3 lines (OK and failures,
+>   median and IQR, min and max) and a 10-bin histogram. It alternates every 5 s. `START` returns to the grid.
+> - V-12: the A-B link takes the right half of the second row of cards (the 3rd card moves to the left).
+>   Each challenge draws a dot travelling from B to A; each response, from A to B. The text under the link
+>   shows the real time of that leg. **Deviation from the plan:** the animation lasts a fixed 350 ms, not
+>   the real time, because 22 ms on the tunnel is invisible to the eye. The real time is in the text.
+> - V-13: stacked bar on the Relay B statistics line: tunnel | A<->key, showing the share of the round.
+>   Relay A does not show the bar, because it does not know the tunnel.
+> - V-14: on receiving `RUN dist=...`, the screen shows the car and the key for 5 s. The key sits at 110 px
+>   for 0 m and 260 px for 10 m (limit x 280). **Deviation:** the scene disappears after 5 s; it does not stay
+>   during the campaign, because the grid needs the card rows.
+> - V-15: 2 s splash at boot with the role title and the commit (`fw ...`). **Deviation:** no mascot on the
+>   splash, to avoid drawing the mascot twice. It stays in the background.
+> - Limit: the V-12 animation and the V-09b bubble may briefly cover the banner. Check on the board.
+>
+> **Status (2026-11-17, checkpoint 02 detail):**
+> - V-02: `cyd_fmt_us()` shows `91.2 ms` and `1.20 s`. Used for the vehicle RTT, the Relay B turnaround and
+>   the key's `Calc` (the `Calc us` label became `Calc`).
+> - V-03: state banner 240 px wide (was 308), so it does not cover the mascot at x 256-314.
+> - V-04: the Relay B card shows the turnaround in BLE mode (label `Turnaround`); in self-test it still shows
+>   the tunnel RTT (label `Tunnel RTT`).
+> - V-05: thin progress bar below the banner, and the OK card shows `12 (100%)`. The `Fail / tmo` card keeps
+>   `failures / timeouts`.
+> - V-10: the LED flashes by result (green OK, red FAIL, yellow TIMEOUT) for 1.2 s and then breathes again.
+>   Limit: on the last round, the switch to "done" cancels the flash before it shows.
 
-> **Status (2026-11-17):** implementado e compilado para `esp32` (vehicle, key, relays BLE A e B,
-> selftest A e B); nao visto na tela, falta conferir na placa. Sem simulador (V-17) ainda.
-> - V-02: `cyd_fmt_us()` mostra `91.2 ms` e `1.20 s`. Usado no RTT do veiculo, no turnaround do
->   Relay B e no `Calc` da chave (rotulo `Calc us` virou `Calc`).
-> - V-03: banner de estado com 240 px (era 308), para nao cobrir o mascote em x 256-314.
-> - V-04: o card do Relay B mostra o turnaround no modo BLE (rotulo `Turnaround`); no selftest
->   continua o RTT do tunel (rotulo `RTT tunel`).
-> - V-05: barra de progresso fina abaixo do banner, e o card OK mostra `12 (100%)`. O card
->   `Falha / tmo` continua com `falhas / timeouts`.
-> - V-10: o LED pisca por resultado (verde OK, vermelho FALHA, amarelo TIMEOUT) por 1,2 s e
->   volta a respirar. Limite: na ultima rodada, a troca para "fim" apaga o pisca antes de aparecer.
+- [ ] **V-01. PKES layout map.** Write `components/cyd/LAYOUT.md` with the y bands and the position of each
+  widget, in the format of deskrab's `layout.md`. **Acceptance:** every widget in `cyd_ui.c` is listed with
+  its coordinates. **Depends on:** nothing.
 
-- [ ] **V-01. Mapa de layout do PKES.** Escrever `components/cyd/LAYOUT.md` com as faixas de y e a
-  posição de cada widget, no formato do `layout.md` do deskrab. **Aceite:** todos os widgets de
-  `cyd_ui.c` estão listados com coordenadas. **Depende de:** nada.
+- [x] **V-02. Values with units.** `cyd_fmt_us()` shows `91.2 ms`, and above 1 s, `1.20 s`. Today the vehicle
+  shows the raw `97545` (µs) and the key shows `Calc us`. Use it on the vehicle, relays and key.
+  **Files:** `components/cyd/cyd_ui.c`, `cyd_ui.h`. **Depends on:** nothing.
 
-- [x] **V-02. Valores com unidade.** Função `cyd_fmt_us()` que mostra `91.2 ms` e, acima de 1 s,
-  `1.20 s`. Hoje o veículo mostra `97545` (µs crus) e a chave mostra `Calc us`. Usar em veículo,
-  relays e chave. **Arquivos:** `components/cyd/cyd_ui.c`, `cyd_ui.h`. **Depende de:** nada.
+- [x] **V-03. Mascot over the banner.** The mascot (58×58, at x 256–314 and y 2–60) covers the end of the
+  state banner (y 44–74). Shrink the mascot or shorten the banner. Check with V-17b or a photo of the board.
+  **Files:** `components/cyd/cyd_ui.c`. **Depends on:** V-01.
 
-- [x] **V-03. Mascote sobre o banner.** O mascote (58×58, em x 256–314 e y 2–60) cobre o fim do
-  banner de estado (y 44–74). Reduzir o mascote ou encurtar o banner. Conferir com V-17b ou
-  foto da placa. **Arquivos:** `components/cyd/cyd_ui.c`. **Depende de:** V-01.
+- [x] **V-04. Relay B shows the RTT in BLE mode.** The "RTT us" field is only updated in the self-test
+  (`relays/main/relay_b.c`, around line 333). In BLE mode it stays "-" forever. Show B's turnaround.
+  **Files:** `relays/main/relay_b.c`. **Depends on:** nothing.
 
-- [x] **V-04. Relay B mostra o RTT no modo BLE.** O campo "RTT us" só é atualizado no autoteste
-  (`relays/main/relay_b.c`, perto da linha 333). No modo BLE fica "-" para sempre. Mostrar o
-  turnaround de B. **Arquivos:** `relays/main/relay_b.c`. **Depende de:** nada.
+- [x] **V-05. Progress and success rate.** Progress bar (`12/50`) and counters with percentages
+  (`OK 12 (100%)`, `FAIL 0`, `TIMEOUT 0`). **Depends on:** M-02, V-02.
 
-- [x] **V-05. Progresso e taxa de sucesso.** Barra de progresso (`12/50`) e contadores com
-  porcentagem (`OK 12 (100%)`, `FALHA 0`, `TIMEOUT 0`). **Depende de:** M-02, V-02.
+- [x] **V-06. Top bar with status.** Mode (`BASELINE` or `RELAY`), a BLE indicator and an ESP-NOW indicator,
+  on the right, in the style of deskrab's top bar. **Depends on:** V-01, M-14b.
 
-- [x] **V-06. Barra de topo com estado.** Modo (`BASELINE` ou `RELAY`), indicador BLE e indicador
-  ESP-NOW, à direita, no estilo da barra de topo do deskrab. **Depende de:** V-01, M-14b.
+- [x] **V-07a. Sparkline of the last 30 rounds.** Line chart (`lv_chart`) of the last 30 rounds. Measure the
+  LVGL pool use afterwards (deskrab uses 72 KB, close to 40%). **Depends on:** V-02.
 
-- [x] **V-07a. Sparkline das últimas 30 rodadas.** Gráfico de linha (`lv_chart`) com as últimas 30
-  rodadas. Medir o uso do pool do LVGL depois (o deskrab usa 72 KB e fica perto de 40%). **Depende
-  de:** V-02.
+- [x] **V-07b. Reference band and loss marks.** Shade the baseline's min–max band on the chart, and mark
+  TIMEOUT with a red tick. **Depends on:** V-07a, M-02.
 
-- [x] **V-07b. Faixa de referência e marcas de perda.** Sombrear a faixa min–máx do baseline no
-  gráfico e marcar TIMEOUT com um traço vermelho. **Depende de:** V-07a, M-02.
+- [x] **V-08. Live statistics.** A line such as `min 83  med 91  max 98 ms`, updated each round.
+  **Depends on:** V-02.
 
-- [x] **V-08. Estatística ao vivo.** Linha `min 83  med 91  max 98 ms`, atualizada a cada rodada.
-  **Depende de:** V-02.
+- [x] **V-09a. Mascot expressions.** Arc-shaped eyes for OK, X eyes and a flat mouth for FAIL, and a "?"
+  for TIMEOUT. Use the poses of `build_mascot` in `cyd_ui.c`. **Depends on:** V-01.
 
-- [x] **V-09a. Expressões do mascote.** Olhos em arco para OK, olhos em X e boca reta para FALHA,
-  um "?" para TIMEOUT. Usar as poses de `build_mascot` em `cyd_ui.c`. **Depende de:** V-01.
+- [x] **V-09b. Bubble with the result.** Show `91 ms OK` beside the mascot for about 1 s, like deskrab's
+  `say()`. **Depends on:** V-09a.
 
-- [x] **V-09b. Balão com o resultado.** Mostrar `91 ms OK` ao lado do mascote por cerca de 1 s,
-  como o `say()` do deskrab. **Depende de:** V-09a.
+- [x] **V-10. LED per round.** Short green for OK, red for FAIL, yellow for TIMEOUT, then back to the
+  breathing of the state colour (`cyd_led_set`). **Depends on:** M-02.
 
-- [x] **V-10. LED por rodada.** Verde curto para OK, vermelho para FALHA, amarelo para TIMEOUT, e
-  depois volta ao respiro da cor do estado (`cyd_led_set`). **Depende de:** M-02.
+- [x] **V-11a. In-RAM histogram.** Keep the campaign's RTTs and draw a 10-bin histogram. **Depends on:** V-02.
 
-- [x] **V-11a. Histograma em RAM.** Guardar os RTTs da campanha e desenhar um histograma de 10
-  barras. **Depende de:** V-02.
+- [x] **V-11b. Final summary screen.** At the end of the campaign, alternate between the summary (OK%, median,
+  IQR) and the histogram every 5 s. **Depends on:** V-11a, V-08.
 
-- [x] **V-11b. Tela de resumo final.** Ao fim da campanha, alternar entre o resumo (OK%, mediana,
-  IQR) e o histograma a cada 5 s. **Depende de:** V-11a, V-08.
+- [x] **V-12a. Link drawing on the relay.** Two nodes (A and B) joined by a dashed line, in the scene band
+  (y 28–107). **Depends on:** V-01.
 
-- [x] **V-12a. Desenho do enlace no relay.** Dois nós (A e B) com uma linha tracejada entre eles,
-  na faixa de cena (y 28–107). **Depende de:** V-01.
+- [x] **V-12b. Animated packet with real time.** A dot travels along the line for the measured time of the leg
+  (for example 22 ms on the tunnel). The speed is the real one, not a fixed animation. **Depends on:** V-12a, M-05.
 
-- [x] **V-12b. Pacote animado com tempo real.** Um ponto percorre a linha durante o tempo medido
-  do trecho (por exemplo, 22 ms no túnel). A velocidade é a real, não uma animação fixa.
-  **Depende de:** V-12a, M-05.
+- [x] **V-13. Stacked bar for the last round.** Relay B shows a bar split into tunnel and A<->key, with the
+  total. **Depends on:** M-05, V-02.
 
-- [x] **V-13. Barra empilhada da última rodada.** O Relay B mostra uma barra dividida em túnel e
-  A↔chave, com o total. **Depende de:** M-05, V-02.
+- [x] **V-14a. Car and key scene.** Static drawing of a car and a key in the scene band, in the style of
+  deskrab's scenes. **Depends on:** V-01.
 
-- [x] **V-14a. Cena do carro e da chave.** Desenho estático de carro e chave na faixa de cena, no
-  estilo das cenas do deskrab. **Depende de:** V-01.
+- [x] **V-14b. Distance in the scene.** Position the key in proportion to the distance given in the `RUN`
+  command, with scale and limit. **Depends on:** V-14a, M-14b.
 
-- [x] **V-14b. Distância na cena.** Posicionar a chave proporcional à distância informada no
-  comando `RUN`, com escala e limite. **Depende de:** V-14a, M-14b.
+- [x] **V-15. Identity splash.** At boot: the title, the mascot and the short commit from `RUN_META`, for 2 s.
+  **Depends on:** M-13a.
 
-- [x] **V-15. Splash de identidade.** Na inicialização, título, mascote e o commit curto de
-  `RUN_META`, por 2 s. **Depende de:** M-13a.
+- [-] **V-16a. Accented fonts (optional).** Dropped. Generating Latin-1 fonts with deskrab's
+  `gen_latin_fonts.py` is no longer needed.
 
-- [ ] **V-16a. Fontes com acentos (opcional).** Gerar fontes Latin-1 com o
-  `gen_latin_fonts.py` do deskrab. **Depende de:** nada.
+- [-] **V-16b. Accented texts (optional).** Dropped and superseded by the full English translation
+  (checkpoint 06). The on-screen font has no accented letters, so on-screen text stays ASCII.
 
-- [ ] **V-16b. Textos com acentos (opcional).** Trocar os textos de tela para português correto e
-  atualizar a regra do `CLAUDE.md`. **Depende de:** V-16a.
+- [ ] **V-17a. Simulator harness for PKES.** Port `deskrab/tools/sim/` to PKES: stubs for the HAL and a build
+  script, rendering `cyd_ui`. **Depends on:** V-01. **Next checkpoint (07).**
 
-- [ ] **V-17a. Harness do simulador no PKES.** Portar `deskrab/tools/sim/` para o PKES: stubs de
-  HAL e script de build, com renderização do `cyd_ui`. **Depende de:** V-01.
+- [ ] **V-17b. Script and frame recording.** A scenario script (state, rounds, distances) that records one
+  320×240 BMP per screen. It serves to check the layout (V-03) without a board. **Depends on:** V-17a.
 
-- [ ] **V-17b. Roteiro e gravação de frames.** Script de cenário (estado, rodadas, distâncias) que
-  grava um BMP de 320×240 por tela. Serve para conferir o layout (V-03) sem placa. **Depende de:**
-  V-17a.
-
-- [ ] **V-18. Roteiro de vídeo e montagem.** Capturar as cenas do roteiro (abaixo) com V-17b e
-  montar com `deskrab/tools/anuncio/`. **Depende de:** V-17b, V-09b, V-11b, V-12b, V-14b.
+- [-] **V-18. Video script and assembly.** Dropped by you: the video is not part of this project. Kept only
+  as a record of the original plan.
 
 ---
 
-## Mockups anotados
+## Annotated mockups
 
-Telas em 320×240, simplificadas. O texto dentro delas é o que apareceria na tela (ASCII).
+Screens at 320×240, simplified. The text inside them is what would appear on the screen (ASCII). These are
+proposals; the real labels in the firmware may differ slightly.
 
-### Veículo (proposta)
+### Vehicle (proposal)
 
 ```
 +------------------------------------------------+
-| VEICULO                [BASELINE]  BLE  ESPNOW |  [1]
+| VEHICLE                [BASELINE]  BLE  ESPNOW |  [1]
 +------------------------------------------------+
-| medindo                             12 / 50    |  [2]
+| measuring                           12 / 50    |  [2]
 | [##############--------------------]           |
 |                                                |
-|  RTT  91.2 ms                       (carinha)  |  [3] [9]
+|  RTT  91.2 ms                       (mascot)   |  [3] [9]
 |  .--.__.--'`--.__.--.__.--'`--.__.--.          |  [4]
-|  faixa do baseline 83-98 ms                    |  [5]
+|  baseline band 83-98 ms                        |  [5]
 |                                                |
 |  min 83   med 91   max 98 ms                   |  [6]
-|  OK 12 (100%)   FALHA 0   TIMEOUT 0            |  [7]
+|  OK 12 (100%)   FAIL 0   TIMEOUT 0             |  [7]
 |  nonce 7c1dbaa5   resp 7c1dbaa5...             |  [8]
 +------------------------------------------------+
 ```
 
-- **[1]** Barra de topo com modo e enlaces (V-06).
-- **[2]** Estado e progresso (V-05).
-- **[3]** Valor grande com unidade (V-02).
-- **[4]** Sparkline das últimas 30 rodadas (V-07a).
-- **[5]** Faixa do baseline e marcas de perda (V-07b).
-- **[6]** Estatística ao vivo (V-08).
-- **[7]** Contadores com porcentagem (V-05).
-- **[8]** Linhas hex, como hoje.
-- **[9]** Mascote com expressão do último resultado (V-09a, V-09b).
+- **[1]** Top bar with mode and links (V-06).
+- **[2]** State and progress (V-05).
+- **[3]** Large value with units (V-02).
+- **[4]** Sparkline of the last 30 rounds (V-07a).
+- **[5]** Baseline band and loss marks (V-07b).
+- **[6]** Live statistics (V-08).
+- **[7]** Counters with percentages (V-05).
+- **[8]** Hex lines, as today.
+- **[9]** Mascot with the expression of the last result (V-09a, V-09b).
 
-### Relay B (proposta)
+### Relay B (proposal)
 
 ```
 +------------------------------------------------+
-| RELAY B                 [RELAY]  BLE  ESPNOW   |  [1]
+| RELAY B                 [CHAIN]  BLE  ESPNOW   |  [1]
 +------------------------------------------------+
-|  (veic)  o - - - - - - - - - o  (B)            |  [2]
-|                pacote 22 ms                    |
-|  [== tunel 22 ms ==][======= A-chave 192 ms ===]|  [3]
-|  turnaround B 214 ms   atrasadas 0   falhas 0  |  [4]
+|  (car)  o - - - - - - - - - o  (B)             |  [2]
+|                packet 22 ms                    |
+|  [== tunnel 22 ms ==][======= A-key 192 ms ===]|  [3]
+|  turnaround B 214 ms   late 0   failures 0     |  [4]
 |  nonce c728bac7                                |
 +------------------------------------------------+
 ```
 
-- **[1]** Barra de topo (V-06).
-- **[2]** Enlace desenhado com pacote animado no tempo real (V-12a, V-12b).
-- **[3]** Barra empilhada da última rodada (V-13). Os valores são os medidos: túnel 22 ms e
-  A↔chave 192 ms na rodada 1 do run de 2026-11-16.
-- **[4]** Turnaround de B (V-04) e contadores de M-04 e M-07.
+- **[1]** Top bar (V-06).
+- **[2]** Link drawn with an animated packet in real time (V-12a, V-12b).
+- **[3]** Stacked bar for the last round (V-13). The values are the measured ones: tunnel 22 ms and A<->key
+  192 ms in round 1 of the 2026-11-16 run.
+- **[4]** B's turnaround (V-04) and the counters from M-04 and M-07.
 
-### Chave (proposta)
+### Key (proposal)
 
-Mesma estrutura do veículo, com o mascote de chave. O campo `Calc us` passa a `Calc ms` (V-02).
-Expressões do mascote seguem V-09a.
-
----
-
-## Roteiro de cenas para o vídeo
-
-Cada cena mostra números medidos. As animações usam tempos reais, para que a tela sirva de
-prova, não de decoração.
-
-1. **Abertura.** Splash com identidade e commit (V-15). Carro e chave na mesma tela, à
-   distância zero (V-14a).
-2. **Linha de base.** Veículo com a chave direta: RTT em torno de 91 ms, gráfico estável, LED
-   verde (V-02, V-07a, V-10).
-3. **Com relé.** Relays A e B: pacote andando no enlace e barra empilhada (V-12, V-13). O
-   veículo continua marcando `OK`, com RTT maior.
-4. **Distância.** A cena mostra a chave longe, e o veículo ainda marca `OK` (V-14b). Esse é o
-   argumento do artigo: o relé encaminha a identidade, não a distância.
-5. **Resultado.** Histograma baseline × relay na tela de resumo (V-11b).
+Same structure as the vehicle, with the key mascot. The `Calc us` field becomes `Calc ms` (V-02).
+Mascot expressions follow V-09a.
 
 ---
 
-## Ordem sugerida
+## Scene script for the video
 
-1. Validade da rodada: M-01 a M-05. São a base de qualquer número novo.
-2. Ferramentas de captura e análise: D-01 a D-04b. Permitem tratar os dados sem depender de placa.
-3. Túnel e BLE: M-06a a M-12. Mexem em firmware, mas não mudam a campanha em andamento.
-4. Visual de baixo custo: V-01 a V-05, V-08, V-10. Aproveitam os dados que já existem.
-5. Visual com dados novos: V-06, V-07, V-09, V-11 a V-14. Dependem dos itens anteriores.
-6. Simulador e vídeo: V-17, V-18, com V-16 como opcional.
+Each scene shows measured numbers. The animations use real times, so the screen serves as evidence, not
+decoration.
 
----
-
-## Pausa: o que ficou de fora de proposito
-
-- **D-01 (encoding dos logs antigos):** nao converti as capturas de `data/`. O analisador le
-  UTF-8 e UTF-16, entao nao bloqueia nada. Reescrever dado capturado so depois de voce confirmar.
-- **D-05 (graficos):** precisa de `matplotlib`, que nao esta instalado no Python do ESP-IDF nem
-  no do sistema. Instalar muda o ambiente, entao espero sua decisao: instalar, ou gerar SVG puro.
-- **D-06 (atualizar `TESTING.md`):** o procedimento novo (`RUN`, `START`, CSV v2, MAC do peer)
-  deve ser escrito depois da primeira campanha no hardware, porque a validacao pode mudar algo.
-- **Bloco V (visual):** envolve escolhas de estilo que sao suas, e o simulador (V-17) e um
-  port grande do `tools/sim` do deskrab. Vale alinhar a direcao antes.
-- **Validacao no hardware:** os itens acima ainda nao rodaram numa placa. Ordem sugerida:
-  gravar vehicle, key e relays; ler `MAC desta placa` dos relays e colar em `RELAY_PEER_MAC`
-  (A aponta para B e B para A), recompilar e regravar os relays; depois uma campanha de baseline
-  e uma de relay com `tools/capture_run.py --port COMx --label <rotulo> --dist <m> --start`.
+1. **Opening.** Splash with identity and commit (V-15). Car and key on the same screen, at zero distance (V-14a).
+2. **Baseline.** Vehicle with the key direct: RTT around 91 ms, stable chart, green LED (V-02, V-07a, V-10).
+3. **With relay.** Relays A and B: packet moving along the link and the stacked bar (V-12, V-13). The vehicle
+   keeps marking `OK`, with a higher RTT.
+4. **Distance.** The scene shows the key far away, and the vehicle still marks `OK` (V-14b). This is the paper's
+   argument: the relay forwards identity, not distance.
+5. **Result.** Histogram baseline vs relay on the summary screen (V-11b).
 
 ---
 
-## Checkpoints (branches locais)
+## Suggested order
 
-Cada checkpoint e um commit num branch `ckpt/...`. Cada branch parte do anterior, então um branch
-antigo é sempre um estado completo do código. Só crio checkpoint depois de compilar para `esp32`.
-Nada vai para o remoto sem pedido. Os branches ficam locais.
+1. Round validity: M-01 to M-05. They are the basis of any new number.
+2. Capture and analysis tools: D-01 to D-04b. They let us handle data without depending on a board.
+3. Tunnel and BLE: M-06a to M-12. They change the firmware but do not change a running campaign.
+4. Low-cost visuals: V-01 to V-05, V-08, V-10. They use data that already exists.
+5. Visuals with new data: V-06, V-07, V-09, V-11 to V-14. They depend on the earlier items.
+6. Simulator: V-17. V-16 and V-18 are dropped.
 
-| Branch | Conteudo | Estado |
+---
+
+## Pause: what was left out on purpose
+
+- **D-01 (encoding of old logs):** I did not convert the captures in `data/`. The analyzer reads UTF-8 and
+  UTF-16, so nothing is blocked. Rewriting captured data only after you confirm.
+- **D-05 (charts):** needs `matplotlib`, which is not installed in either the ESP-IDF Python or the system
+  Python. Installing it changes the environment, so I am waiting for your decision: install it, or generate
+  plain SVG.
+- **D-06 (`TESTING.md`):** the new procedure is written (checkpoint 06). It still needs checking against the
+  first real campaign, because the hardware may change a step.
+- **Visual block (V):** V-17 (simulator) was requested by you and comes next (checkpoint 07).
+- **Hardware validation:** none of the items above has run on a board yet. Suggested order: flash vehicle, key
+  and relays; read `this board MAC` from the relays and paste it into `RELAY_PEER_MAC` (A points to B and B to
+  A), rebuild and reflash the relays; then one baseline campaign and one relay campaign with
+  `tools/capture_run.py --port COMx --label <label> --dist <m> --start`.
+
+---
+
+## Checkpoints (local branches)
+
+Each checkpoint is a commit on a `ckpt/...` branch. Each branch starts from the previous one, so an older
+branch is always a complete state of the code. A checkpoint is only created after the code builds for
+`esp32`. Nothing goes to the remote without a request; the branches stay local.
+
+| Branch | Content | Status |
 |---|---|---|
-| `ckpt/01-rodada-ble-ferramentas` | M-01 a M-18, D-02, D-03, D-04a, D-04b | compilado para esp32, nao gravado |
-| `ckpt/02-visual-basico` | V-02, V-03, V-04, V-05, V-10 | compilado para esp32, nao gravado, nao visto na tela |
-| `ckpt/03-topo-estatistica` | V-06, V-08 | compilado para esp32, nao gravado, nao visto na tela |
-| `ckpt/04-sparkline-mascote` | V-07a, V-07b, V-09a, V-09b | compilado para esp32, nao gravado, nao visto na tela |
-| `ckpt/05-visual-restante` | V-11a, V-11b, V-12a, V-12b, V-13, V-14a, V-14b, V-15 | compilado para esp32, nao gravado, nao visto na tela |
+| `ckpt/01-rodada-ble-ferramentas` | M-01 to M-18, D-02, D-03, D-04a, D-04b | built for esp32, not flashed |
+| `ckpt/02-visual-basico` | V-02, V-03, V-04, V-05, V-10 | built for esp32, not flashed, not seen on screen |
+| `ckpt/03-topo-estatistica` | V-06, V-08 | built for esp32, not flashed, not seen on screen |
+| `ckpt/04-sparkline-mascote` | V-07a, V-07b, V-09a, V-09b | built for esp32, not flashed, not seen on screen |
+| `ckpt/05-visual-restante` | V-11a, V-11b, V-12a, V-12b, V-13, V-14a, V-14b, V-15 | built for esp32, not flashed, not seen on screen |
+| `ckpt/06-english` | Full English translation (code, logs, docs, Android app text), `TESTING.md` rewritten, D-06 done, V-16 and V-18 dropped | built for esp32, not flashed |
+| `ckpt/07-simulator` (planned) | V-17a, V-17b | not started |
 
-Regra para voltar: ao gravar, teste do branch mais novo para o mais antigo. Se o mais novo
-falhar, volte um branch, grave e teste de novo. Os itens M-01 a M-05 estao no mesmo commit que os
-demais (o `vehicle/main/main.c` mudou de uma vez), entao nao ha como reverter so eles.
+Branch names from checkpoints 01 to 05 keep their original spelling, since they already exist.
 
-
-
-
+Rule for going back: when flashing, test from the newest branch to the oldest. If the newest fails, go back one
+branch, flash and test again. M-01 to M-05 are in the same commit as the rest (`vehicle/main/main.c` changed in
+one go), so there is no way to revert only them.

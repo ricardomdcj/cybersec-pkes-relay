@@ -5,47 +5,47 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 /**
- * Contrato GATT compartilhado entre o app (chave) e o firmware do "veiculo" (ESP32).
+ * GATT contract shared by the app (the key) and the "vehicle" firmware (ESP32).
  *
- * Qualquer mudanca aqui precisa ser espelhada no lado do ESP32. Estes UUIDs, o formato
- * do desafio-resposta e o segredo pre-compartilhado sao o "protocolo" da bancada.
+ * Any change here must be mirrored on the ESP32 side. These UUIDs, the challenge-response
+ * format and the pre-shared secret are the bench's "protocol".
  *
- * Fluxo (papel da chave = peripheral + servidor GATT):
- *   1. veiculo (central) conecta e habilita notificacoes na caracteristica RESPONSE (CCCD);
- *   2. veiculo escreve um nonce de NONCE_LEN bytes na caracteristica CHALLENGE;
- *   3. a chave calcula HMAC-SHA256(PSK, nonce), trunca em RESPONSE_LEN bytes e notifica.
+ * Flow (the key's role = peripheral + GATT server):
+ *   1. the vehicle (central) connects and enables notifications on the RESPONSE characteristic (CCCD);
+ *   2. the vehicle writes a NONCE_LEN-byte nonce to the CHALLENGE characteristic;
+ *   3. the key computes HMAC-SHA256(PSK, nonce), truncates it to RESPONSE_LEN bytes and notifies.
  *
- * O HMAC prova posse do segredo E vivacidade (o nonce muda a cada rodada, entao replay
- * ingenuo nao passa). O relay ainda funciona porque transporta a troca ao vivo: ele forja
- * distancia, nao identidade. Essa e a tese do trabalho.
+ * The HMAC proves possession of the secret AND liveness (the nonce changes every round, so a
+ * naive replay fails). The relay still works because it carries the live exchange: it forges
+ * distance, not identity. That is the thesis of the work.
  */
 object BleContract {
 
     val SERVICE_UUID: UUID = UUID.fromString("8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10")
 
-    /** WRITE (veiculo -> chave): nonce de NONCE_LEN bytes. */
+    /** WRITE (vehicle -> key): NONCE_LEN-byte nonce. */
     val CHALLENGE_UUID: UUID = UUID.fromString("8f2a0002-1b2c-4e6a-9f3d-2a7c1e5b0a10")
 
-    /** NOTIFY/READ (chave -> veiculo): MAC de RESPONSE_LEN bytes. */
+    /** NOTIFY/READ (key -> vehicle): RESPONSE_LEN-byte MAC. */
     val RESPONSE_UUID: UUID = UUID.fromString("8f2a0003-1b2c-4e6a-9f3d-2a7c1e5b0a10")
 
-    /** Client Characteristic Configuration Descriptor padrao (habilita notificacao). */
+    /** Standard Client Characteristic Configuration Descriptor (enables notifications). */
     val CCCD_UUID: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
 
     const val NONCE_LEN = 16
     const val RESPONSE_LEN = 16
 
     /**
-     * Segredo pre-compartilhado APENAS de bancada (o texto "PKES-RELAY-BENCH").
-     * A confidencialidade da chave NAO faz parte da superficie de ataque estudada; por isso
-     * ela e fixa e identica nos dois lados. O mesmo array precisa existir no firmware do veiculo.
+     * Bench-only pre-shared secret (the text "PKES-RELAY-BENCH").
+     * Key confidentiality is NOT part of the attack surface under study; so it is fixed and
+     * identical on both sides. The same array must exist in the vehicle firmware.
      */
     val PSK: ByteArray = byteArrayOf(
         0x50, 0x4b, 0x45, 0x53, 0x2d, 0x52, 0x45, 0x4c,
         0x41, 0x59, 0x2d, 0x42, 0x45, 0x4e, 0x43, 0x48
     )
 
-    /** Calcula a resposta ao desafio: HMAC-SHA256(PSK, nonce) truncado em RESPONSE_LEN bytes. */
+    /** Computes the challenge response: HMAC-SHA256(PSK, nonce) truncated to RESPONSE_LEN bytes. */
     fun computeResponse(nonce: ByteArray): ByteArray {
         val mac = Mac.getInstance("HmacSHA256")
         mac.init(SecretKeySpec(PSK, "HmacSHA256"))

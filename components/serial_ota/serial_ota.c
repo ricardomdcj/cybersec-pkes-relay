@@ -13,7 +13,7 @@
 #include "freertos/task.h"
 
 #define OTA_UART   UART_NUM_0
-#define OTA_LINE_MAX   1200          /* cabe um bloco de 512 B em base64 (~684 ch) + prefixo */
+#define OTA_LINE_MAX   1200          /* fits a 512 B block in base64 (~684 chars) + prefix */
 
 static const char *TAG = "serial_ota";
 
@@ -30,9 +30,9 @@ static void reply(const char *s) {
     uart_write_bytes(OTA_UART, "\r\n", 2);
 }
 
-/* CRC-16/CCITT-FALSE (poly 0x1021, init 0xFFFF) sobre os bytes decodificados do bloco:
- * pega bit-flips que mantem o base64 estruturalmente valido (o que falhava so no
- * esp_ota_end, tarde demais). */
+/* CRC-16/CCITT-FALSE (poly 0x1021, init 0xFFFF) over the decoded bytes of the block:
+ * catches bit flips that keep the base64 structurally valid (which used to fail only in
+ * esp_ota_end, too late). */
 static uint16_t crc16(const uint8_t *d, size_t n) {
     uint16_t c = 0xFFFF;
     for (size_t i = 0; i < n; i++) {
@@ -73,15 +73,15 @@ static void handle_line(char *line) {
         char buf[64];
         snprintf(buf, sizeof buf, "OTA:READY part=%s", s_part->label);
         reply(buf);
-        ESP_LOGW(TAG, "OTA iniciada -> particao %s", s_part->label);
+        ESP_LOGW(TAG, "OTA started -> partition %s", s_part->label);
         return;
     }
 
     if (strncmp(line, "OTA:D ", 6) == 0) {
         if (!s_busy) { reply("OTA:ERR not-begun"); return; }
-        /* Formato novo (host com crc): "OTA:D <crc16hex> <b64>". Um espaco separa o CRC
-         * do base64; como base64 nunca tem espaco, a presenca dele identifica o formato.
-         * Sem espaco = formato legado (so b64), aceito p/ compatibilidade. */
+        /* Current format (host with CRC): "OTA:D <crc16hex> <b64>". A space separates the CRC
+         * from the base64; since base64 never contains a space, its presence identifies the
+         * format. No space = legacy format (base64 only), accepted for compatibility. */
         const char *b64 = line + 6;
         int have_crc = 0;
         uint16_t want_crc = 0;
@@ -93,20 +93,20 @@ static void handle_line(char *line) {
         }
         static uint8_t data[768];
         size_t olen = 0;
-        /* b64 invalido = linha corrompida na serial (byte perdido): NAK e NAO aborta;
-         * nada foi escrito, entao o host reenvia o mesmo bloco. Robustez ao ruido. */
+        /* Invalid base64 = a line corrupted on the serial link (lost byte): NAK and do NOT abort;
+         * nothing was written, so the host resends the same block. Noise robustness. */
         if (mbedtls_base64_decode(data, sizeof data, &olen,
                                   (const uint8_t *) b64, strlen(b64)) != 0) {
             reply("OTA:NAK");
             return;
         }
-        /* CRC confere o CONTEUDO (pega bit-flip que o base64 nao detecta). */
+        /* The CRC checks the CONTENT (catches bit flips that base64 does not detect). */
         if (have_crc && crc16(data, olen) != want_crc) {
             reply("OTA:NAK");
             return;
         }
         if (esp_ota_write(s_h, data, olen) != ESP_OK) {
-            abort_ota("write");   /* falha de escrita e fatal */
+            abort_ota("write");   /* a write failure is fatal */
             return;
         }
         s_written += olen;
@@ -125,7 +125,7 @@ static void handle_line(char *line) {
         char buf[48];
         snprintf(buf, sizeof buf, "OTA:OK %u", (unsigned) s_written);
         reply(buf);
-        ESP_LOGW(TAG, "OTA concluida (%u B); reiniciando na imagem nova", (unsigned) s_written);
+        ESP_LOGW(TAG, "OTA done (%u B); rebooting into the new image", (unsigned) s_written);
         vTaskDelay(pdMS_TO_TICKS(400));
         esp_restart();
         return;
@@ -151,26 +151,26 @@ static void ota_task(void *arg) {
                 if (len > 0 && !overflow) {
                     line[len] = 0;
                     if (strncmp(line, "OTA", 3) == 0) handle_line(line);
-                    else if (s_cmd_cb) s_cmd_cb(line);   /* comandos de bancada (TXPOW...) */
+                    else if (s_cmd_cb) s_cmd_cb(line);   /* bench commands (TXPOW...) */
                 }
                 len = 0;
                 overflow = false;
             } else if (len < OTA_LINE_MAX - 1) {
                 line[len++] = c;
             } else {
-                overflow = true;   /* linha grande demais: descarta */
+                overflow = true;   /* line too long: discard it */
             }
         }
     }
 }
 
 void serial_ota_init(void) {
-    /* UART0 e compartilhada com o console (igual a bancada deskrab): instala o driver so
-     * para LER o RX; os logs continuam saindo pelo TX e o host ignora o que nao e "OTA:". */
+    /* UART0 is shared with the console (as on the deskrab bench): the driver is installed only
+     * to READ the RX; logs keep going out on TX and the host ignores anything that is not "OTA:". */
     if (uart_driver_install(OTA_UART, 4096, 0, 0, NULL, 0) != ESP_OK) {
-        ESP_LOGE(TAG, "uart_driver_install falhou; OTA serial indisponivel");
+        ESP_LOGE(TAG, "uart_driver_install failed; serial OTA unavailable");
         return;
     }
     xTaskCreate(ota_task, "serial_ota", 4096, NULL, 4, NULL);
-    ESP_LOGI(TAG, "OTA serial pronto na UART0 (host: tools/serial_ota.py)");
+    ESP_LOGI(TAG, "serial OTA ready on UART0 (host: tools/serial_ota.py)");
 }

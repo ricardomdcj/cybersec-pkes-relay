@@ -4,106 +4,106 @@
 #include <stdbool.h>
 
 /*
- * UI de status compartilhada por todos os papeis da bancada (key, vehicle, relay A/B).
+ * Status UI shared by every role on the bench (key, vehicle, relay A/B).
  *
- * Uma tela unica, view-only (sem toque), no estilo funcional-limpo do deskrab:
- *   - cabecalho colorido com o nome do papel e um mascote animado no canto;
- *   - um banner grande com o ESTADO atual (e a cor dele, espelhada no LED RGB);
- *   - uma grade de cards rotulo/valor (ate 6) com as metricas do papel;
- *   - ate duas linhas hexadecimais (nonce / resposta) no rodape.
+ * A single view-only screen (no touch), in the functional-clean style of deskrab:
+ *   - a colored header with the role name and an animated mascot in the corner;
+ *   - a large banner with the current STATE (its color is mirrored on the RGB LED);
+ *   - a grid of label/value cards (up to 6) with the role's metrics;
+ *   - up to two hex lines (nonce / response) in the footer.
  *
- * O mascote representa o dispositivo (chave, carro ou antena de relay) e tem animacoes
- * basicas: balanca de leve (bob), pisca os olhos e da um "pulo" a cada cyd_ui_pulse()
- * (chamado a cada rodada/evento, para a tela ter vida).
+ * The mascot represents the device (key, car or relay antenna) and has basic animations:
+ * gentle bobbing, eye blinks, and a "hop" on every cyd_ui_pulse() call (made on each round
+ * or event, so the screen feels alive).
  *
- * Todas as funcoes sao seguras para chamar de qualquer task: elas pegam o lock do LVGL.
+ * All functions are safe to call from any task: they take the LVGL lock.
  */
 
 typedef enum {
-    CYD_MASCOT_KEY,     // chave digital
-    CYD_MASCOT_CAR,     // veiculo
-    CYD_MASCOT_RELAY,   // relay (antena)
+    CYD_MASCOT_KEY,     // digital key
+    CYD_MASCOT_CAR,     // vehicle
+    CYD_MASCOT_RELAY,   // relay (antenna)
 } cyd_mascot_t;
 
 typedef struct {
-    const char  *title;      // ex.: "VEICULO"
-    uint32_t     accent;     // cor do cabecalho/mascote, 0xRRGGBB
+    const char  *title;      // e.g. "VEHICLE"
+    uint32_t     accent;     // header/mascot color, 0xRRGGBB
     cyd_mascot_t mascot;
-    const char  *fields[6];  // rotulos dos cards; use NULL para terminar antes de 6
-    const char  *hex0;       // rotulo da 1a linha hex (NULL = nenhuma linha hex)
-    const char  *hex1;       // rotulo da 2a linha hex (NULL = so uma)
+    const char  *fields[6];  // card labels; use NULL to end before 6
+    const char  *hex0;       // label of the 1st hex line (NULL = no hex line)
+    const char  *hex1;       // label of the 2nd hex line (NULL = only one)
 } cyd_ui_cfg_t;
 
-// Sobe display + LED e monta a tela. Chame depois de cyd_display_init()/cyd_led_init().
+// Brings up the screen. Call after cyd_display_init() / cyd_led_init().
 void cyd_ui_init(const cyd_ui_cfg_t *cfg);
 
-// Banner de estado + cor; a cor vira o LED (respirando) e tinge o banner.
+// State banner + color; the color drives the LED (breathing) and tints the banner.
 void cyd_ui_set_state(const char *text, uint32_t color);
 
-// Valor do card idx (0..n-1), estilo printf.
+// Value of card idx (0..n-1), printf-style.
 void cyd_ui_set_field(int idx, const char *fmt, ...);
 
-// Mostra 'n' bytes em hex na linha idx (0 ou 1). data NULL ou n<=0 limpa a linha.
+// Shows 'n' bytes as hex on line idx (0 or 1). data NULL or n<=0 clears the line.
 void cyd_ui_set_hex(int idx, const uint8_t *data, int n);
 
-// Da um "pulo" no mascote (reacao a um evento, ex.: rodada concluida).
+// "Hop" the mascot (reaction to an event, e.g. a round finished).
 void cyd_ui_pulse(void);
 
-// Formata microssegundos para leitura humana: "91.2 ms", "1.20 s" ou "-" (us < 0).
-// Usa so ASCII (a fonte da tela nao tem acentos).
+// Formats microseconds for reading: "91.2 ms", "1.20 s", or "-" (us < 0).
+// ASCII only (the screen font has no accented characters).
 void cyd_fmt_us(char *buf, size_t cap, int64_t us);
 
-// Pisca o LED na cor dada por 'ms' milissegundos e depois volta a cor do estado (V-10).
+// Blinks the LED in the given color for 'ms' milliseconds, then returns to the state color (V-10).
 void cyd_ui_flash(uint32_t color, int ms);
 
-// Barra de progresso fina logo abaixo do banner: cur de total. total <= 0 esconde a barra.
+// Thin progress bar just below the banner: cur of total. total <= 0 hides it.
 void cyd_ui_set_progress(int cur, int total);
 
-// Modo da campanha no cabecalho (ex.: "BASELINE", "RELAY"), em ate 8 caracteres ASCII.
-// NULL ou "" esconde (V-06).
+// Campaign mode in the header (e.g. "BASELINE", "RELAY"), up to 8 ASCII characters.
+// NULL or "" hides it (V-06).
 void cyd_ui_set_tag(const char *text);
 
-// Indicadores de enlace no cabecalho (V-06): BLE ou ESP-NOW.
+// Link indicators in the header (V-06): BLE or ESP-NOW.
 typedef enum { CYD_LINK_BLE = 0, CYD_LINK_ESPNOW = 1 } cyd_link_t;
-// state: -1 esconde o indicador; 0 = caido (vermelho); 1 = ok (verde).
+// state: -1 hides the indicator; 0 = down (red); 1 = up (green).
 void cyd_ui_set_link(cyd_link_t which, int state);
 
-// Linha de estatistica logo abaixo dos cards (V-08), ex.: "min 83.0  med 91.2  max 97.5 ms".
-// NULL limpa a linha.
+// Stats line below the cards (V-08), e.g. "min 83.0  med 91.2  max 97.5 ms".
+// NULL clears the line.
 void cyd_ui_set_stats(const char *text);
 
-// Expressao temporaria do mascote (V-09a): OK = olhos fechados e sorriso, FALHA = olhos
-// vermelhos e boca reta, TIMEOUT = surpreso. Volta ao normal depois de 'ms' milissegundos.
-typedef enum { CYD_EXPR_NORMAL = 0, CYD_EXPR_OK, CYD_EXPR_FALHA, CYD_EXPR_TIMEOUT } cyd_expr_t;
+// Temporary mascot expression (V-09a): OK = closed eyes and a smile, FAIL = red eyes and a
+// flat mouth, TIMEOUT = surprised. Returns to normal after 'ms' milliseconds.
+typedef enum { CYD_EXPR_NORMAL = 0, CYD_EXPR_OK, CYD_EXPR_FAIL, CYD_EXPR_TIMEOUT } cyd_expr_t;
 void cyd_ui_expression(cyd_expr_t e, int ms);
 
-// Balao com um texto curto sobre o banner (V-09b), na cor dada, por 'ms' milissegundos.
+// Short text balloon over the banner (V-09b), in the given color, for 'ms' milliseconds.
 void cyd_ui_badge(const char *text, uint32_t color, int ms);
 
-// Sparkline das ultimas 30 rodadas (V-07a): mostra o inicio de uma campanha (limpa a serie
-// e exibe o grafico). cyd_ui_spark_push: us = RTT em microssegundos, us < 0 = TIMEOUT
-// (marca vermelha na base, sem linha). cyd_ui_spark_band: faixa de referencia do baseline
-// (V-07b); hi <= lo desliga.
+// Sparkline of the last 30 rounds (V-07a). cyd_ui_spark_reset clears the series and shows the
+// chart (call at the start of a campaign). cyd_ui_spark_push: us = RTT in microseconds;
+// us < 0 = TIMEOUT (red mark on the baseline, no line point). cyd_ui_spark_band: reference
+// band for the baseline (V-07b); hi <= lo turns it off.
 void cyd_ui_spark_reset(void);
 void cyd_ui_spark_push(int64_t us);
 void cyd_ui_spark_band(int64_t lo_us, int64_t hi_us);
 
-// V-11: resumo final da campanha. Alterna a cada 5 s entre o texto (3 linhas separadas por \n)
-// e o histograma (ate 10 barras). legenda: texto embaixo do histograma. Esconde a grade.
-void cyd_ui_summary_show(const char *resumo, const uint16_t *bins, int nbins, const char *legenda);
-// Volta a grade de cards (inicio de nova campanha).
+// V-11: final campaign summary. Alternates every 5 s between the text (3 lines separated by \n)
+// and the histogram (up to 10 bars). legend: text below the histogram. Hides the card grid.
+void cyd_ui_summary_show(const char *summary, const uint16_t *bins, int nbins, const char *legend);
+// Shows the card grid again (start of a new campaign).
 void cyd_ui_summary_hide(void);
 
-// V-12: enlace entre os dois relays, no lugar do ultimo card (metade direita da linha 2).
-// dir 0 = B->A (desafio), dir 1 = A->B (resposta). label: texto sob o enlace; NULL mantem.
+// V-12: link between the two relays, in place of the last card (right half of row 2).
+// dir 0 = B->A (challenge), dir 1 = A->B (response). label: text under the link; NULL keeps it.
 void cyd_ui_link_pulse(int dir, const char *label);
 
-// V-13: barra empilhada na linha de estatistica: a = parte do tunel, b = parte A<->chave.
-// a < 0 ou b < 0 esconde.
+// V-13: stacked bar on the stats line: a = tunnel part, b = A<->key part.
+// a < 0 or b < 0 hides it.
 void cyd_ui_stack_bar(int64_t a_us, int64_t b_us);
 
-// V-14: cena do carro e da chave, com a chave a dist_x10 decimos de metro, por ms milissegundos.
+// V-14: car and key scene, with the key at dist_x10 tenths of a meter, for 'ms' milliseconds.
 void cyd_ui_scene(int dist_x10, int ms);
 
-// V-15: splash no boot: titulo do papel e subtitulo (ex.: commit), por ms milissegundos.
+// V-15: boot splash: role title and subtitle (e.g. the commit), for 'ms' milliseconds.
 void cyd_ui_splash(const char *subtitle, int ms);

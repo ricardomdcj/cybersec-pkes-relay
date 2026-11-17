@@ -1,111 +1,123 @@
-# relays — Relay A e Relay B (esboço)
+# relays — Relay A and Relay B
 
-Dois relays BLE ligados por ESP-NOW, um único projeto ESP-IDF selecionando o papel por `#define`.
+Two BLE relays linked by ESP-NOW. One ESP-IDF project; the role is selected by a `#define`.
 
 ```
-Celular(chave) ─BLE─► Relay A (central) ─ESP-NOW─► Relay B (periph) ─BLE─► Veículo
+Key ─BLE─► Relay A (central) ─ESP-NOW─► Relay B (peripheral) ─BLE─► Vehicle
        HMAC ◄──────────────────── nonce ◄──────────────── nonce ◄──────────── nonce
 ```
 
-- **Relay A** (`relay_a.c`): central, perto do celular. Recebe o nonce por ESP-NOW, escreve na chave, devolve o HMAC.
-- **Relay B** (`relay_b.c`): peripheral, perto do veículo. Clona o serviço da chave; repassa o desafio do veículo e notifica a resposta.
-- **Enlace** (`link.c`): ESP-NOW em canal fixo. **Já funciona.**
-- **Contrato** (`ble_contract.h`): espelho de `BleContract.kt` / `vehicle`.
+- **Relay A** (`relay_a.c`): central, near the key. Receives the challenge over ESP-NOW, writes it
+  to the key, and returns the HMAC.
+- **Relay B** (`relay_b.c`): peripheral, near the vehicle. Clones the key's service; forwards the
+  vehicle's challenge and notifies the response.
+- **Link** (`link.c`, `link.h`): ESP-NOW on a fixed channel, with the tunnel frame format
+  (`[seq][nonce]` and `[seq][turnaround A][HMAC]`). **Working.**
+- **Contract** (`components/pkes_contract/ble_contract.h`): shared with the key and the vehicle.
 
-## Estado
+## Status
 
-- [x] Estrutura do projeto e seleção de papel (`relay_config.h`)
-- [x] Enlace ESP-NOW A↔B + autoteste que mede o RTT do túnel
-- [x] BLE central do Relay A (`relay_a.c`): scan/conexão/descoberta/notify portados do
-      `vehicle/main.c`, sem gerar nonce nem conferir HMAC (é um cano burro)
-- [x] BLE peripheral do Relay B (`relay_b.c`): servidor GATT NimBLE espelhando o
-      `KeyPeripheral.kt` (serviço clonado, CHALLENGE write, RESPONSE notify)
-- [ ] Teste da cadeia completa no hardware (celular → A → B → veículo) — ver Milestone 2
+- [x] Project layout and role selection (`relay_config.h`).
+- [x] ESP-NOW link A↔B, plus the self-test that measures the tunnel RTT.
+- [x] Relay A BLE central (`relay_a.c`): scan, connect, discover and notify, ported from
+      `vehicle/main/main.c`, without generating a nonce or checking the HMAC (a dumb pipe).
+- [x] Relay B BLE peripheral (`relay_b.c`): NimBLE GATT server mirroring the key (cloned service,
+      CHALLENGE write, RESPONSE notify).
+- [x] Round validity (M-01 to M-05): sequence numbers, late-response discard, turnaround in the
+      response frame.
+- [ ] Full-chain run on hardware (key → A → B → vehicle). See Milestone 2 in `TASKS.md`.
 
-## Milestone 1: validar o túnel (sem BLE)
+## Milestone 1: validate the tunnel (no BLE)
 
-Com `RELAY_LINK_SELFTEST 1` (padrão em `relay_config.h`), o Relay B dispara um desafio
-por segundo e mede o tempo de ida e volta pelo ESP-NOW.
+With `RELAY_LINK_SELFTEST 1` (the default in `relay_config.h`), Relay B fires one challenge per
+second and measures the round trip over ESP-NOW.
 
-Se existir um `sdkconfig` antigo gerado sem BT, apague-o para pegar os `sdkconfig.defaults`
-novos. A partir da pasta `relays/` (o papel e o modo podem ir na linha de comando com `-D`,
-sem editar os headers):
+If an old `sdkconfig` exists (generated without BT), delete it to pick up the new
+`sdkconfig.defaults`. From the `relays/` folder (role and mode can go on the command line with `-D`,
+without editing the headers):
 
 ```
 del sdkconfig
 
-REM --- Relay A (CYD, papel central) ---
+REM --- Relay A (CYD, central role) ---
 idf.py set-target esp32
 idf.py -DRELAY_ROLE=1 build flash monitor
 
-REM --- Relay B (CYD, papel peripheral) ---
+REM --- Relay B (CYD, peripheral role) ---
 idf.py set-target esp32
 idf.py fullclean
 idf.py -DRELAY_ROLE=2 build flash monitor
 ```
 
-Com A e B ligados, o monitor do B deve mostrar:
+With A and B powered, the monitor of B shows:
 
 ```
-I RELAY_B: [selfteste] originando desafios pelo tunel a cada 1 s
-I RELAY_B: [selfteste] resposta recebida (16 B); RTT tunel=NNNN us
+I RELAY_B: Relay B started (tunnel self-test; originating challenges every 1 s)
+I RELAY_B: [selftest] response received (16 B); tunnel RTT=NNNN us
 ```
 
-Esse `RTT tunel` é o overhead do enlace ESP-NOW — um dado que já entra no artigo.
+That `tunnel RTT` is the ESP-NOW link overhead, one of the data points for the paper.
 
-## Milestone 2: BLE nas duas pontas
+Each relay also prints its MAC at boot (`this board MAC: ...`). Copy the MAC of the other relay
+into `RELAY_PEER_MAC` in `relay_config.h` to switch the tunnel to unicast (MAC-level ACKs, real
+loss counts). While it stays zeroed, the tunnel uses broadcast.
 
-O `TODO(BLE)` de cada relay está implementado. Com `RELAY_LINK_SELFTEST 0` o par completo
-(celular → A → B → veículo) roda o desafio-resposta real, e comparamos o RTT com o baseline
-honesto do `vehicle`.
+## Milestone 2: BLE on both ends
 
-- **Relay A** (`relay_a.c`): central. Varre pelo `SVC_UUID`, conecta na chave, descobre
-  CHALLENGE/RESPONSE, habilita notify. Desafio do túnel → escreve em CHALLENGE (com resposta,
-  igual ao `vehicle`); notify da chave → devolve pelo túnel. Não gera nonce nem confere HMAC.
-- **Relay B** (`relay_b.c`): peripheral. Servidor GATT NimBLE anunciando o `SVC_UUID` clonado;
-  write do veículo em CHALLENGE → manda pelo túnel; resposta do túnel → notifica RESPONSE.
+The BLE halves are implemented. With `RELAY_LINK_SELFTEST 0`, the full chain
+(key → A → B → vehicle) runs the real challenge-response, and its RTT is compared with the
+vehicle's honest baseline.
 
-Em ambos, o frame que chega do túnel (callback do ESP-NOW, que roda na task do WiFi) é
-enfileirado e a chamada GATT acontece numa task worker — o custo dessa passagem entra no
-overhead medido.
+- **Relay A** (`relay_a.c`): central. Scans for `SVC_UUID`, connects to the key, discovers
+  CHALLENGE/RESPONSE, enables notify. A tunnel challenge is written to CHALLENGE (with a response,
+  as the vehicle does); a notify from the key is sent back through the tunnel. It neither
+  generates nonces nor checks the HMAC.
+- **Relay B** (`relay_b.c`): peripheral. A NimBLE GATT server advertising the cloned `SVC_UUID`.
+  The vehicle's write to CHALLENGE is sent through the tunnel; the tunnel response is notified on
+  RESPONSE. Responses that do not match the pending round (`seq`) are dropped and counted as late.
 
-### Como rodar (um binário por papel)
+On both relays, a frame arriving from the tunnel (ESP-NOW callback, running in the WiFi task) is
+queued, and the GATT call runs in a worker task. The cost of that hop is part of the measured
+overhead.
+
+### How to run (one binary per role)
 
 ```
 del sdkconfig
 
-REM --- Relay A (CYD, papel central) ---
+REM --- Relay A (CYD, central role) ---
 idf.py set-target esp32
 idf.py -DRELAY_ROLE=1 -DRELAY_LINK_SELFTEST=0 build flash monitor
 
-REM --- Relay B (CYD, papel peripheral) ---
+REM --- Relay B (CYD, peripheral role) ---
 idf.py set-target esp32
 idf.py fullclean
 idf.py -DRELAY_ROLE=2 -DRELAY_LINK_SELFTEST=0 build flash monitor
 ```
 
-Com a cadeia de pé, o monitor do **veículo** deve voltar a logar rodadas `OK` (o HMAC
-relayado confere) e um `=== BASELINE ... ===` cujo RTT agora inclui o salto do relay — é
-esse número que se compara com o baseline honesto. Nos relays o monitor mostra:
+With the chain running, the vehicle's monitor should again log `OK` rounds (the relayed HMAC
+verifies) and a summary line whose RTT now includes the relay hop. That number is what gets
+compared with the honest baseline. The relays log:
 
 ```
-I RELAY_B: desafio do veiculo (16 B) -> tunel
-I RELAY_A: HMAC da chave (16 B) -> tunel
-I RELAY_B: resposta (16 B) notificada ao veiculo
+I RELAY_B: vehicle challenge (16 B) -> tunnel
+I RELAY_A: HMAC from key (16 B) -> tunnel
+I RELAY_B: response (16 B) notified to the vehicle
 ```
 
-No arranque há uma corrida boba: se o veículo escrever um desafio antes do Relay A ter
-conectado na chave, o Relay A descarta aquele desafio (log `... a chave nao esta pronta`) e
-o veículo simplesmente perde aquela rodada — as 20 rodadas dão folga até a cadeia subir.
+At startup there is a harmless race: if the vehicle writes a challenge before Relay A has
+connected to the key, Relay A drops that challenge (`... the key is not ready; dropping`) and the
+vehicle loses that round. The 50 rounds leave room until the chain is up.
 
 ## Toolchain
 
-O projeto foi escrito para ESP-IDF v5.4, mas também **compila no v6.1** (a máquina de
-desenvolvimento atual). A assinatura do callback de envio do ESP-NOW mudou no v5.4, então o
-`link.c` seleciona a forma certa por `ESP_IDF_VERSION`. No v6.1 o `main/CMakeLists.txt`
-precisa do `REQUIRES bt esp_wifi esp_netif esp_event nvs_flash esp_timer`.
+The project was written for ESP-IDF v5.4 but **also builds on v6.1** (the current development
+machine). The ESP-NOW send-callback signature changed in v5.4, so `link.c` selects the right form
+by `ESP_IDF_VERSION`. On v6.1, `main/CMakeLists.txt` needs
+`REQUIRES bt esp_wifi esp_netif esp_event nvs_flash esp_timer`.
 
-> Espaço em flash: em modo BLE o binário passa de 1 MB (BT+WiFi+NimBLE juntos) e estoura a
-> partição de app padrão — no ESP32-C3 (Relay B) por poucos KB. Por isso o `sdkconfig.defaults`
-> já usa `CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y` (~1.5 MB de app, cabe em 2 MB de flash);
-> com ela sobra ~31% na partição. Se trocar os defaults, apague o `sdkconfig` para reaplicar.
+> Flash space: in BLE mode the binary exceeds 1 MB (BT + WiFi + NimBLE together) and overflows the
+> default app partition. That is why `sdkconfig.defaults` already uses
+> `CONFIG_PARTITION_TABLE_SINGLE_APP_LARGE=y` (about 1.5 MB of app, fits in 2 MB of flash), which
+> leaves about 8 % free in the current BLE build. If you change the defaults, delete `sdkconfig`
+> to re-apply them.

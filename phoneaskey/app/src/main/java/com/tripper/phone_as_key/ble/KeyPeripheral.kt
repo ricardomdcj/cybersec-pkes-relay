@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 enum class PeripheralStatus { IDLE, ADVERTISING, CONNECTED, ERROR }
 
-/** Uma linha de log com carimbo de tempo relativo (ms desde o start da chave). */
+/** One log line with a relative timestamp (ms since the key started). */
 data class LogLine(val tMs: Long, val text: String)
 
 data class PeripheralState(
@@ -35,10 +35,10 @@ data class PeripheralState(
 )
 
 /**
- * A chave digital: peripheral BLE + servidor GATT que responde ao desafio do veiculo.
+ * The digital key: BLE peripheral + GATT server that answers the vehicle's challenge.
  *
- * As permissoes (BLUETOOTH_ADVERTISE / BLUETOOTH_CONNECT no Android 12+) sao verificadas
- * na Activity ANTES de start() ser chamado; por isso o SuppressLint aqui.
+ * The permissions (BLUETOOTH_ADVERTISE / BLUETOOTH_CONNECT on Android 12+) are checked in the
+ * Activity BEFORE start() is called; hence the SuppressLint here.
  */
 @SuppressLint("MissingPermission")
 class KeyPeripheral(context: Context) {
@@ -60,7 +60,7 @@ class KeyPeripheral(context: Context) {
 
     fun isBluetoothReady(): Boolean = adapter?.isEnabled == true
 
-    // ---- estado / log -------------------------------------------------------
+    // ---- state / log -------------------------------------------------------
 
     private fun log(msg: String) {
         val line = LogLine(SystemClock.elapsedRealtime() - t0, msg)
@@ -72,13 +72,13 @@ class KeyPeripheral(context: Context) {
         _state.value = _state.value.copy(status = s, peer = peer)
     }
 
-    // ---- ciclo de vida ------------------------------------------------------
+    // ---- lifecycle ----------------------------------------------------------
 
     fun start() {
-        if (adapter == null) { log("Adaptador Bluetooth ausente"); setStatus(PeripheralStatus.ERROR); return }
-        if (!adapter.isEnabled) { log("Bluetooth desligado, ative e tente de novo"); setStatus(PeripheralStatus.ERROR); return }
+        if (adapter == null) { log("Bluetooth adapter missing"); setStatus(PeripheralStatus.ERROR); return }
+        if (!adapter.isEnabled) { log("Bluetooth is off, turn it on and try again"); setStatus(PeripheralStatus.ERROR); return }
         advertiser = adapter.bluetoothLeAdvertiser
-        if (advertiser == null) { log("Este radio nao suporta advertising BLE"); setStatus(PeripheralStatus.ERROR); return }
+        if (advertiser == null) { log("This radio does not support BLE advertising"); setStatus(PeripheralStatus.ERROR); return }
 
         t0 = SystemClock.elapsedRealtime()
         _state.value = PeripheralState(status = PeripheralStatus.IDLE)
@@ -107,9 +107,9 @@ class KeyPeripheral(context: Context) {
         service.addCharacteristic(response)
         responseChar = response
 
-        // advertising so comeca em onServiceAdded, garantindo o GATT pronto.
+        // advertising only starts in onServiceAdded, which ensures the GATT server is ready.
         gattServer?.addService(service)
-        log("Servidor GATT criado, adicionando servico...")
+        log("GATT server created, adding service...")
     }
 
     fun stop() {
@@ -118,7 +118,7 @@ class KeyPeripheral(context: Context) {
         gattServer = null
         subscribers.clear()
         setStatus(PeripheralStatus.IDLE, peer = null)
-        log("Parada")
+        log("Stopped")
     }
 
     // ---- advertising --------------------------------------------------------
@@ -129,7 +129,7 @@ class KeyPeripheral(context: Context) {
             .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
             .setConnectable(true)
             .build()
-        // O nome do aparelho vai na scan response para nao estourar os 31 bytes do pacote.
+        // The device name goes in the scan response, so the 31-byte advertising packet does not overflow.
         val advData = AdvertiseData.Builder()
             .setIncludeDeviceName(false)
             .addServiceUuid(ParcelUuid(BleContract.SERVICE_UUID))
@@ -143,20 +143,20 @@ class KeyPeripheral(context: Context) {
     private val advCallback = object : AdvertiseCallback() {
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
             setStatus(PeripheralStatus.ADVERTISING)
-            log("Anunciando servico ${BleContract.SERVICE_UUID}")
+            log("Advertising service ${BleContract.SERVICE_UUID}")
         }
         override fun onStartFailure(errorCode: Int) {
             setStatus(PeripheralStatus.ERROR)
-            log("Falha ao anunciar (codigo $errorCode)")
+            log("Advertising failed (code $errorCode)")
         }
     }
 
-    // ---- servidor GATT ------------------------------------------------------
+    // ---- GATT server --------------------------------------------------------
 
     private val gattCallback = object : BluetoothGattServerCallback() {
 
         override fun onServiceAdded(status: Int, service: BluetoothGattService?) {
-            log("Servico adicionado (status $status), iniciando advertising")
+            log("Service added (status $status), starting advertising")
             startAdvertising()
         }
 
@@ -164,12 +164,12 @@ class KeyPeripheral(context: Context) {
             when (newState) {
                 BluetoothProfile.STATE_CONNECTED -> {
                     setStatus(PeripheralStatus.CONNECTED, peer = device.address)
-                    log("Conectado: ${device.address}")
+                    log("Connected: ${device.address}")
                 }
                 BluetoothProfile.STATE_DISCONNECTED -> {
                     subscribers.remove(device)
                     setStatus(PeripheralStatus.ADVERTISING, peer = null)
-                    log("Desconectado: ${device.address}")
+                    log("Disconnected: ${device.address}")
                 }
             }
         }
@@ -183,14 +183,14 @@ class KeyPeripheral(context: Context) {
             val data = value ?: ByteArray(0)
             if (characteristic.uuid == BleContract.CHALLENGE_UUID) {
                 val tRxNs = SystemClock.elapsedRealtimeNanos()
-                log("Desafio recebido (${data.size} B): ${BleContract.toHex(data)}")
+                log("Challenge received (${data.size} B): ${BleContract.toHex(data)}")
                 if (responseNeeded) {
                     gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, data)
                 }
                 lastResponse = BleContract.computeResponse(data)
                 notifyResponse(device, lastResponse)
                 val dtUs = (SystemClock.elapsedRealtimeNanos() - tRxNs) / 1000
-                log("Resposta enviada (${lastResponse.size} B) em ${dtUs} us: ${BleContract.toHex(lastResponse)}")
+                log("Response sent (${lastResponse.size} B) in ${dtUs} us: ${BleContract.toHex(lastResponse)}")
             } else if (responseNeeded) {
                 gattServer?.sendResponse(device, requestId, BluetoothGatt.GATT_FAILURE, offset, null)
             }
@@ -214,9 +214,9 @@ class KeyPeripheral(context: Context) {
             if (descriptor.uuid == BleContract.CCCD_UUID) {
                 val enable = value != null && value.isNotEmpty() && value[0].toInt() != 0
                 if (enable) {
-                    subscribers.add(device); log("Notificacoes habilitadas por ${device.address}")
+                    subscribers.add(device); log("Notifications enabled by ${device.address}")
                 } else {
-                    subscribers.remove(device); log("Notificacoes desabilitadas por ${device.address}")
+                    subscribers.remove(device); log("Notifications disabled by ${device.address}")
                 }
             }
             if (responseNeeded) {

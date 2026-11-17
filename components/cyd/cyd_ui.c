@@ -7,19 +7,19 @@
 #include <string.h>
 #include "esp_timer.h"
 
-/* ---- paleta e medidas --------------------------------------------------- */
+/* ---- palette and sizes -------------------------------------------------- */
 
-#define COL_BG        0x101014   /* fundo quase preto   */
-#define COL_CARD      0x1e1e26   /* fundo dos cards     */
-#define COL_LABEL     0x8a8a9a   /* rotulos (cinza)     */
-#define COL_VALUE     0xf2f2f6   /* valores (branco)    */
-#define COL_FACE      0xf4f4f4   /* rosto do mascote    */
-#define COL_INK       0x202028   /* olhos/boca          */
+#define COL_BG        0x101014   /* near-black background */
+#define COL_CARD      0x1e1e26   /* card background     */
+#define COL_LABEL     0x8a8a9a   /* labels (grey)       */
+#define COL_VALUE     0xf2f2f6   /* values (white)      */
+#define COL_FACE      0xf4f4f4   /* mascot face         */
+#define COL_INK       0x202028   /* eyes/mouth          */
 
 #define CARD_W  150
 #define CARD_H  44
 
-/* ---- widgets persistentes ----------------------------------------------- */
+/* ---- persistent widgets ------------------------------------------------- */
 
 static lv_obj_t *s_state_box, *s_state_lbl;
 static lv_obj_t *s_field_val[6];
@@ -27,32 +27,32 @@ static int       s_n_fields;
 static lv_obj_t *s_hex_lbl[2];
 static const char *s_hex_tag[2];
 
-/* mascote */
+/* mascot */
 static lv_obj_t *s_mascot, *s_eye[2], *s_ant_tip;
-static int       s_base_y;        /* y de repouso do mascote */
-static int       s_tick;          /* contador do timer de animacao */
-static int       s_hop;           /* energia do "pulo", decai a cada tick */
+static int       s_base_y;        /* mascot rest y */
+static int       s_tick;          /* animation timer counter */
+static int       s_hop;           /* "hop" energy, decays each tick */
 static uint32_t  s_accent;
 
-/* barra de progresso (V-05) e cor do estado guardada para o pisca do LED (V-10) */
+/* progress bar (V-05) and the state color kept for the LED flash (V-10) */
 static lv_obj_t *s_bar;
 static uint32_t  s_state_color = 0x33333a;
 static esp_timer_handle_t s_flash_timer;
 
-/* indicadores do cabecalho (V-06) e linha de estatistica (V-08) */
+/* header indicators (V-06) and stats line (V-08) */
 static lv_obj_t *s_tag_lbl;
 static lv_obj_t *s_link_dot[2], *s_link_lbl[2];
 static lv_obj_t *s_stats_lbl;
 
-/* mascote: expressao temporaria (V-09a) e balao de resultado (V-09b) */
+/* mascot: temporary expression (V-09a) and result badge (V-09b) */
 static lv_obj_t *s_mouth;
-typedef enum { EXPR_NORMAL, EXPR_OK, EXPR_FALHA, EXPR_TIMEOUT } expr_t;
+typedef enum { EXPR_NORMAL, EXPR_OK, EXPR_FAIL, EXPR_TIMEOUT } expr_t;
 static volatile expr_t s_expr = EXPR_NORMAL;
 static volatile int    s_expr_until;
 static lv_obj_t       *s_badge;
 static volatile int    s_badge_until;
 
-/* sparkline das rodadas (V-07a/b). Valores do grafico em decimos de ms (cabem em int16). */
+/* round sparkline (V-07a/b). Chart values in tenths of ms (they fit in int16). */
 #define SPARK_N  30
 #define SPARK_W  102
 #define SPARK_H  18
@@ -60,27 +60,27 @@ static volatile int    s_badge_until;
 #define SPARK_Y  178
 static lv_obj_t          *s_spark, *s_band, *s_rug[SPARK_N];
 static lv_chart_series_t *s_ser;
-static int64_t s_win[SPARK_N];        /* us; -1 = timeout, -2 = vazio */
-static int64_t s_band_lo, s_band_hi;  /* us; hi <= lo = sem faixa */
+static int64_t s_win[SPARK_N];        /* us; -1 = timeout, -2 = empty */
+static int64_t s_band_lo, s_band_hi;  /* us; hi <= lo = no band */
 static bool    s_spark_on;
 
-/* titulo do papel (splash) e grade de cards (escondida pelo resumo e pela cena) */
+/* role title (splash) and card grid (hidden by the summary and the scene) */
 static const char *s_title = "";
 static lv_obj_t *s_grid;
 
-/* V-11: resumo e histograma no lugar da grade ao fim da campanha */
+/* V-11: summary and histogram replace the grid at the end of a campaign */
 static lv_obj_t *s_sum_panel, *s_sum_text, *s_hist, *s_hist_leg;
 static lv_chart_series_t *s_hist_ser;
 static lv_timer_t *s_sum_timer;
 static volatile int s_sum_mode;
 
-/* V-12: enlace entre os relays, no lugar do ultimo card */
+/* V-12: link between the relays, in place of the last card */
 static lv_obj_t *s_diag, *s_diag_node[2], *s_diag_dot, *s_diag_lbl, *s_diag_line;
 
-/* V-13: barra empilhada na linha de estatistica */
+/* V-13: stacked bar on the stats line */
 static lv_obj_t *s_stk_a, *s_stk_b;
 
-/* V-14: cena do carro e da chave */
+/* V-14: car and key scene */
 static lv_obj_t *s_scene, *s_car_body, *s_car_roof, *s_wheel[2], *s_ground;
 static lv_obj_t *s_key_head, *s_key_stem, *s_scene_line, *s_scene_lbl;
 static lv_timer_t *s_scene_timer;
@@ -115,7 +115,7 @@ static lv_obj_t *mk_card(lv_obj_t *parent, const char *label) {
     return v;
 }
 
-/* ---- mascote ------------------------------------------------------------ */
+/* ---- mascot ------------------------------------------------------------- */
 
 static lv_obj_t *mk_dot(lv_obj_t *parent, int d, uint32_t color) {
     lv_obj_t *o = lv_obj_create(parent);
@@ -137,7 +137,7 @@ static void build_mascot(lv_obj_t *scr, cyd_mascot_t kind, uint32_t accent) {
     lv_obj_set_style_pad_all(s_mascot, 0, 0);
     lv_obj_align(s_mascot, LV_ALIGN_TOP_RIGHT, -6, 2);
 
-    /* rosto: quadrado arredondado claro */
+    /* face: light rounded square */
     lv_obj_t *face = lv_obj_create(s_mascot);
     lv_obj_set_size(face, 44, 38);
     lv_obj_clear_flag(face, LV_OBJ_FLAG_SCROLLABLE);
@@ -164,10 +164,10 @@ static void build_mascot(lv_obj_t *scr, cyd_mascot_t kind, uint32_t accent) {
     lv_obj_align(mouth, LV_ALIGN_CENTER, 0, 10);
     s_mouth = mouth;
 
-    /* acessorio que identifica o papel */
+    /* accessory that identifies the role */
     switch (kind) {
     case CYD_MASCOT_KEY: {
-        /* anel + haste de uma chave acima da cabeca */
+        /* ring + stem of a key above the head */
         lv_obj_t *ring = lv_obj_create(s_mascot);
         lv_obj_set_size(ring, 14, 14);
         lv_obj_clear_flag(ring, LV_OBJ_FLAG_SCROLLABLE);
@@ -186,7 +186,7 @@ static void build_mascot(lv_obj_t *scr, cyd_mascot_t kind, uint32_t accent) {
         break;
     }
     case CYD_MASCOT_CAR: {
-        /* duas rodas sob o rosto */
+        /* two wheels below the face */
         lv_obj_t *w0 = mk_dot(s_mascot, 12, COL_INK);
         lv_obj_t *w1 = mk_dot(s_mascot, 12, COL_INK);
         lv_obj_align(w0, LV_ALIGN_BOTTOM_MID, -12, 2);
@@ -194,7 +194,7 @@ static void build_mascot(lv_obj_t *scr, cyd_mascot_t kind, uint32_t accent) {
         break;
     }
     case CYD_MASCOT_RELAY: {
-        /* antena com ponta que pisca na cor do papel */
+        /* antenna with a tip that blinks in the role color */
         lv_obj_t *mast = lv_obj_create(s_mascot);
         lv_obj_set_size(mast, 3, 16);
         lv_obj_clear_flag(mast, LV_OBJ_FLAG_SCROLLABLE);
@@ -209,12 +209,12 @@ static void build_mascot(lv_obj_t *scr, cyd_mascot_t kind, uint32_t accent) {
     }
 }
 
-/* Timer unico (roda sob o lock do LVGL): bob + piscar + pulo. */
+/* Single timer (runs under the LVGL lock): bob + blink + hop. */
 static void mascot_tick(lv_timer_t *t) {
     (void) t;
     s_tick++;
 
-    /* bob: onda triangular, amplitude 5, periodo ~27 ticks (~1,6 s) */
+    /* bob: triangle wave, amplitude 5, period ~27 ticks (~1.6 s) */
     int p = s_tick % 27;
     int tri = p < 14 ? p : 27 - p;
     int bob = tri * 5 / 13;
@@ -224,17 +224,17 @@ static void mascot_tick(lv_timer_t *t) {
     if (s_hop > 0) s_hop -= 3;
     if (s_hop < 0) s_hop = 0;
 
-    /* piscar: ~a cada 45 ticks (~2,7 s), olhos fechados por 2 ticks */
+    /* blink: about every 45 ticks (~2.7 s), eyes closed for 2 ticks */
     bool closed = (s_tick % 45) >= 43;
 
-    /* expressao temporaria (V-09a): volta ao normal quando o prazo passa */
+    /* temporary expression (V-09a): back to normal when the time is up */
     if (s_expr != EXPR_NORMAL && s_tick >= s_expr_until) s_expr = EXPR_NORMAL;
     int eye_h = closed ? 2 : 8, mouth_w = 14, mouth_h = 4, mouth_dy = 10;
     uint32_t eye_col = COL_INK;
     switch (s_expr) {
-    case EXPR_OK:      eye_h = 2;  mouth_w = 18; mouth_h = 6; mouth_dy = 9;  break;  /* sorriso */
-    case EXPR_FALHA:   eye_col = 0xD64545; mouth_w = 14; mouth_h = 2; mouth_dy = 11; break;
-    case EXPR_TIMEOUT: eye_h = 10; mouth_w = 6;  mouth_h = 6; mouth_dy = 9;  break;  /* surpreso */
+    case EXPR_OK:      eye_h = 2;  mouth_w = 18; mouth_h = 6; mouth_dy = 9;  break;  /* smile */
+    case EXPR_FAIL:    eye_col = 0xD64545; mouth_w = 14; mouth_h = 2; mouth_dy = 11; break;
+    case EXPR_TIMEOUT: eye_h = 10; mouth_w = 6;  mouth_h = 6; mouth_dy = 9;  break;  /* surprised */
     default: break;
     }
     lv_obj_set_height(s_eye[0], eye_h);
@@ -244,11 +244,11 @@ static void mascot_tick(lv_timer_t *t) {
     lv_obj_set_size(s_mouth, mouth_w, mouth_h);
     lv_obj_align(s_mouth, LV_ALIGN_CENTER, 0, mouth_dy);
 
-    /* balao de resultado (V-09b): some quando o prazo passa */
+    /* result badge (V-09b): hides when the time is up */
     if (s_badge && !lv_obj_has_flag(s_badge, LV_OBJ_FLAG_HIDDEN) && s_tick >= s_badge_until)
         lv_obj_add_flag(s_badge, LV_OBJ_FLAG_HIDDEN);
 
-    /* ponta da antena pisca (so no relay) */
+    /* antenna tip blinks (relay only) */
     if (s_ant_tip) {
         bool on = (s_tick / 8) % 2;
         lv_obj_set_style_bg_opa(s_ant_tip, on ? LV_OPA_COVER : LV_OPA_40, 0);
@@ -257,7 +257,7 @@ static void mascot_tick(lv_timer_t *t) {
 
 /* ---- API ---------------------------------------------------------------- */
 
-/* ---- helpers de montagem e de troca de painel (V-11..V-14) -------------- */
+/* ---- layout helpers and panel switching (V-11..V-14) ------------------- */
 
 static lv_obj_t *mk_rect(lv_obj_t *parent, int x, int y, int w, int h, int radius, uint32_t color) {
     lv_obj_t *o = lv_obj_create(parent);
@@ -272,7 +272,7 @@ static lv_obj_t *mk_rect(lv_obj_t *parent, int x, int y, int w, int h, int radiu
     return o;
 }
 
-/* Mostra um so painel no lugar da grade: grade, resumo ou cena. Chamar com o lock. */
+/* Shows a single panel in place of the grid: grid, summary or scene. Call with the lock held. */
 static void set_center(center_t c) {
     if (c == CENTER_GRID) lv_obj_clear_flag(s_grid, LV_OBJ_FLAG_HIDDEN);
     else                  lv_obj_add_flag(s_grid, LV_OBJ_FLAG_HIDDEN);
@@ -302,11 +302,11 @@ static void sum_toggle_cb(lv_timer_t *t) {
 
 static void scene_end_cb(lv_timer_t *t) {
     (void) t;
-    s_scene_timer = NULL;                 /* o LVGL apaga o timer de uma vez (repeat 1) */
+    s_scene_timer = NULL;                 /* LVGL deletes the timer after one run (repeat 1) */
     set_center(CENTER_GRID);
 }
 
-/* Wrapper do tipo certo para a animacao de x (evita o cast entre tipos de funcao). */
+/* Wrapper with the right type for the x animation (avoids a cast between function types). */
 static void anim_set_x(void *obj, int32_t v) {
     lv_obj_set_x((lv_obj_t *) obj, (lv_coord_t) v);
 }
@@ -316,7 +316,7 @@ static void link_anim_done(lv_anim_t *a) {
     lv_obj_add_flag(s_diag_dot, LV_OBJ_FLAG_HIDDEN);
 }
 
-/* Posiciona a chave pela distancia: 0 m -> x 110, 10 m -> x 260 (limite x 280). */
+/* Places the key by distance: 0 m -> x 110, 10 m -> x 260 (capped at x 280). */
 static void scene_place(int dist_x10) {
     int x = 110 + dist_x10 * 150 / 100;
     if (x > 280) x = 280;
@@ -339,7 +339,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, 0);
     lv_obj_clear_flag(scr, LV_OBJ_FLAG_SCROLLABLE);
 
-    /* cabecalho */
+    /* header */
     lv_obj_t *hdr = lv_obj_create(scr);
     lv_obj_set_size(hdr, 320, 40);
     lv_obj_clear_flag(hdr, LV_OBJ_FLAG_SCROLLABLE);
@@ -354,8 +354,8 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_style_text_font(title, &lv_font_montserrat_20, 0);
     lv_obj_align(title, LV_ALIGN_LEFT_MID, 4, 0);
 
-    /* V-06: modo da campanha e dois indicadores de enlace, entre o titulo e o mascote
-     * (o mascote ocupa x 256..314 e nao pode ser coberto). Escondidos por padrao. */
+    /* V-06: campaign mode and two link indicators, between the title and the mascot
+     * (the mascot occupies x 256..314 and must not be covered). Hidden by default. */
     s_tag_lbl = lv_label_create(hdr);
     lv_obj_set_style_text_color(s_tag_lbl, lv_color_hex(0xffffff), 0);
     lv_obj_set_style_text_font(s_tag_lbl, &lv_font_montserrat_12, 0);
@@ -383,9 +383,9 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
         lv_obj_add_flag(s_link_lbl[i], LV_OBJ_FLAG_HIDDEN);
     }
 
-    /* banner de estado */
+    /* state banner */
     s_state_box = lv_obj_create(scr);
-    /* 240 px (e nao 308): o mascote ocupa x 256..314 em y 2..60 e cobria o fim do banner (V-03). */
+    /* 240 px (not 308): the mascot occupies x 256..314 at y 2..60 and covered the end of the banner (V-03). */
     lv_obj_set_size(s_state_box, 240, 30);
     lv_obj_clear_flag(s_state_box, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_bg_color(s_state_box, lv_color_hex(0x33333a), 0);
@@ -395,12 +395,12 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_style_pad_all(s_state_box, 0, 0);
     lv_obj_align(s_state_box, LV_ALIGN_TOP_LEFT, 6, 44);
     s_state_lbl = lv_label_create(s_state_box);
-    lv_label_set_text(s_state_lbl, "iniciando");
+    lv_label_set_text(s_state_lbl, "starting");
     lv_obj_set_style_text_color(s_state_lbl, lv_color_hex(0xffffff), 0);
     lv_obj_set_style_text_font(s_state_lbl, &lv_font_montserrat_16, 0);
     lv_obj_align(s_state_lbl, LV_ALIGN_LEFT_MID, 8, 0);
 
-    /* barra de progresso fina entre o banner (y 74) e a grade (y 80); escondida por padrao */
+    /* thin progress bar between the banner (y 74) and the grid (y 80); hidden by default */
     s_bar = lv_bar_create(scr);
     lv_obj_set_size(s_bar, 308, 4);
     lv_obj_align(s_bar, LV_ALIGN_TOP_LEFT, 6, 76);
@@ -415,7 +415,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_style_radius(s_bar, 2, LV_PART_INDICATOR);
     lv_obj_add_flag(s_bar, LV_OBJ_FLAG_HIDDEN);
 
-    /* grade de cards (flex, 2 por linha) */
+    /* card grid (flex, 2 per row) */
     lv_obj_t *grid = lv_obj_create(scr);
     lv_obj_set_size(grid, 312, 110);
     lv_obj_clear_flag(grid, LV_OBJ_FLAG_SCROLLABLE);
@@ -435,7 +435,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
         s_n_fields++;
     }
 
-    /* linhas hex no rodape */
+    /* hex lines in the footer */
     const char *tags[2] = { cfg->hex0, cfg->hex1 };
     for (int i = 0; i < 2; i++) {
         s_hex_tag[i] = tags[i];
@@ -449,16 +449,16 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
         s_hex_lbl[i] = l;
     }
 
-    /* V-08: linha de estatistica abaixo da grade (cards terminam em y 174) */
+    /* V-08: stats line below the grid (cards end at y 174) */
     s_stats_lbl = lv_label_create(scr);
     lv_label_set_text(s_stats_lbl, "");
     lv_obj_set_style_text_color(s_stats_lbl, lv_color_hex(COL_VALUE), 0);
     lv_obj_set_style_text_font(s_stats_lbl, &lv_font_montserrat_12, 0);
     lv_label_set_long_mode(s_stats_lbl, LV_LABEL_LONG_CLIP);
-    lv_obj_set_width(s_stats_lbl, 200);                   /* deixa x 212..314 para a sparkline */
+    lv_obj_set_width(s_stats_lbl, 200);                   /* leaves x 212..314 for the sparkline */
     lv_obj_align(s_stats_lbl, LV_ALIGN_TOP_LEFT, 6, SPARK_Y + 2);
 
-    /* V-07: faixa do baseline (atras do grafico), sparkline e marcas de timeout (rug) */
+    /* V-07: baseline band (behind the chart), sparkline and timeout marks (rug) */
     s_band = lv_obj_create(scr);
     lv_obj_set_size(s_band, SPARK_W, SPARK_H);
     lv_obj_clear_flag(s_band, LV_OBJ_FLAG_SCROLLABLE);
@@ -481,7 +481,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_style_border_width(s_spark, 0, 0);
     lv_obj_set_style_pad_all(s_spark, 0, 0);
     lv_obj_set_style_line_width(s_spark, 2, LV_PART_ITEMS);
-    lv_obj_set_style_size(s_spark, 0, LV_PART_INDICATOR);       /* sem marcadores nos pontos */
+    lv_obj_set_style_size(s_spark, 0, LV_PART_INDICATOR);       /* no markers on the points */
     s_ser = lv_chart_add_series(s_spark, lv_color_hex(cfg->accent), LV_CHART_AXIS_PRIMARY_Y);
     lv_obj_add_flag(s_spark, LV_OBJ_FLAG_HIDDEN);
 
@@ -501,7 +501,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     s_band_lo = s_band_hi = 0;
     s_spark_on = false;
 
-    /* V-06/V-09b: balao de resultado sobre o banner, a esquerda do mascote (x 256..314) */
+    /* V-06/V-09b: result badge over the banner, left of the mascot (x 256..314) */
     s_badge = lv_label_create(scr);
     lv_label_set_text(s_badge, "");
     lv_obj_set_style_text_font(s_badge, &lv_font_montserrat_14, 0);
@@ -514,7 +514,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_align(s_badge, LV_ALIGN_TOP_LEFT, 136, 46);
     lv_obj_add_flag(s_badge, LV_OBJ_FLAG_HIDDEN);
 
-    /* V-12: enlace entre relays, escondido ate o primeiro pulso */
+    /* V-12: link between relays, hidden until the first pulse */
     s_diag = lv_obj_create(scr);
     lv_obj_set_size(s_diag, 150, 44);
     lv_obj_clear_flag(s_diag, LV_OBJ_FLAG_SCROLLABLE);
@@ -542,13 +542,13 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_style_text_color(s_diag_lbl, lv_color_hex(COL_VALUE), 0);
     lv_obj_set_pos(s_diag_lbl, 0, 28);
 
-    /* V-13: barra empilhada da ultima rodada (relay B), escondida por padrao */
+    /* V-13: stacked bar of the last round (relay B), hidden by default */
     s_stk_a = mk_rect(scr, 6, 182, 1, 12, 0, cfg->accent);
     s_stk_b = mk_rect(scr, 6, 182, 1, 12, 0, 0xB0B0C0);
     lv_obj_add_flag(s_stk_a, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(s_stk_b, LV_OBJ_FLAG_HIDDEN);
 
-    /* V-11: painel do resumo e do histograma (escondido) */
+    /* V-11: summary and histogram panel (hidden) */
     s_sum_panel = lv_obj_create(scr);
     lv_obj_set_size(s_sum_panel, 308, 94);
     lv_obj_clear_flag(s_sum_panel, LV_OBJ_FLAG_SCROLLABLE);
@@ -584,7 +584,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_pos(s_hist_leg, 0, 66);
     lv_obj_add_flag(s_hist_leg, LV_OBJ_FLAG_HIDDEN);
 
-    /* V-14: cena do carro e da chave (escondida; aparece depois do RUN) */
+    /* V-14: car and key scene (hidden; shown after RUN) */
     s_scene = lv_obj_create(scr);
     lv_obj_set_size(s_scene, 308, 94);
     lv_obj_clear_flag(s_scene, LV_OBJ_FLAG_SCROLLABLE);
@@ -616,7 +616,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
 
     cyd_display_unlock();
 
-    cyd_ui_set_state("iniciando", 0x33333a);
+    cyd_ui_set_state("starting", 0x33333a);
 }
 
 void cyd_ui_set_state(const char *text, uint32_t color) {
@@ -625,7 +625,7 @@ void cyd_ui_set_state(const char *text, uint32_t color) {
     if (s_state_lbl) lv_label_set_text(s_state_lbl, text);
     if (s_state_box) lv_obj_set_style_bg_color(s_state_box, lv_color_hex(color), 0);
     cyd_display_unlock();
-    /* espelha no LED RGB: respira na cor do estado */
+    /* mirror on the RGB LED: breathes in the state color */
     cyd_led_set(CYD_LED_BREATHE, color);
 }
 
@@ -648,7 +648,7 @@ void cyd_ui_set_hex(int idx, const uint8_t *data, int n) {
     if (!data || n <= 0) {
         snprintf(buf + w, sizeof buf - w, "-");
     } else {
-        if (n > 16) n = 16;   /* cabe na linha */
+        if (n > 16) n = 16;   /* fits on the line */
         for (int i = 0; i < n && w < (int) sizeof buf - 3; i++)
             w += snprintf(buf + w, sizeof buf - w, "%02x", data[i]);
     }
@@ -658,7 +658,7 @@ void cyd_ui_set_hex(int idx, const uint8_t *data, int n) {
 }
 
 void cyd_ui_pulse(void) {
-    s_hop = 16;   /* o timer de animacao faz o pulo decair */
+    s_hop = 16;   /* the animation timer decays the hop */
 }
 
 /* ---- expressao, balao e sparkline (V-07, V-09) ------------------------- */
@@ -666,7 +666,7 @@ void cyd_ui_pulse(void) {
 void cyd_ui_expression(cyd_expr_t e, int ms) {
     cyd_display_lock();
     s_expr = (expr_t) e;
-    s_expr_until = s_tick + ms / 60;     /* o timer do mascote roda a cada 60 ms */
+    s_expr_until = s_tick + ms / 60;     /* the mascot timer runs every 60 ms */
     cyd_display_unlock();
 }
 
@@ -681,7 +681,7 @@ void cyd_ui_badge(const char *text, uint32_t color, int ms) {
     cyd_display_unlock();
 }
 
-/* Recalcula a escala (em decimos de ms), a faixa e as marcas de timeout. Chamar com o lock. */
+/* Recomputes the scale (tenths of ms), the band and the timeout marks. Call with the lock held. */
 static void spark_redraw(void)
 {
     int64_t lo = 0, hi = 0;
@@ -701,7 +701,7 @@ static void spark_redraw(void)
         if (bh > hi) hi = bh;
     }
     if (!any) { lo = 0; hi = 1; }
-    if (hi == lo) { lo -= 50; hi += 50; }          /* 5 ms de folga para linha reta */
+    if (hi == lo) { lo -= 50; hi += 50; }          /* 5 ms of margin for a flat line */
     int64_t pad = (hi - lo) / 10;
     lo -= pad;
     hi += pad;
@@ -760,11 +760,11 @@ void cyd_ui_spark_band(int64_t lo_us, int64_t hi_us) {
     cyd_display_unlock();
 }
 
-/* ---- resumo, enlace, barra, cena e splash (V-11..V-15) ------------------ */
+/* ---- summary, link, bar, scene and splash (V-11..V-15) ----------------- */
 
-void cyd_ui_summary_show(const char *resumo, const uint16_t *bins, int nbins, const char *legenda) {
+void cyd_ui_summary_show(const char *summary, const uint16_t *bins, int nbins, const char *legend) {
     cyd_display_lock();
-    lv_label_set_text(s_sum_text, resumo ? resumo : "");
+    lv_label_set_text(s_sum_text, summary ? summary : "");
     if (bins && nbins > 0) {
         int n = nbins > 10 ? 10 : nbins;
         uint16_t mx = 1;
@@ -774,7 +774,7 @@ void cyd_ui_summary_show(const char *resumo, const uint16_t *bins, int nbins, co
             lv_chart_set_value_by_id(s_hist, s_hist_ser, i, (lv_coord_t) bins[i]);
         lv_chart_refresh(s_hist);
     }
-    lv_label_set_text(s_hist_leg, legenda ? legenda : "");
+    lv_label_set_text(s_hist_leg, legend ? legend : "");
     s_sum_mode = 0;
     lv_obj_clear_flag(s_sum_text, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(s_hist, LV_OBJ_FLAG_HIDDEN);
@@ -794,7 +794,7 @@ void cyd_ui_link_pulse(int dir, const char *label) {
     cyd_display_lock();
     lv_obj_clear_flag(s_diag, LV_OBJ_FLAG_HIDDEN);
     if (label) lv_label_set_text(s_diag_lbl, label);
-    int x0 = dir == 0 ? 135 : 9;          /* dir 0: B -> A (desafio); dir 1: A -> B (resposta) */
+    int x0 = dir == 0 ? 135 : 9;          /* dir 0: B -> A (challenge); dir 1: A -> B (response) */
     int x1 = dir == 0 ? 9 : 135;
     lv_anim_del(s_diag_dot, NULL);
     lv_obj_set_x(s_diag_dot, x0);
@@ -803,7 +803,7 @@ void cyd_ui_link_pulse(int dir, const char *label) {
     lv_anim_init(&a);
     lv_anim_set_var(&a, s_diag_dot);
     lv_anim_set_values(&a, x0, x1);
-    lv_anim_set_time(&a, 350);            /* animacao curta e legivel; o tempo real vai no texto */
+    lv_anim_set_time(&a, 350);            /* short, readable animation; the real time is in the text */
     lv_anim_set_exec_cb(&a, anim_set_x);
     lv_anim_set_ready_cb(&a, link_anim_done);
     lv_anim_start(&a);
@@ -872,7 +872,7 @@ void cyd_ui_splash(const char *subtitle, int ms) {
     cyd_display_unlock();
 }
 
-/* ---- cabecalho e estatistica (V-06, V-08) ------------------------------ */
+/* ---- header and stats (V-06, V-08) ------------------------------------- */
 
 void cyd_ui_set_tag(const char *text) {
     cyd_display_lock();
@@ -910,7 +910,7 @@ void cyd_ui_set_stats(const char *text) {
     cyd_display_unlock();
 }
 
-/* ---- valores com unidade (V-02) ---------------------------------------- */
+/* ---- values with units (V-02) ------------------------------------------ */
 
 void cyd_fmt_us(char *buf, size_t cap, int64_t us) {
     if (us < 0) {
@@ -924,10 +924,10 @@ void cyd_fmt_us(char *buf, size_t cap, int64_t us) {
     }
 }
 
-/* ---- pisca do LED por resultado (V-10) --------------------------------- */
+/* ---- LED flash by result (V-10) ---------------------------------------- */
 
 static void flash_end_cb(void *arg) {
-    cyd_led_set(CYD_LED_BREATHE, s_state_color);   /* volta a respirar na cor do estado */
+    cyd_led_set(CYD_LED_BREATHE, s_state_color);   /* back to breathing in the state color */
 }
 
 void cyd_ui_flash(uint32_t color, int ms) {
@@ -940,7 +940,7 @@ void cyd_ui_flash(uint32_t color, int ms) {
     esp_timer_start_once(s_flash_timer, (uint64_t) ms * 1000);
 }
 
-/* ---- barra de progresso (V-05) ----------------------------------------- */
+/* ---- progress bar (V-05) ----------------------------------------------- */
 
 void cyd_ui_set_progress(int cur, int total) {
     cyd_display_lock();
