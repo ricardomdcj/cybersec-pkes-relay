@@ -1,0 +1,2 @@
+- [PKES relay project](pkes-relay-project.md) — PKES BLE relay bench (UNIFEI): repo and checkpoint state, what is left on hardware, the Methods draft link
+- [No git switch during builds](no-git-switch-during-build.md) — don't checkout or merge in a repo while its firmware build is still running
