@@ -271,6 +271,20 @@ English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16
 > - V-10: the LED flashes by result (green OK, red FAIL, yellow TIMEOUT) for 1.2 s and then breathes again.
 >   Limit: on the last round, the switch to "done" cancels the flash before it shows.
 
+> **Status (2026-11-17, checkpoint 07):** the simulator is in `tools/sim` (V-17a, V-17b). It renders the
+> device's own `cyd_ui.c`, so the layout checks below were made on that code, not on a picture.
+> - Checked: V-03 (the state banner ends at x 246; the mascot starts at x 256, so they do not overlap).
+>   V-08 (the statistics line `min 83.0  med 91.2  max 97.5 ms` fits its 200 px box). V-15 (splash reads
+>   `fw 64bd0f5`). V-11 (the histogram shows 5 s after the summary). V-14 (the car and the key scene at 0 m and
+>   10 m: the key moves right with the distance). V-06 (the header indicators were checked by their
+>   coordinates, not by pixels: the `ESP` label should end near x 253, against the mascot at x 256, a gap of
+>   about 3 px).
+> - **Fix found by the simulator:** the two hex lines were drawn in `montserrat_14`, with no width limit.
+>   The key's 16-byte nonce ran to x 319 of 320, so the last digit could be cut on the panel. They are now
+>   `montserrat_12` and end at x 258–270. **This changes the look on the device too.**
+> - Not checked: the animations on hardware and the real colours of the panel (the simulator writes the
+>   logical RGB; the ST7789 orientation and colour settings are not simulated).
+
 - [ ] **V-01. PKES layout map.** Write `components/cyd/LAYOUT.md` with the y bands and the position of each
   widget, in the format of deskrab's `layout.md`. **Acceptance:** every widget in `cyd_ui.c` is listed with
   its coordinates. **Depends on:** nothing.
@@ -340,11 +354,13 @@ English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16
 - [-] **V-16b. Accented texts (optional).** Dropped and superseded by the full English translation
   (checkpoint 06). The on-screen font has no accented letters, so on-screen text stays ASCII.
 
-- [ ] **V-17a. Simulator harness for PKES.** Port `deskrab/tools/sim/` to PKES: stubs for the HAL and a build
-  script, rendering `cyd_ui`. **Depends on:** V-01. **Next checkpoint (07).**
+- [x] **V-17a. Simulator harness for PKES.** Port of the idea in `deskrab/tools/sim/` to PKES: the device's
+  own `cyd_ui.c` and LVGL 8.3 built with msys64 gcc; display, LED and timers replaced (`tools/sim/sim_hal.c`).
+  Built in checkpoint 07. **Depends on:** V-01. *V-01 (`LAYOUT.md`) is still open; the harness does not need it.*
 
-- [ ] **V-17b. Script and frame recording.** A scenario script (state, rounds, distances) that records one
-  320×240 BMP per screen. It serves to check the layout (V-03) without a board. **Depends on:** V-17a.
+- [x] **V-17b. Script and frame recording.** `tools/sim/scenarios/*.txt` drive the `cyd_ui` calls with a virtual
+  clock; each `shot` writes a 320×240 BMP (and a PNG via `run_scenarios.py`). Six scenarios: splash, vehicle
+  campaign, relay B, relay A, key, distance scene. **Depends on:** V-17a.
 
 - [-] **V-18. Video script and assembly.** Dropped by you: the video is not part of this project. Kept only
   as a record of the original plan.
@@ -447,7 +463,8 @@ decoration.
   plain SVG.
 - **D-06 (`TESTING.md`):** the new procedure is written (checkpoint 06). It still needs checking against the
   first real campaign, because the hardware may change a step.
-- **Visual block (V):** V-17 (simulator) was requested by you and comes next (checkpoint 07).
+- **Visual block (V):** the simulator (V-17) is done in checkpoint 07. Its frames are proposals for the screen
+  design, and they are not measurements. The firmware logic does not run in it (see `tools/sim/README.md`).
 - **Hardware validation:** none of the items above has run on a board yet. Suggested order: flash vehicle, key
   and relays; read `this board MAC` from the relays and paste it into `RELAY_PEER_MAC` (A points to B and B to
   A), rebuild and reflash the relays; then one baseline campaign and one relay campaign with
@@ -469,7 +486,7 @@ branch is always a complete state of the code. A checkpoint is only created afte
 | `ckpt/04-sparkline-mascote` | V-07a, V-07b, V-09a, V-09b | built for esp32, not flashed, not seen on screen |
 | `ckpt/05-visual-restante` | V-11a, V-11b, V-12a, V-12b, V-13, V-14a, V-14b, V-15 | built for esp32, not flashed, not seen on screen |
 | `ckpt/06-english` | Full English translation (code, logs, docs, Android app text), `TESTING.md` rewritten, D-06 done, V-16 and V-18 dropped | built for esp32, not flashed |
-| `ckpt/07-simulator` (planned) | V-17a, V-17b | not started |
+| `ckpt/07-simulator` | V-17a, V-17b (`tools/sim`); hex lines font 14 to 12 in `cyd_ui.c` | built for esp32 (6 configs), not flashed; frames in `tools/sim/out` |
 
 Branch names from checkpoints 01 to 05 keep their original spelling, since they already exist.
 

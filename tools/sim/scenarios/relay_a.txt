@@ -1,0 +1,13 @@
+# Relay A (near the key): connected to the key, forwarding the car's challenges. Sample values.
+# Accent A 7C4DFF.
+init relay_a
+tag CHAIN
+link ble 1
+link esp 1
+state 7C4DFF forwarding to key
+field 0 12
+field 1 12
+field 2 192 ms
+hex 0 c728bac7e19f04d2a6b3c8e75f10d9a4
+wait 300
+shot relay_a.bmp

@@ -1,0 +1,28 @@
+# Relay B (near the car): forwarding the car challenge over the tunnel. Sample values.
+# Accent A 7C4DFF, accent B 00B8D4. Turnaround of B 214 ms, tunnel 22 ms, A<->key 192 ms.
+
+init relay_b
+tag CHAIN
+link ble 1
+link esp 1
+state 00B8D4 forwarding challenges
+field 0 12
+field 1 12
+field 2 214 ms
+hex 0 c728bac7e19f04d2a6b3c8e75f10d9a4
+stack 22000 192000
+wait 300
+linkpulse 0 challenge 22 ms
+wait 200
+shot relay_b_link.bmp
+
+# The response travels back: A -> B.
+wait 1000
+linkpulse 1 response 22 ms
+wait 150
+shot relay_b_response.bmp
+
+# Hide the stacked bar again (negative values hide it).
+stack -1 -1
+wait 200
+shot relay_b_idle.bmp

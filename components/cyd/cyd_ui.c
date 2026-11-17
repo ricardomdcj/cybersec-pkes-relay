@@ -444,7 +444,8 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
         lv_obj_t *l = lv_label_create(scr);
         lv_label_set_text_fmt(l, "%s -", tags[i]);
         lv_obj_set_style_text_color(l, lv_color_hex(COL_LABEL), 0);
-        lv_obj_set_style_text_font(l, &lv_font_montserrat_14, 0);
+        /* font 12: a full 16-byte line at font 14 reached the right edge (x 319 of 320) */
+        lv_obj_set_style_text_font(l, &lv_font_montserrat_12, 0);
         lv_obj_align(l, LV_ALIGN_BOTTOM_LEFT, 6, i == 0 ? -22 : -4);
         s_hex_lbl[i] = l;
     }

@@ -158,6 +158,20 @@ gradlew.bat testDebugUnitTest    # unit tests
 
 Package `com.tripper.phone_as_key`. The app only needs the `ble/` package to act as the key; the rest is scaffold UI/theme.
 
+## Screen simulator (tools/sim)
+
+Renders the device's own `components/cyd/cyd_ui.c` (LVGL 8.3) on the PC, so screens can be checked
+without a board. Only the display, LED and timers are replaced (`sim_hal.c`); the UI code is the one
+on the CYD. Full details and the script commands are in `tools/sim/README.md`.
+
+- Build once `vehicle/` has been built with `idf.py build` (it provides LVGL and the LVGL options),
+  then `python tools/sim/build_gcc.py` (msys64 gcc: this work machine has no MSVC). Run every
+  scenario with `python tools/sim/run_scenarios.py`; frames go to `tools/sim/out/` as BMP and PNG.
+- It drives the UI API with the values from a script; it does **not** run the BLE, ESP-NOW or round
+  logic, and the numbers in the scenarios are samples. Its LVGL pool is doubled, so memory use there
+  says nothing about the device.
+- When a card or a label changes in a firmware, update the matching `CFG_*` in `tools/sim/sim_main.c`.
+
 ## Conventions
 
 - **Everything is in English**: code, comments, log messages, on-screen text, READMEs, `TESTING.md`,
