@@ -63,6 +63,29 @@ static lv_chart_series_t *s_ser;
 static int64_t s_win[SPARK_N];        /* us; -1 = timeout, -2 = vazio */
 static int64_t s_band_lo, s_band_hi;  /* us; hi <= lo = sem faixa */
 static bool    s_spark_on;
+
+/* titulo do papel (splash) e grade de cards (escondida pelo resumo e pela cena) */
+static const char *s_title = "";
+static lv_obj_t *s_grid;
+
+/* V-11: resumo e histograma no lugar da grade ao fim da campanha */
+static lv_obj_t *s_sum_panel, *s_sum_text, *s_hist, *s_hist_leg;
+static lv_chart_series_t *s_hist_ser;
+static lv_timer_t *s_sum_timer;
+static volatile int s_sum_mode;
+
+/* V-12: enlace entre os relays, no lugar do ultimo card */
+static lv_obj_t *s_diag, *s_diag_node[2], *s_diag_dot, *s_diag_lbl, *s_diag_line;
+
+/* V-13: barra empilhada na linha de estatistica */
+static lv_obj_t *s_stk_a, *s_stk_b;
+
+/* V-14: cena do carro e da chave */
+static lv_obj_t *s_scene, *s_car_body, *s_car_roof, *s_wheel[2], *s_ground;
+static lv_obj_t *s_key_head, *s_key_stem, *s_scene_line, *s_scene_lbl;
+static lv_timer_t *s_scene_timer;
+
+typedef enum { CENTER_GRID, CENTER_SUMMARY, CENTER_SCENE } center_t;
 #define COL_LINK_OK   0x1AA260
 #define COL_LINK_DOWN 0xD64545
 
@@ -234,8 +257,80 @@ static void mascot_tick(lv_timer_t *t) {
 
 /* ---- API ---------------------------------------------------------------- */
 
+/* ---- helpers de montagem e de troca de painel (V-11..V-14) -------------- */
+
+static lv_obj_t *mk_rect(lv_obj_t *parent, int x, int y, int w, int h, int radius, uint32_t color) {
+    lv_obj_t *o = lv_obj_create(parent);
+    lv_obj_set_size(o, w, h);
+    lv_obj_clear_flag(o, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_bg_color(o, lv_color_hex(color), 0);
+    lv_obj_set_style_bg_opa(o, LV_OPA_COVER, 0);
+    lv_obj_set_style_radius(o, radius, 0);
+    lv_obj_set_style_border_width(o, 0, 0);
+    lv_obj_set_style_pad_all(o, 0, 0);
+    lv_obj_set_pos(o, x, y);
+    return o;
+}
+
+/* Mostra um so painel no lugar da grade: grade, resumo ou cena. Chamar com o lock. */
+static void set_center(center_t c) {
+    if (c == CENTER_GRID) lv_obj_clear_flag(s_grid, LV_OBJ_FLAG_HIDDEN);
+    else                  lv_obj_add_flag(s_grid, LV_OBJ_FLAG_HIDDEN);
+    if (c == CENTER_SUMMARY) lv_obj_clear_flag(s_sum_panel, LV_OBJ_FLAG_HIDDEN);
+    else                     lv_obj_add_flag(s_sum_panel, LV_OBJ_FLAG_HIDDEN);
+    if (c == CENTER_SCENE) lv_obj_clear_flag(s_scene, LV_OBJ_FLAG_HIDDEN);
+    else                   lv_obj_add_flag(s_scene, LV_OBJ_FLAG_HIDDEN);
+    if (s_sum_timer) {
+        if (c == CENTER_SUMMARY) lv_timer_resume(s_sum_timer);
+        else                     lv_timer_pause(s_sum_timer);
+    }
+}
+
+static void sum_toggle_cb(lv_timer_t *t) {
+    (void) t;
+    s_sum_mode = !s_sum_mode;
+    if (s_sum_mode) {
+        lv_obj_add_flag(s_sum_text, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(s_hist, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(s_hist_leg, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        lv_obj_clear_flag(s_sum_text, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(s_hist, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(s_hist_leg, LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
+static void scene_end_cb(lv_timer_t *t) {
+    (void) t;
+    s_scene_timer = NULL;                 /* o LVGL apaga o timer de uma vez (repeat 1) */
+    set_center(CENTER_GRID);
+}
+
+/* Wrapper do tipo certo para a animacao de x (evita o cast entre tipos de funcao). */
+static void anim_set_x(void *obj, int32_t v) {
+    lv_obj_set_x((lv_obj_t *) obj, (lv_coord_t) v);
+}
+
+static void link_anim_done(lv_anim_t *a) {
+    (void) a;
+    lv_obj_add_flag(s_diag_dot, LV_OBJ_FLAG_HIDDEN);
+}
+
+/* Posiciona a chave pela distancia: 0 m -> x 110, 10 m -> x 260 (limite x 280). */
+static void scene_place(int dist_x10) {
+    int x = 110 + dist_x10 * 150 / 100;
+    if (x > 280) x = 280;
+    lv_obj_set_x(s_key_head, x);
+    lv_obj_set_x(s_key_stem, x + 18);
+    lv_obj_set_width(s_scene_line, x - 72);
+    char t[32];
+    snprintf(t, sizeof t, "%d.%d m", dist_x10 / 10, dist_x10 % 10);
+    lv_label_set_text(s_scene_lbl, t);
+}
+
 void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     s_accent = cfg->accent;
+    s_title = cfg->title;
     cyd_display_lock();
 
     lv_obj_t *scr = lv_scr_act();
@@ -332,6 +427,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_align(grid, LV_ALIGN_TOP_LEFT, 4, 80);
     lv_obj_set_flex_flow(grid, LV_FLEX_FLOW_ROW_WRAP);
     lv_obj_set_flex_align(grid, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    s_grid = grid;
 
     s_n_fields = 0;
     for (int i = 0; i < 6 && cfg->fields[i]; i++) {
@@ -417,6 +513,101 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_style_pad_ver(s_badge, 3, 0);
     lv_obj_align(s_badge, LV_ALIGN_TOP_LEFT, 136, 46);
     lv_obj_add_flag(s_badge, LV_OBJ_FLAG_HIDDEN);
+
+    /* V-12: enlace entre relays, escondido ate o primeiro pulso */
+    s_diag = lv_obj_create(scr);
+    lv_obj_set_size(s_diag, 150, 44);
+    lv_obj_clear_flag(s_diag, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_bg_opa(s_diag, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(s_diag, 0, 0);
+    lv_obj_set_style_pad_all(s_diag, 0, 0);
+    lv_obj_set_pos(s_diag, 160, 130);
+    lv_obj_add_flag(s_diag, LV_OBJ_FLAG_HIDDEN);
+    s_diag_line = mk_rect(s_diag, 12, 11, 126, 2, 0, COL_LABEL);
+    for (int i = 0; i < 2; i++) {
+        s_diag_node[i] = mk_rect(s_diag, i == 0 ? 4 : 130, 4, 16, 16, LV_RADIUS_CIRCLE, cfg->accent);
+        lv_obj_t *nl = lv_label_create(s_diag_node[i]);
+        lv_label_set_text(nl, i == 0 ? "A" : "B");
+        lv_obj_set_style_text_font(nl, &lv_font_montserrat_12, 0);
+        lv_obj_set_style_text_color(nl, lv_color_hex(0xffffff), 0);
+        lv_obj_align(nl, LV_ALIGN_CENTER, 0, 0);
+    }
+    s_diag_dot = mk_rect(s_diag, 9, 9, 6, 6, LV_RADIUS_CIRCLE, 0xffffff);
+    lv_obj_add_flag(s_diag_dot, LV_OBJ_FLAG_HIDDEN);
+    s_diag_lbl = lv_label_create(s_diag);
+    lv_label_set_text(s_diag_lbl, "");
+    lv_obj_set_width(s_diag_lbl, 150);
+    lv_obj_set_style_text_align(s_diag_lbl, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_font(s_diag_lbl, &lv_font_montserrat_12, 0);
+    lv_obj_set_style_text_color(s_diag_lbl, lv_color_hex(COL_VALUE), 0);
+    lv_obj_set_pos(s_diag_lbl, 0, 28);
+
+    /* V-13: barra empilhada da ultima rodada (relay B), escondida por padrao */
+    s_stk_a = mk_rect(scr, 6, 182, 1, 12, 0, cfg->accent);
+    s_stk_b = mk_rect(scr, 6, 182, 1, 12, 0, 0xB0B0C0);
+    lv_obj_add_flag(s_stk_a, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(s_stk_b, LV_OBJ_FLAG_HIDDEN);
+
+    /* V-11: painel do resumo e do histograma (escondido) */
+    s_sum_panel = lv_obj_create(scr);
+    lv_obj_set_size(s_sum_panel, 308, 94);
+    lv_obj_clear_flag(s_sum_panel, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_bg_opa(s_sum_panel, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(s_sum_panel, 0, 0);
+    lv_obj_set_style_pad_all(s_sum_panel, 0, 0);
+    lv_obj_set_pos(s_sum_panel, 6, 80);
+    lv_obj_add_flag(s_sum_panel, LV_OBJ_FLAG_HIDDEN);
+
+    s_sum_text = lv_label_create(s_sum_panel);
+    lv_label_set_text(s_sum_text, "");
+    lv_obj_set_style_text_font(s_sum_text, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_color(s_sum_text, lv_color_hex(COL_VALUE), 0);
+    lv_obj_set_pos(s_sum_text, 0, 4);
+
+    s_hist = lv_chart_create(s_sum_panel);
+    lv_obj_set_size(s_hist, 308, 60);
+    lv_obj_set_pos(s_hist, 0, 0);
+    lv_chart_set_type(s_hist, LV_CHART_TYPE_BAR);
+    lv_chart_set_point_count(s_hist, 10);
+    lv_chart_set_div_line_count(s_hist, 0, 0);
+    lv_obj_set_style_bg_opa(s_hist, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(s_hist, 0, 0);
+    lv_obj_set_style_pad_all(s_hist, 0, 0);
+    s_hist_ser = lv_chart_add_series(s_hist, lv_color_hex(cfg->accent), LV_CHART_AXIS_PRIMARY_Y);
+    lv_chart_set_range(s_hist, LV_CHART_AXIS_PRIMARY_Y, 0, 10);
+    lv_obj_add_flag(s_hist, LV_OBJ_FLAG_HIDDEN);
+
+    s_hist_leg = lv_label_create(s_sum_panel);
+    lv_label_set_text(s_hist_leg, "");
+    lv_obj_set_style_text_font(s_hist_leg, &lv_font_montserrat_12, 0);
+    lv_obj_set_style_text_color(s_hist_leg, lv_color_hex(COL_LABEL), 0);
+    lv_obj_set_pos(s_hist_leg, 0, 66);
+    lv_obj_add_flag(s_hist_leg, LV_OBJ_FLAG_HIDDEN);
+
+    /* V-14: cena do carro e da chave (escondida; aparece depois do RUN) */
+    s_scene = lv_obj_create(scr);
+    lv_obj_set_size(s_scene, 308, 94);
+    lv_obj_clear_flag(s_scene, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_bg_opa(s_scene, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(s_scene, 0, 0);
+    lv_obj_set_style_pad_all(s_scene, 0, 0);
+    lv_obj_set_pos(s_scene, 6, 80);
+    lv_obj_add_flag(s_scene, LV_OBJ_FLAG_HIDDEN);
+    s_car_body   = mk_rect(s_scene, 6, 34, 64, 24, 6, cfg->accent);
+    s_car_roof   = mk_rect(s_scene, 18, 20, 40, 16, 6, cfg->accent);
+    s_wheel[0]   = mk_rect(s_scene, 12, 50, 14, 14, LV_RADIUS_CIRCLE, COL_INK);
+    s_wheel[1]   = mk_rect(s_scene, 50, 50, 14, 14, LV_RADIUS_CIRCLE, COL_INK);
+    s_ground     = mk_rect(s_scene, 0, 66, 308, 2, 0, COL_LABEL);
+    s_key_head   = mk_rect(s_scene, 110, 34, 18, 18, LV_RADIUS_CIRCLE, 0xF4B400);
+    s_key_stem   = mk_rect(s_scene, 128, 40, 14, 4, 0, 0xF4B400);
+    s_scene_line = mk_rect(s_scene, 72, 46, 38, 2, 0, COL_LABEL);
+    s_scene_lbl  = lv_label_create(s_scene);
+    lv_label_set_text(s_scene_lbl, "");
+    lv_obj_set_width(s_scene_lbl, 308);
+    lv_obj_set_style_text_align(s_scene_lbl, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_font(s_scene_lbl, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_color(s_scene_lbl, lv_color_hex(COL_VALUE), 0);
+    lv_obj_set_pos(s_scene_lbl, 0, 14);
 
     build_mascot(scr, cfg->mascot, cfg->accent);
     s_base_y = 2;
@@ -566,6 +757,118 @@ void cyd_ui_spark_band(int64_t lo_us, int64_t hi_us) {
     s_band_lo = lo_us;
     s_band_hi = hi_us;
     spark_redraw();
+    cyd_display_unlock();
+}
+
+/* ---- resumo, enlace, barra, cena e splash (V-11..V-15) ------------------ */
+
+void cyd_ui_summary_show(const char *resumo, const uint16_t *bins, int nbins, const char *legenda) {
+    cyd_display_lock();
+    lv_label_set_text(s_sum_text, resumo ? resumo : "");
+    if (bins && nbins > 0) {
+        int n = nbins > 10 ? 10 : nbins;
+        uint16_t mx = 1;
+        for (int i = 0; i < n; i++) if (bins[i] > mx) mx = bins[i];
+        lv_chart_set_range(s_hist, LV_CHART_AXIS_PRIMARY_Y, 0, (lv_coord_t) mx);
+        for (int i = 0; i < n; i++)
+            lv_chart_set_value_by_id(s_hist, s_hist_ser, i, (lv_coord_t) bins[i]);
+        lv_chart_refresh(s_hist);
+    }
+    lv_label_set_text(s_hist_leg, legenda ? legenda : "");
+    s_sum_mode = 0;
+    lv_obj_clear_flag(s_sum_text, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(s_hist, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(s_hist_leg, LV_OBJ_FLAG_HIDDEN);
+    if (!s_sum_timer) s_sum_timer = lv_timer_create(sum_toggle_cb, 5000, NULL);
+    set_center(CENTER_SUMMARY);
+    cyd_display_unlock();
+}
+
+void cyd_ui_summary_hide(void) {
+    cyd_display_lock();
+    set_center(CENTER_GRID);
+    cyd_display_unlock();
+}
+
+void cyd_ui_link_pulse(int dir, const char *label) {
+    cyd_display_lock();
+    lv_obj_clear_flag(s_diag, LV_OBJ_FLAG_HIDDEN);
+    if (label) lv_label_set_text(s_diag_lbl, label);
+    int x0 = dir == 0 ? 135 : 9;          /* dir 0: B -> A (desafio); dir 1: A -> B (resposta) */
+    int x1 = dir == 0 ? 9 : 135;
+    lv_anim_del(s_diag_dot, NULL);
+    lv_obj_set_x(s_diag_dot, x0);
+    lv_obj_clear_flag(s_diag_dot, LV_OBJ_FLAG_HIDDEN);
+    lv_anim_t a;
+    lv_anim_init(&a);
+    lv_anim_set_var(&a, s_diag_dot);
+    lv_anim_set_values(&a, x0, x1);
+    lv_anim_set_time(&a, 350);            /* animacao curta e legivel; o tempo real vai no texto */
+    lv_anim_set_exec_cb(&a, anim_set_x);
+    lv_anim_set_ready_cb(&a, link_anim_done);
+    lv_anim_start(&a);
+    cyd_display_unlock();
+}
+
+void cyd_ui_stack_bar(int64_t a_us, int64_t b_us) {
+    cyd_display_lock();
+    if (a_us < 0 || b_us < 0 || a_us + b_us <= 0) {
+        lv_obj_add_flag(s_stk_a, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(s_stk_b, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        int wa = (int) (308 * a_us / (a_us + b_us));
+        if (wa < 1) wa = 1;
+        if (wa > 307) wa = 307;
+        lv_obj_set_size(s_stk_a, wa, 12);
+        lv_obj_set_pos(s_stk_a, 6, 182);
+        lv_obj_set_size(s_stk_b, 308 - wa, 12);
+        lv_obj_set_pos(s_stk_b, 6 + wa, 182);
+        lv_obj_clear_flag(s_stk_a, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(s_stk_b, LV_OBJ_FLAG_HIDDEN);
+    }
+    cyd_display_unlock();
+}
+
+void cyd_ui_scene(int dist_x10, int ms) {
+    cyd_display_lock();
+    scene_place(dist_x10);
+    set_center(CENTER_SCENE);
+    if (s_scene_timer) { lv_timer_del(s_scene_timer); s_scene_timer = NULL; }
+    s_scene_timer = lv_timer_create(scene_end_cb, ms > 0 ? (uint32_t) ms : 1000, NULL);
+    lv_timer_set_repeat_count(s_scene_timer, 1);
+    cyd_display_unlock();
+}
+
+static void splash_end_cb(lv_timer_t *t) {
+    lv_obj_del((lv_obj_t *) t->user_data);
+}
+
+void cyd_ui_splash(const char *subtitle, int ms) {
+    cyd_display_lock();
+    lv_obj_t *ov = lv_obj_create(lv_layer_top());
+    lv_obj_set_size(ov, 320, 240);
+    lv_obj_clear_flag(ov, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_bg_color(ov, lv_color_hex(COL_BG), 0);
+    lv_obj_set_style_bg_opa(ov, LV_OPA_COVER, 0);
+    lv_obj_set_style_border_width(ov, 0, 0);
+    lv_obj_set_style_radius(ov, 0, 0);
+    lv_obj_set_style_pad_all(ov, 0, 0);
+    lv_obj_set_pos(ov, 0, 0);
+    mk_rect(ov, 0, 0, 320, 6, 0, s_accent);
+    lv_obj_t *tit = lv_label_create(ov);
+    lv_label_set_text(tit, s_title);
+    lv_obj_set_style_text_font(tit, &lv_font_montserrat_28, 0);
+    lv_obj_set_style_text_color(tit, lv_color_hex(0xffffff), 0);
+    lv_obj_align(tit, LV_ALIGN_CENTER, 0, -18);
+    char sub[48];
+    snprintf(sub, sizeof sub, "fw %s", subtitle ? subtitle : "?");
+    lv_obj_t *sl = lv_label_create(ov);
+    lv_label_set_text(sl, sub);
+    lv_obj_set_style_text_font(sl, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_color(sl, lv_color_hex(COL_LABEL), 0);
+    lv_obj_align(sl, LV_ALIGN_CENTER, 0, 22);
+    lv_timer_t *tm = lv_timer_create(splash_end_cb, ms > 0 ? (uint32_t) ms : 1000, ov);
+    lv_timer_set_repeat_count(tm, 1);
     cyd_display_unlock();
 }
 

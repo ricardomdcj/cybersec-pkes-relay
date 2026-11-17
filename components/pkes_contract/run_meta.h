@@ -10,3 +10,6 @@
  * `idf.py reconfigure` antes do build, senao a linha mostra o commit anterior.
  */
 void run_meta_print(const char *papel);
+
+/* Commit curto da fonte (com +mod se houver mudancas), para o splash da tela (V-15). */
+const char *run_meta_commit(void);

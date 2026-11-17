@@ -173,6 +173,69 @@ static void update_stats_line(void)
 /* ---- comandos de bancada (RUN, START) ----------------------------------- */
 
 /* Copia o valor de "chave=valor" de uma linha, ate o proximo espaco. */
+/* Copia os RTTs respondidos em 's', ordenados (insercao; ate ROUNDS valores). */
+static void sorted_answered(int64_t *s)
+{
+    memcpy(s, s_ans, (size_t) s_n_ans * sizeof s[0]);
+    for (int i = 1; i < s_n_ans; i++) {
+        int64_t v = s[i];
+        int j = i - 1;
+        while (j >= 0 && s[j] > v) { s[j + 1] = s[j]; j--; }
+        s[j + 1] = v;
+    }
+}
+
+/* Resumo final da campanha (V-11): 3 linhas de texto e histograma de 10 faixas entre min e max. */
+static void send_summary(void)
+{
+    char l1[96], l2[96], l3[64], txt[320], leg[96];
+    snprintf(l1, sizeof l1, "OK %d/%d (%d%%)  falha %d  tmo %d",
+             ok_count, ROUNDS, ok_count * 100 / ROUNDS, fail_count, timeout_count);
+    if (s_n_ans == 0) {
+        snprintf(txt, sizeof txt, "%s\nsem respostas", l1);
+        cyd_ui_summary_show(txt, NULL, 0, "");
+        return;
+    }
+    int n = s_n_ans;
+    int64_t s[ROUNDS];
+    sorted_answered(s);
+    int64_t med = (n % 2) ? s[n / 2] : (s[n / 2 - 1] + s[n / 2]) / 2;
+    int64_t q1 = s[(n - 1) / 4];
+    int64_t q3 = s[(n - 1) * 3 / 4];
+    char mn[24], mx[24], md[24], a1[24], a3[24];
+    fmt_ms1(mn, sizeof mn, s[0]);
+    fmt_ms1(mx, sizeof mx, s[n - 1]);
+    fmt_ms1(md, sizeof md, med);
+    fmt_ms1(a1, sizeof a1, q1);
+    fmt_ms1(a3, sizeof a3, q3);
+    snprintf(l2, sizeof l2, "med %s  IQR %s a %s ms", md, a1, a3);
+    snprintf(l3, sizeof l3, "min %s  max %s ms", mn, mx);
+    snprintf(txt, sizeof txt, "%s\n%s\n%s", l1, l2, l3);
+
+    uint16_t bins[10] = {0};
+    int64_t w = (s[n - 1] - s[0]) / 10 + 1;
+    for (int i = 0; i < n; i++) {
+        int k = (int) ((s[i] - s[0]) / w);
+        if (k > 9) k = 9;
+        bins[k]++;
+    }
+    snprintf(leg, sizeof leg, "%s ms ... %s ms", mn, mx);
+    cyd_ui_summary_show(txt, bins, 10, leg);
+}
+
+/* "3.0" -> 30, "3" -> 30, "0.5" -> 5 (so a primeira casa decimal). Qualquer outra coisa -> 0. */
+static int dist_to_x10(const char *s)
+{
+    int inteiro = 0, decimo = 0;
+    const char *p = s;
+    while (*p >= '0' && *p <= '9') { inteiro = inteiro * 10 + (*p - '0'); p++; }
+    if (*p == '.' || *p == ',') {
+        p++;
+        if (*p >= '0' && *p <= '9') decimo = *p - '0';
+    }
+    return inteiro * 10 + decimo;
+}
+
 static bool kv_get(const char *line, const char *key, char *out, size_t cap)
 {
     const char *p = strstr(line, key);
@@ -203,6 +266,7 @@ static void start_campaign(void)
     rtt_sum = 0; rtt_min = INT64_MAX; rtt_max = 0;
     s_n_ans = 0;
     update_stats_line();
+    cyd_ui_summary_hide();                                                     /* V-11 */
     cyd_ui_spark_reset();                                                      /* V-07a */
     cyd_ui_spark_band(BASELINE_BAND_MIN_US, BASELINE_BAND_MAX_US);             /* V-07b */
     ESP_LOGI(TAG, "campanha iniciada: rotulo=%s dist=%s rodadas=%d intervalo=%d ms timeout=%d ms",
@@ -222,6 +286,7 @@ static void bench_cmd(const char *line)
         if (kv_get(line, "dist=", dst, sizeof dst))  snprintf(run_dist, sizeof run_dist, "%s", dst);
         run_recebido = true;
         set_tag_label();
+        if (strcmp(run_dist, "-") != 0) cyd_ui_scene(dist_to_x10(run_dist), 5000);   /* V-14 */
         ESP_LOGW(TAG, "RUN label=%s dist=%s", run_label, run_dist);
     } else if (strcmp(line, "START") == 0) {
         start_campaign();
@@ -319,6 +384,7 @@ static void finish_round(round_res_t res, int64_t rtt, const uint8_t *nonce,
                      run_label, run_dist, ROUNDS, ok_count, fail_count, timeout_count,
                      (unsigned long) desconexoes);
         }
+        send_summary();                                                     /* V-11 */
         bool limpo = (fail_count == 0 && timeout_count == 0);
         cyd_ui_set_state(limpo ? "fim: tudo OK" : "fim: com falhas",
                          limpo ? 0x1AA260 : 0xD64545);
@@ -637,6 +703,7 @@ void app_main(void)
     cyd_ui_init(&cfg);
     set_tag_label();                      /* V-06: modo = rotulo padrao ate o RUN */
     cyd_ui_set_link(CYD_LINK_BLE, 0);     /* V-06: sem conexao ainda */
+    cyd_ui_splash(run_meta_commit(), 2000);                                    /* V-15 */
 
     round_mux = xSemaphoreCreateMutex();
     if (round_mux == NULL) { ESP_LOGE(TAG, "sem mutex de rodada"); return; }

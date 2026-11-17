@@ -241,6 +241,24 @@ acentos (regra do `CLAUDE.md`), a menos que V-16b mude isso.
 > - V-09b: balao com `91.2 ms OK`, `... FALHA` ou `TIMEOUT` sobre o banner por 1,2 s, a esquerda do
 >   mascote. Ele cobre o estado do banner por um instante.
 > - Limite: a escala da sparkline e recalculada a cada rodada. Vale conferir na placa se a faixa e a
+> **Status (2026-11-17, checkpoint 05):** implementado e compilado para `esp32` (vehicle, key, relays
+> BLE A e B, selftest A e B); nao visto na tela.
+> - V-11: ao fim da campanha, a grade de cards e trocada por um painel com 3 linhas (OK e
+>   falhas, mediana e IQR, min e max) e um histograma de 10 faixas. Alterna a cada 5 s. O `START`
+>   volta para a grade.
+> - V-12: o enlace A-B ocupa a metade direita da segunda linha de cards (o 3o card vai para a
+>   esquerda). Cada desafio desenha um ponto indo de B para A; cada resposta, de A para B. O texto
+>   sob o enlace traz o tempo real do trecho. **Desvio do plano:** a animacao dura 350 ms fixos,
+>   nao o tempo real, porque 22 ms no tunel e invisivel a olho. O tempo real esta no texto.
+> - V-13: barra empilhada na linha de estatistica do Relay B: tunel | A<->chave, com a proporcao
+>   da rodada. Relay A nao mostra a barra, porque nao conhece o tunel.
+> - V-14: ao receber `RUN dist=...`, a tela mostra o carro e a chave por 5 s. A chave fica em
+>   110 px para 0 m e 260 px para 10 m (limite x 280). **Desvio:** a cena some depois de 5 s, nao
+>   fica durante a campanha, porque a grade precisa das linhas de cards.
+> - V-15: splash de 2 s no boot com o titulo do papel e o commit (`fw ...`). **Desvio:** sem
+>   mascote no splash, para evitar desenhar o mascote duas vezes. Ele fica no fundo.
+> - Limite: a animacao de V-12 e o balao de V-09b podem cobrir o banner por instantes. Conferir
+>   na placa.
 >   marca vermelha ficam legiveis em 102 px.
 
 > **Status (2026-11-17):** implementado e compilado para `esp32` (vehicle, key, relays BLE A e B,
@@ -296,29 +314,29 @@ acentos (regra do `CLAUDE.md`), a menos que V-16b mude isso.
 - [x] **V-10. LED por rodada.** Verde curto para OK, vermelho para FALHA, amarelo para TIMEOUT, e
   depois volta ao respiro da cor do estado (`cyd_led_set`). **Depende de:** M-02.
 
-- [ ] **V-11a. Histograma em RAM.** Guardar os RTTs da campanha e desenhar um histograma de 10
+- [x] **V-11a. Histograma em RAM.** Guardar os RTTs da campanha e desenhar um histograma de 10
   barras. **Depende de:** V-02.
 
-- [ ] **V-11b. Tela de resumo final.** Ao fim da campanha, alternar entre o resumo (OK%, mediana,
+- [x] **V-11b. Tela de resumo final.** Ao fim da campanha, alternar entre o resumo (OK%, mediana,
   IQR) e o histograma a cada 5 s. **Depende de:** V-11a, V-08.
 
-- [ ] **V-12a. Desenho do enlace no relay.** Dois nós (A e B) com uma linha tracejada entre eles,
+- [x] **V-12a. Desenho do enlace no relay.** Dois nós (A e B) com uma linha tracejada entre eles,
   na faixa de cena (y 28–107). **Depende de:** V-01.
 
-- [ ] **V-12b. Pacote animado com tempo real.** Um ponto percorre a linha durante o tempo medido
+- [x] **V-12b. Pacote animado com tempo real.** Um ponto percorre a linha durante o tempo medido
   do trecho (por exemplo, 22 ms no túnel). A velocidade é a real, não uma animação fixa.
   **Depende de:** V-12a, M-05.
 
-- [ ] **V-13. Barra empilhada da última rodada.** O Relay B mostra uma barra dividida em túnel e
+- [x] **V-13. Barra empilhada da última rodada.** O Relay B mostra uma barra dividida em túnel e
   A↔chave, com o total. **Depende de:** M-05, V-02.
 
-- [ ] **V-14a. Cena do carro e da chave.** Desenho estático de carro e chave na faixa de cena, no
+- [x] **V-14a. Cena do carro e da chave.** Desenho estático de carro e chave na faixa de cena, no
   estilo das cenas do deskrab. **Depende de:** V-01.
 
-- [ ] **V-14b. Distância na cena.** Posicionar a chave proporcional à distância informada no
+- [x] **V-14b. Distância na cena.** Posicionar a chave proporcional à distância informada no
   comando `RUN`, com escala e limite. **Depende de:** V-14a, M-14b.
 
-- [ ] **V-15. Splash de identidade.** Na inicialização, título, mascote e o commit curto de
+- [x] **V-15. Splash de identidade.** Na inicialização, título, mascote e o commit curto de
   `RUN_META`, por 2 s. **Depende de:** M-13a.
 
 - [ ] **V-16a. Fontes com acentos (opcional).** Gerar fontes Latin-1 com o
@@ -456,10 +474,12 @@ Nada vai para o remoto sem pedido. Os branches ficam locais.
 | `ckpt/02-visual-basico` | V-02, V-03, V-04, V-05, V-10 | compilado para esp32, nao gravado, nao visto na tela |
 | `ckpt/03-topo-estatistica` | V-06, V-08 | compilado para esp32, nao gravado, nao visto na tela |
 | `ckpt/04-sparkline-mascote` | V-07a, V-07b, V-09a, V-09b | compilado para esp32, nao gravado, nao visto na tela |
+| `ckpt/05-visual-restante` | V-11a, V-11b, V-12a, V-12b, V-13, V-14a, V-14b, V-15 | compilado para esp32, nao gravado, nao visto na tela |
 
 Regra para voltar: ao gravar, teste do branch mais novo para o mais antigo. Se o mais novo
 falhar, volte um branch, grave e teste de novo. Os itens M-01 a M-05 estao no mesmo commit que os
 demais (o `vehicle/main/main.c` mudou de uma vez), entao nao ha como reverter so eles.
+
 
 
 

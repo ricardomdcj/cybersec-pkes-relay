@@ -31,6 +31,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "esp_log.h"
 #include "esp_timer.h"
@@ -170,6 +171,7 @@ static int gatt_access(uint16_t conn_handle, uint16_t attr_handle,
                      (long long) s_t_chal_us);
             ESP_LOGI(TAG, "desafio do veiculo (%u B) -> tunel", olen);
             forward_challenge(s_round, nonce);
+            cyd_ui_link_pulse(0, NULL);                                           /* V-12: desafio chega ao B e segue para A */
             s_from_vehicle++;
             cyd_ui_set_field(F_VEIC, "%lu", (unsigned long) s_from_vehicle);
             cyd_ui_pulse();
@@ -352,6 +354,14 @@ static void notify_worker(void *arg)
         char turn_txt[24];                                                 /* V-04 */
         cyd_fmt_us(turn_txt, sizeof turn_txt, turn);
         cyd_ui_set_field(F_RTT, "%s", turn_txt);
+        {   /* V-12/V-13: resposta A -> B com o tempo do tunel; barra tunel | A<->chave */
+            int64_t tunel = turn - (int64_t) it.turn_a_us;
+            char tv[24], lbl[32];
+            cyd_fmt_us(tv, sizeof tv, tunel);
+            snprintf(lbl, sizeof lbl, "tunel %s", tv);
+            cyd_ui_link_pulse(1, lbl);
+            cyd_ui_stack_bar(tunel, (int64_t) it.turn_a_us);
+        }
         cyd_ui_set_hex(0, it.data, RESPONSE_LEN);
         cyd_ui_pulse();
     }
@@ -393,6 +403,11 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
         char rtt_txt[24];
         cyd_fmt_us(rtt_txt, sizeof rtt_txt, rtt);
         cyd_ui_set_field(F_RTT, "%s", rtt_txt);
+        {   /* V-12: no autoteste o enlace mostra o RTT do tunel */
+            char lbl[32];
+            snprintf(lbl, sizeof lbl, "RTT %s", rtt_txt);
+            cyd_ui_link_pulse(1, lbl);
+        }
         cyd_ui_set_hex(0, data, (int) len);
         cyd_ui_pulse();
     }
@@ -422,7 +437,8 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
 void relay_b_start(void)
 {
     relay_b_ui_init();
-    run_meta_print("relay-b");                                            /* M-13b */
+    run_meta_print("relay-b");
+    cyd_ui_splash(run_meta_commit(), 2000);                               /* V-15 */                                            /* M-13b */
 #if RELAY_LINK_SELFTEST
     cyd_ui_set_tag("SELFTEST");                                           /* V-06 */
 #else

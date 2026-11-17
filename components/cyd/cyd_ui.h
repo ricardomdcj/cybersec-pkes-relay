@@ -87,3 +87,23 @@ void cyd_ui_badge(const char *text, uint32_t color, int ms);
 void cyd_ui_spark_reset(void);
 void cyd_ui_spark_push(int64_t us);
 void cyd_ui_spark_band(int64_t lo_us, int64_t hi_us);
+
+// V-11: resumo final da campanha. Alterna a cada 5 s entre o texto (3 linhas separadas por \n)
+// e o histograma (ate 10 barras). legenda: texto embaixo do histograma. Esconde a grade.
+void cyd_ui_summary_show(const char *resumo, const uint16_t *bins, int nbins, const char *legenda);
+// Volta a grade de cards (inicio de nova campanha).
+void cyd_ui_summary_hide(void);
+
+// V-12: enlace entre os dois relays, no lugar do ultimo card (metade direita da linha 2).
+// dir 0 = B->A (desafio), dir 1 = A->B (resposta). label: texto sob o enlace; NULL mantem.
+void cyd_ui_link_pulse(int dir, const char *label);
+
+// V-13: barra empilhada na linha de estatistica: a = parte do tunel, b = parte A<->chave.
+// a < 0 ou b < 0 esconde.
+void cyd_ui_stack_bar(int64_t a_us, int64_t b_us);
+
+// V-14: cena do carro e da chave, com a chave a dist_x10 decimos de metro, por ms milissegundos.
+void cyd_ui_scene(int dist_x10, int ms);
+
+// V-15: splash no boot: titulo do papel e subtitulo (ex.: commit), por ms milissegundos.
+void cyd_ui_splash(const char *subtitle, int ms);

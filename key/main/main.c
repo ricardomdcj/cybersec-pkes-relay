@@ -259,6 +259,7 @@ void app_main(void)
     cyd_ui_init(&cfg);
     cyd_ui_set_field(F_DESAFIOS, "0");
     cyd_ui_set_link(CYD_LINK_BLE, 0);                                     /* V-06: sem veiculo ainda */
+    cyd_ui_splash(run_meta_commit(), 2000);                               /* V-15 */
 
     ret = nimble_port_init();
     if (ret != ESP_OK) { ESP_LOGE(TAG, "nimble_port_init rc=%d", ret); return; }

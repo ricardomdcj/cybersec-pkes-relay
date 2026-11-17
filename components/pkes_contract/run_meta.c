@@ -14,3 +14,8 @@ void run_meta_print(const char *papel)
 {
     ESP_LOGI("RUN_META", "papel=%s fw=%s build=%s", papel, RUN_GIT_COMMIT, RUN_BUILD_TIME);
 }
+
+const char *run_meta_commit(void)
+{
+    return RUN_GIT_COMMIT;
+}

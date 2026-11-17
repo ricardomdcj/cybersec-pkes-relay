@@ -30,6 +30,7 @@
 #include "run_meta.h"
 
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include "esp_log.h"
 #include "esp_timer.h"
@@ -142,6 +143,10 @@ static void handle_notify(struct ble_gap_event *event)
     memcpy(frame + LINK_SEQ_LEN, &turn_u32, 4);
     memcpy(frame + LINK_SEQ_LEN + 4, resp, RESPONSE_LEN);
 
+    char lbl[24], val[16];                                                /* V-12: resposta A -> B */
+    cyd_fmt_us(val, sizeof val, turn);
+    snprintf(lbl, sizeof lbl, "chave %s", val);
+    cyd_ui_link_pulse(1, lbl);
     ESP_LOGI(TAG, "HMAC da chave (%u B) -> tunel", olen);
     link_send(LINK_MSG_RESPONSE, frame, sizeof frame);
 
@@ -372,6 +377,7 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
 {
     switch (type) {
     case LINK_MSG_CHALLENGE:
+        cyd_ui_link_pulse(0, NULL);                                           /* V-12: desafio B -> A */
         s_from_tunnel++;
         cyd_ui_set_field(F_TUNEL, "%lu", (unsigned long) s_from_tunnel);
         cyd_ui_set_hex(0, data + (len >= LINK_SEQ_LEN ? LINK_SEQ_LEN : 0),
@@ -408,7 +414,8 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
 void relay_a_start(void)
 {
     relay_a_ui_init();
-    run_meta_print("relay-a");                                            /* M-13b */
+    run_meta_print("relay-a");
+    cyd_ui_splash(run_meta_commit(), 2000);                               /* V-15 */                                            /* M-13b */
 #if RELAY_LINK_SELFTEST
     cyd_ui_set_tag("SELFTEST");                                           /* V-06 */
 #else
