@@ -28,3 +28,11 @@
 #ifndef RELAY_LINK_SELFTEST
 #define RELAY_LINK_SELFTEST 1
 #endif
+
+/* MAC do outro relay (M-06b), no formato {0xAA,0xBB,...}. Cada placa precisa do MAC da
+ * OUTRA: o Relay A coloca aqui o MAC do B, e o Relay B o MAC do A. Os MACs saem no log de
+ * boot ("MAC desta placa"). Enquanto estiver zerado, o enlace usa broadcast como antes.
+ * Broadcast nao tem ACK da camada MAC, entao a perda do tunel nao aparece na contagem. */
+#ifndef RELAY_PEER_MAC
+#define RELAY_PEER_MAC {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+#endif

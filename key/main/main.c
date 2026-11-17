@@ -28,6 +28,8 @@
 #include "services/gatt/ble_svc_gatt.h"
 
 #include "ble_contract.h"
+#include "ble_link_params.h"
+#include "run_meta.h"
 #include "pkes_hmac.h"
 #include "cyd_display.h"
 #include "cyd_led.h"
@@ -44,6 +46,7 @@ static uint16_t g_conn = BLE_HS_CONN_HANDLE_NONE;
 static uint16_t h_response_val;
 static uint8_t  last_response[RESPONSE_LEN];
 static uint32_t challenge_count;
+static uint32_t desconexoes;      /* quedas da conexao com o veiculo desde o boot (M-12) */
 
 /* ids dos campos na UI (ordem dos rotulos em cfg.fields). */
 enum { F_DESAFIOS = 0, F_CALC_US = 1 };
@@ -143,6 +146,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
         if (event->connect.status == 0) {
             g_conn = event->connect.conn_handle;
             ESP_LOGI(TAG, "veiculo conectado (handle %u)", g_conn);
+            ble_link_log_conn(TAG, g_conn);                                    /* M-10 */
             cyd_ui_set_state("conectado", 0x1AA260);
         } else {
             ESP_LOGE(TAG, "conexao falhou (status=%d); re-anuncio", event->connect.status);
@@ -151,9 +155,20 @@ static int gap_event(struct ble_gap_event *event, void *arg)
         break;
 
     case BLE_GAP_EVENT_DISCONNECT:
-        ESP_LOGI(TAG, "veiculo desconectou (reason=%d); re-anuncio", event->disconnect.reason);
+        desconexoes++;                                                    /* M-12 */
+        ESP_LOGW(TAG, "veiculo desconectou (reason=%d, desconexoes=%lu); re-anuncio",
+                 event->disconnect.reason, (unsigned long) desconexoes);
         g_conn = BLE_HS_CONN_HANDLE_NONE;
         start_advertising();
+        break;
+
+    case BLE_GAP_EVENT_CONN_UPDATE:                                       /* M-10 */
+        if (event->conn_update.status == 0)
+            ble_link_log_conn(TAG, event->conn_update.conn_handle);
+        break;
+
+    case BLE_GAP_EVENT_MTU:                                               /* M-11 */
+        ble_link_log_mtu(TAG, event->mtu.conn_handle, event->mtu.value);
         break;
 
     case BLE_GAP_EVENT_SUBSCRIBE:
@@ -222,6 +237,7 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
     pkes_hmac_init();
+    run_meta_print("key");                                                /* M-13b */
     serial_ota_init();   /* regravacao pela UART0 sem download mode (tools/serial_ota.py) */
 
     /* UI primeiro, para a tela acender mesmo antes do BLE. */
