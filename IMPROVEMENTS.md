@@ -228,6 +228,20 @@ acentos (regra do `CLAUDE.md`), a menos que V-16b mude isso.
 > - V-08: linha `min ... med ... max ... ms` abaixo dos cards, com a mediana das rodadas
 >   respondidas. Atualiza a cada rodada; antes da primeira resposta mostra `-`.
 > - A linha fica em y 178, logo abaixo da segunda linha de cards (que termina em y 174).
+> **Status (2026-11-17, checkpoint 04):** implementado e compilado para `esp32` (vehicle, key,
+> relays BLE A e B, selftest A e B); nao visto na tela.
+> - Layout: a linha de estatistica passou para fonte 12 com 200 px de largura, em y 180. A
+>   sparkline ocupa x 212..314, y 178..196. Os cards nao mudaram.
+> - V-07a: sparkline das ultimas 30 rodadas (linha, em decimos de ms). Timeout nao vira ponto: aparece
+>   como marca vermelha na base da coluna correspondente.
+> - V-07b: faixa do baseline em branco translucido atras da linha. Vem de `BASELINE_BAND_MIN_US` e
+>   `BASELINE_BAND_MAX_US` no veiculo (padrao 0 = sem faixa). Preencher com o min e o max do baseline medido.
+> - V-09a: expressao do mascote por 1,5 s. OK: olhos fechados e sorriso. FALHA: olhos vermelhos e boca
+>   reta. TIMEOUT: olhos grandes e boca de surpresa.
+> - V-09b: balao com `91.2 ms OK`, `... FALHA` ou `TIMEOUT` sobre o banner por 1,2 s, a esquerda do
+>   mascote. Ele cobre o estado do banner por um instante.
+> - Limite: a escala da sparkline e recalculada a cada rodada. Vale conferir na placa se a faixa e a
+>   marca vermelha ficam legiveis em 102 px.
 
 > **Status (2026-11-17):** implementado e compilado para `esp32` (vehicle, key, relays BLE A e B,
 > selftest A e B); nao visto na tela, falta conferir na placa. Sem simulador (V-17) ainda.
@@ -263,20 +277,20 @@ acentos (regra do `CLAUDE.md`), a menos que V-16b mude isso.
 - [x] **V-06. Barra de topo com estado.** Modo (`BASELINE` ou `RELAY`), indicador BLE e indicador
   ESP-NOW, à direita, no estilo da barra de topo do deskrab. **Depende de:** V-01, M-14b.
 
-- [ ] **V-07a. Sparkline das últimas 30 rodadas.** Gráfico de linha (`lv_chart`) com as últimas 30
+- [x] **V-07a. Sparkline das últimas 30 rodadas.** Gráfico de linha (`lv_chart`) com as últimas 30
   rodadas. Medir o uso do pool do LVGL depois (o deskrab usa 72 KB e fica perto de 40%). **Depende
   de:** V-02.
 
-- [ ] **V-07b. Faixa de referência e marcas de perda.** Sombrear a faixa min–máx do baseline no
+- [x] **V-07b. Faixa de referência e marcas de perda.** Sombrear a faixa min–máx do baseline no
   gráfico e marcar TIMEOUT com um traço vermelho. **Depende de:** V-07a, M-02.
 
 - [x] **V-08. Estatística ao vivo.** Linha `min 83  med 91  max 98 ms`, atualizada a cada rodada.
   **Depende de:** V-02.
 
-- [ ] **V-09a. Expressões do mascote.** Olhos em arco para OK, olhos em X e boca reta para FALHA,
+- [x] **V-09a. Expressões do mascote.** Olhos em arco para OK, olhos em X e boca reta para FALHA,
   um "?" para TIMEOUT. Usar as poses de `build_mascot` em `cyd_ui.c`. **Depende de:** V-01.
 
-- [ ] **V-09b. Balão com o resultado.** Mostrar `91 ms OK` ao lado do mascote por cerca de 1 s,
+- [x] **V-09b. Balão com o resultado.** Mostrar `91 ms OK` ao lado do mascote por cerca de 1 s,
   como o `say()` do deskrab. **Depende de:** V-09a.
 
 - [x] **V-10. LED por rodada.** Verde curto para OK, vermelho para FALHA, amarelo para TIMEOUT, e
@@ -441,9 +455,11 @@ Nada vai para o remoto sem pedido. Os branches ficam locais.
 | `ckpt/01-rodada-ble-ferramentas` | M-01 a M-18, D-02, D-03, D-04a, D-04b | compilado para esp32, nao gravado |
 | `ckpt/02-visual-basico` | V-02, V-03, V-04, V-05, V-10 | compilado para esp32, nao gravado, nao visto na tela |
 | `ckpt/03-topo-estatistica` | V-06, V-08 | compilado para esp32, nao gravado, nao visto na tela |
+| `ckpt/04-sparkline-mascote` | V-07a, V-07b, V-09a, V-09b | compilado para esp32, nao gravado, nao visto na tela |
 
 Regra para voltar: ao gravar, teste do branch mais novo para o mais antigo. Se o mais novo
 falhar, volte um branch, grave e teste de novo. Os itens M-01 a M-05 estao no mesmo commit que os
 demais (o `vehicle/main/main.c` mudou de uma vez), entao nao ha como reverter so eles.
+
 
 

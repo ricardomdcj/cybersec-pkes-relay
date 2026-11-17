@@ -43,6 +43,26 @@ static esp_timer_handle_t s_flash_timer;
 static lv_obj_t *s_tag_lbl;
 static lv_obj_t *s_link_dot[2], *s_link_lbl[2];
 static lv_obj_t *s_stats_lbl;
+
+/* mascote: expressao temporaria (V-09a) e balao de resultado (V-09b) */
+static lv_obj_t *s_mouth;
+typedef enum { EXPR_NORMAL, EXPR_OK, EXPR_FALHA, EXPR_TIMEOUT } expr_t;
+static volatile expr_t s_expr = EXPR_NORMAL;
+static volatile int    s_expr_until;
+static lv_obj_t       *s_badge;
+static volatile int    s_badge_until;
+
+/* sparkline das rodadas (V-07a/b). Valores do grafico em decimos de ms (cabem em int16). */
+#define SPARK_N  30
+#define SPARK_W  102
+#define SPARK_H  18
+#define SPARK_X  212
+#define SPARK_Y  178
+static lv_obj_t          *s_spark, *s_band, *s_rug[SPARK_N];
+static lv_chart_series_t *s_ser;
+static int64_t s_win[SPARK_N];        /* us; -1 = timeout, -2 = vazio */
+static int64_t s_band_lo, s_band_hi;  /* us; hi <= lo = sem faixa */
+static bool    s_spark_on;
 #define COL_LINK_OK   0x1AA260
 #define COL_LINK_DOWN 0xD64545
 
@@ -119,6 +139,7 @@ static void build_mascot(lv_obj_t *scr, cyd_mascot_t kind, uint32_t accent) {
     lv_obj_set_style_radius(mouth, 2, 0);
     lv_obj_set_style_border_width(mouth, 0, 0);
     lv_obj_align(mouth, LV_ALIGN_CENTER, 0, 10);
+    s_mouth = mouth;
 
     /* acessorio que identifica o papel */
     switch (kind) {
@@ -182,8 +203,27 @@ static void mascot_tick(lv_timer_t *t) {
 
     /* piscar: ~a cada 45 ticks (~2,7 s), olhos fechados por 2 ticks */
     bool closed = (s_tick % 45) >= 43;
-    lv_obj_set_height(s_eye[0], closed ? 2 : 8);
-    lv_obj_set_height(s_eye[1], closed ? 2 : 8);
+
+    /* expressao temporaria (V-09a): volta ao normal quando o prazo passa */
+    if (s_expr != EXPR_NORMAL && s_tick >= s_expr_until) s_expr = EXPR_NORMAL;
+    int eye_h = closed ? 2 : 8, mouth_w = 14, mouth_h = 4, mouth_dy = 10;
+    uint32_t eye_col = COL_INK;
+    switch (s_expr) {
+    case EXPR_OK:      eye_h = 2;  mouth_w = 18; mouth_h = 6; mouth_dy = 9;  break;  /* sorriso */
+    case EXPR_FALHA:   eye_col = 0xD64545; mouth_w = 14; mouth_h = 2; mouth_dy = 11; break;
+    case EXPR_TIMEOUT: eye_h = 10; mouth_w = 6;  mouth_h = 6; mouth_dy = 9;  break;  /* surpreso */
+    default: break;
+    }
+    lv_obj_set_height(s_eye[0], eye_h);
+    lv_obj_set_height(s_eye[1], eye_h);
+    lv_obj_set_style_bg_color(s_eye[0], lv_color_hex(eye_col), 0);
+    lv_obj_set_style_bg_color(s_eye[1], lv_color_hex(eye_col), 0);
+    lv_obj_set_size(s_mouth, mouth_w, mouth_h);
+    lv_obj_align(s_mouth, LV_ALIGN_CENTER, 0, mouth_dy);
+
+    /* balao de resultado (V-09b): some quando o prazo passa */
+    if (s_badge && !lv_obj_has_flag(s_badge, LV_OBJ_FLAG_HIDDEN) && s_tick >= s_badge_until)
+        lv_obj_add_flag(s_badge, LV_OBJ_FLAG_HIDDEN);
 
     /* ponta da antena pisca (so no relay) */
     if (s_ant_tip) {
@@ -317,8 +357,66 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     s_stats_lbl = lv_label_create(scr);
     lv_label_set_text(s_stats_lbl, "");
     lv_obj_set_style_text_color(s_stats_lbl, lv_color_hex(COL_VALUE), 0);
-    lv_obj_set_style_text_font(s_stats_lbl, &lv_font_montserrat_14, 0);
-    lv_obj_align(s_stats_lbl, LV_ALIGN_TOP_LEFT, 6, 178);
+    lv_obj_set_style_text_font(s_stats_lbl, &lv_font_montserrat_12, 0);
+    lv_label_set_long_mode(s_stats_lbl, LV_LABEL_LONG_CLIP);
+    lv_obj_set_width(s_stats_lbl, 200);                   /* deixa x 212..314 para a sparkline */
+    lv_obj_align(s_stats_lbl, LV_ALIGN_TOP_LEFT, 6, SPARK_Y + 2);
+
+    /* V-07: faixa do baseline (atras do grafico), sparkline e marcas de timeout (rug) */
+    s_band = lv_obj_create(scr);
+    lv_obj_set_size(s_band, SPARK_W, SPARK_H);
+    lv_obj_clear_flag(s_band, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_bg_color(s_band, lv_color_hex(0xffffff), 0);
+    lv_obj_set_style_bg_opa(s_band, LV_OPA_20, 0);
+    lv_obj_set_style_radius(s_band, 0, 0);
+    lv_obj_set_style_border_width(s_band, 0, 0);
+    lv_obj_set_style_pad_all(s_band, 0, 0);
+    lv_obj_set_pos(s_band, SPARK_X, SPARK_Y);
+    lv_obj_add_flag(s_band, LV_OBJ_FLAG_HIDDEN);
+
+    s_spark = lv_chart_create(scr);
+    lv_obj_set_size(s_spark, SPARK_W, SPARK_H);
+    lv_obj_set_pos(s_spark, SPARK_X, SPARK_Y);
+    lv_chart_set_type(s_spark, LV_CHART_TYPE_LINE);
+    lv_chart_set_point_count(s_spark, SPARK_N);
+    lv_chart_set_div_line_count(s_spark, 0, 0);
+    lv_chart_set_update_mode(s_spark, LV_CHART_UPDATE_MODE_SHIFT);
+    lv_obj_set_style_bg_opa(s_spark, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(s_spark, 0, 0);
+    lv_obj_set_style_pad_all(s_spark, 0, 0);
+    lv_obj_set_style_line_width(s_spark, 2, LV_PART_ITEMS);
+    lv_obj_set_style_size(s_spark, 0, LV_PART_INDICATOR);       /* sem marcadores nos pontos */
+    s_ser = lv_chart_add_series(s_spark, lv_color_hex(cfg->accent), LV_CHART_AXIS_PRIMARY_Y);
+    lv_obj_add_flag(s_spark, LV_OBJ_FLAG_HIDDEN);
+
+    for (int i = 0; i < SPARK_N; i++) {
+        s_rug[i] = lv_obj_create(scr);
+        lv_obj_set_size(s_rug[i], 2, 2);
+        lv_obj_clear_flag(s_rug[i], LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_style_bg_color(s_rug[i], lv_color_hex(0xD64545), 0);
+        lv_obj_set_style_bg_opa(s_rug[i], LV_OPA_COVER, 0);
+        lv_obj_set_style_radius(s_rug[i], 0, 0);
+        lv_obj_set_style_border_width(s_rug[i], 0, 0);
+        lv_obj_set_style_pad_all(s_rug[i], 0, 0);
+        lv_obj_set_pos(s_rug[i], SPARK_X + i * SPARK_W / SPARK_N, SPARK_Y + SPARK_H - 2);
+        lv_obj_add_flag(s_rug[i], LV_OBJ_FLAG_HIDDEN);
+    }
+    for (int i = 0; i < SPARK_N; i++) s_win[i] = -2;
+    s_band_lo = s_band_hi = 0;
+    s_spark_on = false;
+
+    /* V-06/V-09b: balao de resultado sobre o banner, a esquerda do mascote (x 256..314) */
+    s_badge = lv_label_create(scr);
+    lv_label_set_text(s_badge, "");
+    lv_obj_set_style_text_font(s_badge, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_color(s_badge, lv_color_hex(0xffffff), 0);
+    lv_obj_set_style_bg_color(s_badge, lv_color_hex(0x1AA260), 0);
+    lv_obj_set_style_bg_opa(s_badge, LV_OPA_COVER, 0);
+    lv_obj_set_style_radius(s_badge, 6, 0);
+    lv_obj_set_style_pad_hor(s_badge, 6, 0);
+    lv_obj_set_style_pad_ver(s_badge, 3, 0);
+    lv_obj_align(s_badge, LV_ALIGN_TOP_LEFT, 136, 46);
+    lv_obj_add_flag(s_badge, LV_OBJ_FLAG_HIDDEN);
 
     build_mascot(scr, cfg->mascot, cfg->accent);
     s_base_y = 2;
@@ -370,6 +468,105 @@ void cyd_ui_set_hex(int idx, const uint8_t *data, int n) {
 
 void cyd_ui_pulse(void) {
     s_hop = 16;   /* o timer de animacao faz o pulo decair */
+}
+
+/* ---- expressao, balao e sparkline (V-07, V-09) ------------------------- */
+
+void cyd_ui_expression(cyd_expr_t e, int ms) {
+    cyd_display_lock();
+    s_expr = (expr_t) e;
+    s_expr_until = s_tick + ms / 60;     /* o timer do mascote roda a cada 60 ms */
+    cyd_display_unlock();
+}
+
+void cyd_ui_badge(const char *text, uint32_t color, int ms) {
+    cyd_display_lock();
+    if (s_badge) {
+        lv_label_set_text(s_badge, text ? text : "");
+        lv_obj_set_style_bg_color(s_badge, lv_color_hex(color), 0);
+        lv_obj_clear_flag(s_badge, LV_OBJ_FLAG_HIDDEN);
+        s_badge_until = s_tick + ms / 60;
+    }
+    cyd_display_unlock();
+}
+
+/* Recalcula a escala (em decimos de ms), a faixa e as marcas de timeout. Chamar com o lock. */
+static void spark_redraw(void)
+{
+    int64_t lo = 0, hi = 0;
+    bool any = false;
+    for (int i = 0; i < SPARK_N; i++) {
+        if (s_win[i] < 0) continue;
+        int64_t v = s_win[i] / 100;
+        if (!any) { lo = hi = v; any = true; }
+        if (v < lo) lo = v;
+        if (v > hi) hi = v;
+    }
+    bool band = s_spark_on && s_band_hi > s_band_lo;
+    if (band) {
+        int64_t bl = s_band_lo / 100, bh = s_band_hi / 100;
+        if (!any) { lo = bl; hi = bh; any = true; }
+        if (bl < lo) lo = bl;
+        if (bh > hi) hi = bh;
+    }
+    if (!any) { lo = 0; hi = 1; }
+    if (hi == lo) { lo -= 50; hi += 50; }          /* 5 ms de folga para linha reta */
+    int64_t pad = (hi - lo) / 10;
+    lo -= pad;
+    hi += pad;
+    lv_chart_set_range(s_spark, LV_CHART_AXIS_PRIMARY_Y, (lv_coord_t) lo, (lv_coord_t) hi);
+
+    int64_t span = hi - lo;
+    if (band) {
+        int64_t bl = s_band_lo / 100, bh = s_band_hi / 100;
+        int y0 = SPARK_Y + (int) ((hi - bh) * SPARK_H / span);
+        int y1 = SPARK_Y + (int) ((hi - bl) * SPARK_H / span);
+        if (y0 < SPARK_Y) y0 = SPARK_Y;
+        if (y1 > SPARK_Y + SPARK_H) y1 = SPARK_Y + SPARK_H;
+        if (y1 <= y0) y1 = y0 + 1;
+        lv_obj_set_pos(s_band, SPARK_X, y0);
+        lv_obj_set_height(s_band, y1 - y0);
+        lv_obj_clear_flag(s_band, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        lv_obj_add_flag(s_band, LV_OBJ_FLAG_HIDDEN);
+    }
+
+    for (int i = 0; i < SPARK_N; i++) {
+        if (s_spark_on && s_win[i] == -1) lv_obj_clear_flag(s_rug[i], LV_OBJ_FLAG_HIDDEN);
+        else                              lv_obj_add_flag(s_rug[i], LV_OBJ_FLAG_HIDDEN);
+    }
+}
+
+void cyd_ui_spark_reset(void) {
+    cyd_display_lock();
+    for (int i = 0; i < SPARK_N; i++) s_win[i] = -2;
+    if (s_spark) {
+        lv_chart_set_all_value(s_spark, s_ser, LV_CHART_POINT_NONE);
+        lv_obj_clear_flag(s_spark, LV_OBJ_FLAG_HIDDEN);
+    }
+    s_spark_on = true;
+    spark_redraw();
+    cyd_display_unlock();
+}
+
+void cyd_ui_spark_push(int64_t us) {
+    cyd_display_lock();
+    if (s_spark) {
+        for (int i = 0; i < SPARK_N - 1; i++) s_win[i] = s_win[i + 1];
+        s_win[SPARK_N - 1] = us < 0 ? -1 : us;
+        lv_chart_set_next_value(s_spark, s_ser,
+                                us < 0 ? LV_CHART_POINT_NONE : (lv_coord_t) (us / 100));
+        spark_redraw();
+    }
+    cyd_display_unlock();
+}
+
+void cyd_ui_spark_band(int64_t lo_us, int64_t hi_us) {
+    cyd_display_lock();
+    s_band_lo = lo_us;
+    s_band_hi = hi_us;
+    spark_redraw();
+    cyd_display_unlock();
 }
 
 /* ---- cabecalho e estatistica (V-06, V-08) ------------------------------ */

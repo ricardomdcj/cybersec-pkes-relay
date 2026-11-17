@@ -59,6 +59,15 @@
 #define ROUND_TIMEOUT_MS  2000
 #endif
 
+/* Faixa do baseline na sparkline (V-07b), em microssegundos. Preencha com o min e o max do
+ * baseline medido (linha "min ... max" do resumo). 0 = sem faixa. */
+#ifndef BASELINE_BAND_MIN_US
+#define BASELINE_BAND_MIN_US  0
+#endif
+#ifndef BASELINE_BAND_MAX_US
+#define BASELINE_BAND_MAX_US  0
+#endif
+
 /* Rotulo padrao da campanha, usado se nao houver comando RUN. */
 #ifndef RUN_LABEL
 #define RUN_LABEL "run"
@@ -194,6 +203,8 @@ static void start_campaign(void)
     rtt_sum = 0; rtt_min = INT64_MAX; rtt_max = 0;
     s_n_ans = 0;
     update_stats_line();
+    cyd_ui_spark_reset();                                                      /* V-07a */
+    cyd_ui_spark_band(BASELINE_BAND_MIN_US, BASELINE_BAND_MAX_US);             /* V-07b */
     ESP_LOGI(TAG, "campanha iniciada: rotulo=%s dist=%s rodadas=%d intervalo=%d ms timeout=%d ms",
              run_label, run_dist, ROUNDS, INTERVAL_MS, ROUND_TIMEOUT_MS);
     ESP_LOGI(TAG, "CSVHDR v2 label,dist_m,rodada,nonce,t_tx_us,rtt_us,resultado,rssi_dbm,itvl_1_25ms,mtu");
@@ -272,6 +283,18 @@ static void finish_round(round_res_t res, int64_t rtt, const uint8_t *nonce,
     cyd_ui_set_hex(0, nonce, NONCE_LEN);
     cyd_ui_set_hex(1, got, got_len);
     cyd_ui_pulse();
+    /* V-09: expressao do mascote e balao com o resultado; V-07a: um ponto na sparkline. */
+    cyd_ui_expression(res == RES_OK ? CYD_EXPR_OK : res == RES_FALHA ? CYD_EXPR_FALHA
+                                                                     : CYD_EXPR_TIMEOUT, 1500);
+    if (res == RES_TIMEOUT) {
+        cyd_ui_badge("TIMEOUT", 0xB8860B, 1200);
+    } else {
+        char badge[32];
+        snprintf(badge, sizeof badge, "%s %s", rtt_txt, res == RES_OK ? "OK" : "FALHA");
+        cyd_ui_badge(badge, res == RES_OK ? 0x1AA260 : 0xD64545, 1200);
+    }
+    cyd_ui_spark_push(res == RES_TIMEOUT ? -1 : rtt);
+
     /* LED por resultado (V-10): verde OK, vermelho FALHA, amarelo TIMEOUT. */
     cyd_ui_flash(res == RES_OK ? 0x1AA260 : res == RES_FALHA ? 0xD64545 : 0xF4B400, 1200);
 

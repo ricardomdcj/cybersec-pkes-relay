@@ -71,3 +71,19 @@ void cyd_ui_set_link(cyd_link_t which, int state);
 // Linha de estatistica logo abaixo dos cards (V-08), ex.: "min 83.0  med 91.2  max 97.5 ms".
 // NULL limpa a linha.
 void cyd_ui_set_stats(const char *text);
+
+// Expressao temporaria do mascote (V-09a): OK = olhos fechados e sorriso, FALHA = olhos
+// vermelhos e boca reta, TIMEOUT = surpreso. Volta ao normal depois de 'ms' milissegundos.
+typedef enum { CYD_EXPR_NORMAL = 0, CYD_EXPR_OK, CYD_EXPR_FALHA, CYD_EXPR_TIMEOUT } cyd_expr_t;
+void cyd_ui_expression(cyd_expr_t e, int ms);
+
+// Balao com um texto curto sobre o banner (V-09b), na cor dada, por 'ms' milissegundos.
+void cyd_ui_badge(const char *text, uint32_t color, int ms);
+
+// Sparkline das ultimas 30 rodadas (V-07a): mostra o inicio de uma campanha (limpa a serie
+// e exibe o grafico). cyd_ui_spark_push: us = RTT em microssegundos, us < 0 = TIMEOUT
+// (marca vermelha na base, sem linha). cyd_ui_spark_band: faixa de referencia do baseline
+// (V-07b); hi <= lo desliga.
+void cyd_ui_spark_reset(void);
+void cyd_ui_spark_push(int64_t us);
+void cyd_ui_spark_band(int64_t lo_us, int64_t hi_us);
