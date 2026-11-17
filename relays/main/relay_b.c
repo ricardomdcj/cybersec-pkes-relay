@@ -257,6 +257,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             ESP_LOGI(TAG, "veiculo conectado (handle %u)", g_conn);
             ble_link_log_conn(TAG, g_conn);                                    /* M-10 */
             cyd_ui_set_state("veiculo conectado", 0x1AA260);
+            cyd_ui_set_link(CYD_LINK_BLE, 1);                             /* V-06 */
         } else {
             ESP_LOGE(TAG, "conexao falhou (status=%d); re-anuncio", event->connect.status);
             start_advertising();
@@ -269,6 +270,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
                  event->disconnect.reason, (unsigned long) s_desconexoes);
         g_conn = BLE_HS_CONN_HANDLE_NONE;
         s_pending_open = false;   /* a rodada em voo nao sera entregue a ninguem */
+        cyd_ui_set_link(CYD_LINK_BLE, 0);                                 /* V-06 */
         cyd_ui_set_state("anunciando clone", ACCENT);
         start_advertising();
         break;
@@ -422,8 +424,15 @@ void relay_b_start(void)
     relay_b_ui_init();
     run_meta_print("relay-b");                                            /* M-13b */
 #if RELAY_LINK_SELFTEST
+    cyd_ui_set_tag("SELFTEST");                                           /* V-06 */
+#else
+    cyd_ui_set_tag("CADEIA");
+    cyd_ui_set_link(CYD_LINK_BLE, 0);                                     /* veiculo ainda nao conectado */
+#endif
+#if RELAY_LINK_SELFTEST
     cyd_ui_set_state("selfteste do tunel", ACCENT);
     ESP_ERROR_CHECK(link_init(on_link_rx));
+    cyd_ui_set_link(CYD_LINK_ESPNOW, 1);                                  /* V-06 */
     const esp_timer_create_args_t ta = { .callback = selftest_fire, .name = "selftest" };
     ESP_ERROR_CHECK(esp_timer_create(&ta, &st_timer));
     esp_timer_start_once(st_timer, 1000000);
@@ -436,6 +445,7 @@ void relay_b_start(void)
     xTaskCreate(notify_worker, "notify_wk", 4096, NULL, 10, NULL);
 
     ESP_ERROR_CHECK(link_init(on_link_rx));
+    cyd_ui_set_link(CYD_LINK_ESPNOW, 1);                                  /* V-06 */
 
     esp_err_t ret = nimble_port_init();
     if (ret != ESP_OK) { ESP_LOGE(TAG, "nimble_port_init rc=%d", ret); return; }

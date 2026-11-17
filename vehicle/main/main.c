@@ -99,6 +99,8 @@ static esp_timer_handle_t round_timer, timeout_timer;
 /* Contadores e estatisticas (RTT em microssegundos, so rodadas respondidas). */
 static int      round_i, ok_count, fail_count, timeout_count, answered_count;
 static int64_t  rtt_min, rtt_max, rtt_sum;
+static int64_t  s_ans[ROUNDS];    /* RTTs respondidos da campanha, para a mediana (V-08) */
+static int      s_n_ans;
 
 /* Prototipos. */
 static void start_scan(void);
@@ -113,6 +115,50 @@ enum { F_RODADA = 0, F_RTT = 1, F_OK = 2, F_FALHA = 3 };
 static const char *res_str(round_res_t r)
 {
     return r == RES_OK ? "OK" : r == RES_FALHA ? "FALHA" : "TIMEOUT";
+}
+
+/* Modo no cabecalho (V-06): o rotulo do RUN em maiusculas, ate 8 caracteres ASCII. */
+static void set_tag_label(void)
+{
+    char t[9];
+    int n = 0;
+    for (; n < 8 && run_label[n]; n++) {
+        char c = run_label[n];
+        t[n] = (c >= 'a' && c <= 'z') ? (char) (c - 32) : c;
+    }
+    t[n] = '\0';
+    cyd_ui_set_tag(t);
+}
+
+/* Estatistica ao vivo (V-08): min, mediana e max das rodadas respondidas, em ms com 1 casa. */
+static void fmt_ms1(char *buf, size_t cap, int64_t us)
+{
+    snprintf(buf, cap, "%lld.%01lld", (long long) (us / 1000), (long long) ((us % 1000) / 100));
+}
+
+static void update_stats_line(void)
+{
+    if (s_n_ans == 0) {
+        cyd_ui_set_stats("min -  med -  max - ms");
+        return;
+    }
+    int64_t s[ROUNDS];
+    memcpy(s, s_ans, (size_t) s_n_ans * sizeof s[0]);
+    for (int i = 1; i < s_n_ans; i++) {          /* insercao: 50 valores, custo irrelevante */
+        int64_t v = s[i];
+        int j = i - 1;
+        while (j >= 0 && s[j] > v) { s[j + 1] = s[j]; j--; }
+        s[j + 1] = v;
+    }
+    int64_t med = (s_n_ans % 2) ? s[s_n_ans / 2]
+                                : (s[s_n_ans / 2 - 1] + s[s_n_ans / 2]) / 2;
+    /* tamanhos folgados: o GCC avalia o pior caso de int64 e reclama se nao couber */
+    char a[24], m[24], x[24], line[96];
+    fmt_ms1(a, sizeof a, s[0]);
+    fmt_ms1(m, sizeof m, med);
+    fmt_ms1(x, sizeof x, s[s_n_ans - 1]);
+    snprintf(line, sizeof line, "min %s  med %s  max %s ms", a, m, x);
+    cyd_ui_set_stats(line);
 }
 
 /* ---- comandos de bancada (RUN, START) ----------------------------------- */
@@ -146,6 +192,8 @@ static void start_campaign(void)
     running = true;
     round_i = 0; ok_count = 0; fail_count = 0; timeout_count = 0; answered_count = 0;
     rtt_sum = 0; rtt_min = INT64_MAX; rtt_max = 0;
+    s_n_ans = 0;
+    update_stats_line();
     ESP_LOGI(TAG, "campanha iniciada: rotulo=%s dist=%s rodadas=%d intervalo=%d ms timeout=%d ms",
              run_label, run_dist, ROUNDS, INTERVAL_MS, ROUND_TIMEOUT_MS);
     ESP_LOGI(TAG, "CSVHDR v2 label,dist_m,rodada,nonce,t_tx_us,rtt_us,resultado,rssi_dbm,itvl_1_25ms,mtu");
@@ -162,6 +210,7 @@ static void bench_cmd(const char *line)
         if (kv_get(line, "label=", lbl, sizeof lbl)) snprintf(run_label, sizeof run_label, "%s", lbl);
         if (kv_get(line, "dist=", dst, sizeof dst))  snprintf(run_dist, sizeof run_dist, "%s", dst);
         run_recebido = true;
+        set_tag_label();
         ESP_LOGW(TAG, "RUN label=%s dist=%s", run_label, run_dist);
     } else if (strcmp(line, "START") == 0) {
         start_campaign();
@@ -186,6 +235,7 @@ static void finish_round(round_res_t res, int64_t rtt, const uint8_t *nonce,
         if (rtt < rtt_min) rtt_min = rtt;
         if (rtt > rtt_max) rtt_max = rtt;
         rtt_sum += rtt;
+        if (s_n_ans < ROUNDS) s_ans[s_n_ans++] = rtt;
     }
 
     if (res == RES_TIMEOUT) {
@@ -218,6 +268,7 @@ static void finish_round(round_res_t res, int64_t rtt, const uint8_t *nonce,
     cyd_ui_set_field(F_OK, "%d (%d%%)", ok_count, ok_count * 100 / feitas);   /* V-05 */
     cyd_ui_set_field(F_FALHA, "%d / %d", fail_count, timeout_count);
     cyd_ui_set_progress(feitas, ROUNDS);                                       /* V-05 */
+    update_stats_line();                                                       /* V-08 */
     cyd_ui_set_hex(0, nonce, NONCE_LEN);
     cyd_ui_set_hex(1, got, got_len);
     cyd_ui_pulse();
@@ -465,6 +516,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             h_challenge = h_response = h_cccd = 0;
             subscribed = false;
             ESP_LOGI(TAG, "conectado (handle %u); descobrindo servico", g_conn);
+            cyd_ui_set_link(CYD_LINK_BLE, 1);                                   /* V-06 */
             conn_itvl = ble_link_log_conn(TAG, g_conn);                        /* M-10 */
             ble_gattc_exchange_mtu(g_conn, ble_link_mtu_exchange_cb, NULL);   /* M-11 */
             cyd_ui_set_state("conectado", 0x1AA260);
@@ -481,6 +533,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
                  event->disconnect.reason, (unsigned long) desconexoes);
         g_conn = BLE_HS_CONN_HANDLE_NONE;
         subscribed = false;
+        cyd_ui_set_link(CYD_LINK_BLE, 0);                                    /* V-06 */
         round_abort("desconexao");
         start_scan();
         break;
@@ -559,6 +612,8 @@ void app_main(void)
         .hex1   = "resp",
     };
     cyd_ui_init(&cfg);
+    set_tag_label();                      /* V-06: modo = rotulo padrao ate o RUN */
+    cyd_ui_set_link(CYD_LINK_BLE, 0);     /* V-06: sem conexao ainda */
 
     round_mux = xSemaphoreCreateMutex();
     if (round_mux == NULL) { ESP_LOGE(TAG, "sem mutex de rodada"); return; }

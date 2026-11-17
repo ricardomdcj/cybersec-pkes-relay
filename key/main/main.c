@@ -150,6 +150,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             ESP_LOGI(TAG, "veiculo conectado (handle %u)", g_conn);
             ble_link_log_conn(TAG, g_conn);                                    /* M-10 */
             cyd_ui_set_state("conectado", 0x1AA260);
+            cyd_ui_set_link(CYD_LINK_BLE, 1);                             /* V-06 */
         } else {
             ESP_LOGE(TAG, "conexao falhou (status=%d); re-anuncio", event->connect.status);
             start_advertising();
@@ -161,6 +162,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
         ESP_LOGW(TAG, "veiculo desconectou (reason=%d, desconexoes=%lu); re-anuncio",
                  event->disconnect.reason, (unsigned long) desconexoes);
         g_conn = BLE_HS_CONN_HANDLE_NONE;
+        cyd_ui_set_link(CYD_LINK_BLE, 0);                                 /* V-06 */
         start_advertising();
         break;
 
@@ -256,6 +258,7 @@ void app_main(void)
     };
     cyd_ui_init(&cfg);
     cyd_ui_set_field(F_DESAFIOS, "0");
+    cyd_ui_set_link(CYD_LINK_BLE, 0);                                     /* V-06: sem veiculo ainda */
 
     ret = nimble_port_init();
     if (ret != ESP_OK) { ESP_LOGE(TAG, "nimble_port_init rc=%d", ret); return; }

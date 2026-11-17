@@ -58,3 +58,16 @@ void cyd_ui_flash(uint32_t color, int ms);
 
 // Barra de progresso fina logo abaixo do banner: cur de total. total <= 0 esconde a barra.
 void cyd_ui_set_progress(int cur, int total);
+
+// Modo da campanha no cabecalho (ex.: "BASELINE", "RELAY"), em ate 8 caracteres ASCII.
+// NULL ou "" esconde (V-06).
+void cyd_ui_set_tag(const char *text);
+
+// Indicadores de enlace no cabecalho (V-06): BLE ou ESP-NOW.
+typedef enum { CYD_LINK_BLE = 0, CYD_LINK_ESPNOW = 1 } cyd_link_t;
+// state: -1 esconde o indicador; 0 = caido (vermelho); 1 = ok (verde).
+void cyd_ui_set_link(cyd_link_t which, int state);
+
+// Linha de estatistica logo abaixo dos cards (V-08), ex.: "min 83.0  med 91.2  max 97.5 ms".
+// NULL limpa a linha.
+void cyd_ui_set_stats(const char *text);

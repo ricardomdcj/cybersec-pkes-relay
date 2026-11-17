@@ -39,6 +39,13 @@ static lv_obj_t *s_bar;
 static uint32_t  s_state_color = 0x33333a;
 static esp_timer_handle_t s_flash_timer;
 
+/* indicadores do cabecalho (V-06) e linha de estatistica (V-08) */
+static lv_obj_t *s_tag_lbl;
+static lv_obj_t *s_link_dot[2], *s_link_lbl[2];
+static lv_obj_t *s_stats_lbl;
+#define COL_LINK_OK   0x1AA260
+#define COL_LINK_DOWN 0xD64545
+
 /* ---- helpers ------------------------------------------------------------ */
 
 static lv_obj_t *mk_card(lv_obj_t *parent, const char *label) {
@@ -212,6 +219,35 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_style_text_font(title, &lv_font_montserrat_20, 0);
     lv_obj_align(title, LV_ALIGN_LEFT_MID, 4, 0);
 
+    /* V-06: modo da campanha e dois indicadores de enlace, entre o titulo e o mascote
+     * (o mascote ocupa x 256..314 e nao pode ser coberto). Escondidos por padrao. */
+    s_tag_lbl = lv_label_create(hdr);
+    lv_obj_set_style_text_color(s_tag_lbl, lv_color_hex(0xffffff), 0);
+    lv_obj_set_style_text_font(s_tag_lbl, &lv_font_montserrat_12, 0);
+    lv_obj_align(s_tag_lbl, LV_ALIGN_LEFT_MID, 116, 0);
+    lv_obj_add_flag(s_tag_lbl, LV_OBJ_FLAG_HIDDEN);
+    static const char *link_names[2] = { "BLE", "ESP" };
+    for (int i = 0; i < 2; i++) {
+        int x = 182 + i * 36;
+        s_link_dot[i] = lv_obj_create(hdr);
+        lv_obj_set_size(s_link_dot[i], 8, 8);
+        lv_obj_clear_flag(s_link_dot[i], LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_style_radius(s_link_dot[i], LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_opa(s_link_dot[i], LV_OPA_COVER, 0);
+        lv_obj_set_style_bg_color(s_link_dot[i], lv_color_hex(COL_LINK_DOWN), 0);
+        lv_obj_set_style_border_width(s_link_dot[i], 0, 0);
+        lv_obj_set_style_pad_all(s_link_dot[i], 0, 0);
+        lv_obj_align(s_link_dot[i], LV_ALIGN_LEFT_MID, x, 0);
+        lv_obj_add_flag(s_link_dot[i], LV_OBJ_FLAG_HIDDEN);
+
+        s_link_lbl[i] = lv_label_create(hdr);
+        lv_label_set_text(s_link_lbl[i], link_names[i]);
+        lv_obj_set_style_text_color(s_link_lbl[i], lv_color_hex(0xffffff), 0);
+        lv_obj_set_style_text_font(s_link_lbl[i], &lv_font_montserrat_12, 0);
+        lv_obj_align(s_link_lbl[i], LV_ALIGN_LEFT_MID, x + 11, 0);
+        lv_obj_add_flag(s_link_lbl[i], LV_OBJ_FLAG_HIDDEN);
+    }
+
     /* banner de estado */
     s_state_box = lv_obj_create(scr);
     /* 240 px (e nao 308): o mascote ocupa x 256..314 em y 2..60 e cobria o fim do banner (V-03). */
@@ -277,6 +313,13 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
         s_hex_lbl[i] = l;
     }
 
+    /* V-08: linha de estatistica abaixo da grade (cards terminam em y 174) */
+    s_stats_lbl = lv_label_create(scr);
+    lv_label_set_text(s_stats_lbl, "");
+    lv_obj_set_style_text_color(s_stats_lbl, lv_color_hex(COL_VALUE), 0);
+    lv_obj_set_style_text_font(s_stats_lbl, &lv_font_montserrat_14, 0);
+    lv_obj_align(s_stats_lbl, LV_ALIGN_TOP_LEFT, 6, 178);
+
     build_mascot(scr, cfg->mascot, cfg->accent);
     s_base_y = 2;
     s_tick = s_hop = 0;
@@ -327,6 +370,44 @@ void cyd_ui_set_hex(int idx, const uint8_t *data, int n) {
 
 void cyd_ui_pulse(void) {
     s_hop = 16;   /* o timer de animacao faz o pulo decair */
+}
+
+/* ---- cabecalho e estatistica (V-06, V-08) ------------------------------ */
+
+void cyd_ui_set_tag(const char *text) {
+    cyd_display_lock();
+    if (s_tag_lbl) {
+        if (text && *text) {
+            lv_label_set_text(s_tag_lbl, text);
+            lv_obj_clear_flag(s_tag_lbl, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            lv_obj_add_flag(s_tag_lbl, LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+    cyd_display_unlock();
+}
+
+void cyd_ui_set_link(cyd_link_t which, int state) {
+    if ((int) which < 0 || (int) which > 1) return;
+    cyd_display_lock();
+    if (s_link_dot[which]) {
+        if (state < 0) {
+            lv_obj_add_flag(s_link_dot[which], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(s_link_lbl[which], LV_OBJ_FLAG_HIDDEN);
+        } else {
+            lv_obj_set_style_bg_color(s_link_dot[which],
+                                      lv_color_hex(state ? COL_LINK_OK : COL_LINK_DOWN), 0);
+            lv_obj_clear_flag(s_link_dot[which], LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(s_link_lbl[which], LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+    cyd_display_unlock();
+}
+
+void cyd_ui_set_stats(const char *text) {
+    cyd_display_lock();
+    if (s_stats_lbl) lv_label_set_text(s_stats_lbl, text ? text : "");
+    cyd_display_unlock();
 }
 
 /* ---- valores com unidade (V-02) ---------------------------------------- */
