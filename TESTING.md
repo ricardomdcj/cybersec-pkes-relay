@@ -283,6 +283,15 @@ For each condition, run the vehicle's 50-round campaign and keep the captures.
    `summary.md` (counts, Wilson CI on the success rate, median and IQR, bootstrap CI on the
    median and on the overhead). It also reads the older captures in `data/`.
 
+   Then draw the charts (SVG, standard library only):
+
+   ```
+   python -I tools/plot_runs.py data/analysis/rounds.csv
+   ```
+
+   `rtt_timeseries.svg` has one panel per condition, coloured by result, with a cross for each TIMEOUT.
+   `rtt_histogram.svg` and `rtt_boxplot.svg` compare the conditions.
+
 ---
 
 ## 6. Capturing logs to files

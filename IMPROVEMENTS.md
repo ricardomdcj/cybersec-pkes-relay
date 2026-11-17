@@ -168,9 +168,9 @@ English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16
 
 ### E. Capture and analysis (PC tools)
 
-- [ ] **D-01. Standardise the log encoding.** The files in `data/` are UTF-16 (baseline) and UTF-8 with
+- [x] **D-01. Standardise the log encoding.** The files in `data/` are UTF-16 (baseline) and UTF-8 with
   BOM (relayed), which breaks `grep`. Convert them to UTF-8 without BOM and record this in a README in
-  the folder. **Files:** `data/`. **Depends on:** nothing. *Deferred: see Pause.*
+  the folder. **Files:** `data/`. **Depends on:** nothing. *Done in checkpoint 08: UTF-8 copies in `data/utf8/` (`tools/recode_logs.py`); the originals are untouched. See `data/README.md`.*
 
 - [x] **D-02. Capture script `tools/capture_run.py`.** Non-interactive capture with pyserial (the same
   procedure as `TESTING.md` section 6), writing UTF-8 to `data/runs/<date>_<label>/capture_<port>.log`.
@@ -186,11 +186,11 @@ English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16
 - [x] **D-04b. Statistics.** Median, IQR, p90, bootstrap CI for the overhead, and success rate by distance
   with a Wilson CI. Output in CSV and Markdown. **Depends on:** D-04a.
 
-- [ ] **D-05a. Time-series chart.** RTT per round, coloured by result (OK, FAIL, TIMEOUT), with markers
-  where the conditions change. Matplotlib. **Depends on:** D-04a. *Deferred: needs your decision on
-  installing matplotlib (see Pause).*
+- [x] **D-05a. Time-series chart.** RTT per round, coloured by result (OK, FAIL, TIMEOUT), one panel per
+  condition (the panel boundary marks the change of condition). SVG from `tools/plot_runs.py`, no
+  matplotlib. **Depends on:** D-04a.
 
-- [ ] **D-05b. Histogram and boxplot, baseline vs relay.** **Depends on:** D-04b. *Deferred, same as D-05a.*
+- [x] **D-05b. Histogram and boxplot, baseline vs relay.** Histogram as % of each condition's rounds, overlaid per condition; box plot with whiskers at 1.5 IQR and outliers. SVG from `tools/plot_runs.py`. **Depends on:** D-04b.
 
 - [x] **D-06. Update `TESTING.md`.** Done in checkpoint 06: `TESTING.md` was rewritten for the current
   procedure (three stages, `RUN`/`START`, CSV v2, relay peer MAC, bench photos). It must still be
@@ -456,11 +456,10 @@ decoration.
 
 ## Pause: what was left out on purpose
 
-- **D-01 (encoding of old logs):** I did not convert the captures in `data/`. The analyzer reads UTF-8 and
-  UTF-16, so nothing is blocked. Rewriting captured data only after you confirm.
-- **D-05 (charts):** needs `matplotlib`, which is not installed in either the ESP-IDF Python or the system
-  Python. Installing it changes the environment, so I am waiting for your decision: install it, or generate
-  plain SVG.
+- **D-01 (encoding of old logs):** decided in checkpoint 08. UTF-8 copies in `data/utf8/`; the originals stay as
+  they were.
+- **D-05 (charts):** decided in checkpoint 08. The charts are SVG, written with the standard library
+  (`tools/plot_runs.py`). No matplotlib was installed.
 - **D-06 (`TESTING.md`):** the new procedure is written (checkpoint 06). It still needs checking against the
   first real campaign, because the hardware may change a step.
 - **Visual block (V):** the simulator (V-17) is done in checkpoint 07. Its frames are proposals for the screen
@@ -487,6 +486,7 @@ branch is always a complete state of the code. A checkpoint is only created afte
 | `ckpt/05-visual-restante` | V-11a, V-11b, V-12a, V-12b, V-13, V-14a, V-14b, V-15 | built for esp32, not flashed, not seen on screen |
 | `ckpt/06-english` | Full English translation (code, logs, docs, Android app text), `TESTING.md` rewritten, D-06 done, V-16 and V-18 dropped | built for esp32, not flashed |
 | `ckpt/07-simulator` | V-17a, V-17b (`tools/sim`); hex lines font 14 to 12 in `cyd_ui.c` | built for esp32 (6 configs), not flashed; frames in `tools/sim/out` |
+| `ckpt/08-analysis-plots` | D-01 (`data/utf8`, `data/README.md`), D-05a, D-05b (`tools/plot_runs.py`, SVG), `TESTING.md` step 6 | analysis tools only, no firmware change, so no esp32 build |
 
 Branch names from checkpoints 01 to 05 keep their original spelling, since they already exist.
 
