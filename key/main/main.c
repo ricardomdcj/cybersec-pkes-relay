@@ -80,7 +80,9 @@ static void answer_challenge(const uint8_t *nonce, uint16_t nlen)
              (unsigned long) challenge_count, nlen, (long long) esp_timer_get_time());
 
     cyd_ui_set_field(F_DESAFIOS, "%lu", (unsigned long) challenge_count);
-    cyd_ui_set_field(F_CALC_US, "%lld", (long long) dt);
+    char calc_txt[24];                                                 /* V-02 */
+    cyd_fmt_us(calc_txt, sizeof calc_txt, dt);
+    cyd_ui_set_field(F_CALC_US, "%s", calc_txt);
     cyd_ui_set_hex(0, nonce, nlen);
     cyd_ui_set_hex(1, last_response, RESPONSE_LEN);
     cyd_ui_pulse();
@@ -248,7 +250,7 @@ void app_main(void)
         .title  = "CHAVE",
         .accent = ACCENT,
         .mascot = CYD_MASCOT_KEY,
-        .fields = { "Desafios", "Calc us", NULL },
+        .fields = { "Desafios", "Calc", NULL },
         .hex0   = "nonce",
         .hex1   = "resp",
     };

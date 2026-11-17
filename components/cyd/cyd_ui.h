@@ -1,4 +1,5 @@
 #pragma once
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -47,3 +48,13 @@ void cyd_ui_set_hex(int idx, const uint8_t *data, int n);
 
 // Da um "pulo" no mascote (reacao a um evento, ex.: rodada concluida).
 void cyd_ui_pulse(void);
+
+// Formata microssegundos para leitura humana: "91.2 ms", "1.20 s" ou "-" (us < 0).
+// Usa so ASCII (a fonte da tela nao tem acentos).
+void cyd_fmt_us(char *buf, size_t cap, int64_t us);
+
+// Pisca o LED na cor dada por 'ms' milissegundos e depois volta a cor do estado (V-10).
+void cyd_ui_flash(uint32_t color, int ms);
+
+// Barra de progresso fina logo abaixo do banner: cur de total. total <= 0 esconde a barra.
+void cyd_ui_set_progress(int cur, int total);

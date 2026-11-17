@@ -150,6 +150,7 @@ static void start_campaign(void)
              run_label, run_dist, ROUNDS, INTERVAL_MS, ROUND_TIMEOUT_MS);
     ESP_LOGI(TAG, "CSVHDR v2 label,dist_m,rodada,nonce,t_tx_us,rtt_us,resultado,rssi_dbm,itvl_1_25ms,mtu");
     cyd_ui_set_state("medindo", ACCENT);
+    cyd_ui_set_progress(0, ROUNDS);
     send_challenge();
 }
 
@@ -205,14 +206,23 @@ static void finish_round(round_res_t res, int64_t rtt, const uint8_t *nonce,
              res_str(res), rssi, (unsigned) conn_itvl, (unsigned) conn_mtu);
 
     /* Espelha a rodada no display. */
-    cyd_ui_set_field(F_RODADA, "%d/%d", round_i + 1, ROUNDS);
-    if (res == RES_TIMEOUT) cyd_ui_set_field(F_RTT, "timeout");
-    else                    cyd_ui_set_field(F_RTT, "%lld", (long long) rtt);
-    cyd_ui_set_field(F_OK, "%d", ok_count);
+    int feitas = round_i + 1;
+    char rtt_txt[24];
+    cyd_ui_set_field(F_RODADA, "%d/%d", feitas, ROUNDS);
+    if (res == RES_TIMEOUT) {
+        cyd_ui_set_field(F_RTT, "timeout");
+    } else {
+        cyd_fmt_us(rtt_txt, sizeof rtt_txt, rtt);          /* V-02: "91.2 ms" */
+        cyd_ui_set_field(F_RTT, "%s", rtt_txt);
+    }
+    cyd_ui_set_field(F_OK, "%d (%d%%)", ok_count, ok_count * 100 / feitas);   /* V-05 */
     cyd_ui_set_field(F_FALHA, "%d / %d", fail_count, timeout_count);
+    cyd_ui_set_progress(feitas, ROUNDS);                                       /* V-05 */
     cyd_ui_set_hex(0, nonce, NONCE_LEN);
     cyd_ui_set_hex(1, got, got_len);
     cyd_ui_pulse();
+    /* LED por resultado (V-10): verde OK, vermelho FALHA, amarelo TIMEOUT. */
+    cyd_ui_flash(res == RES_OK ? 0x1AA260 : res == RES_FALHA ? 0xD64545 : 0xF4B400, 1200);
 
     round_i++;
     if (round_i < ROUNDS) {
@@ -544,7 +554,7 @@ void app_main(void)
         .title  = "VEICULO",
         .accent = ACCENT,
         .mascot = CYD_MASCOT_CAR,
-        .fields = { "Rodada", "RTT us", "OK", "Falha / tmo", NULL },
+        .fields = { "Rodada", "RTT", "OK", "Falha / tmo", NULL },
         .hex0   = "nonce",
         .hex1   = "resp",
     };

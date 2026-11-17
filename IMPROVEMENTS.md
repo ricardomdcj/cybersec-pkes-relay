@@ -220,23 +220,35 @@ acentos (regra do `CLAUDE.md`), a menos que V-16b mude isso.
 
 ### Tarefas
 
+> **Status (2026-11-17):** implementado e compilado para `esp32` (vehicle, key, relays BLE A e B,
+> selftest A e B); nao visto na tela, falta conferir na placa. Sem simulador (V-17) ainda.
+> - V-02: `cyd_fmt_us()` mostra `91.2 ms` e `1.20 s`. Usado no RTT do veiculo, no turnaround do
+>   Relay B e no `Calc` da chave (rotulo `Calc us` virou `Calc`).
+> - V-03: banner de estado com 240 px (era 308), para nao cobrir o mascote em x 256-314.
+> - V-04: o card do Relay B mostra o turnaround no modo BLE (rotulo `Turnaround`); no selftest
+>   continua o RTT do tunel (rotulo `RTT tunel`).
+> - V-05: barra de progresso fina abaixo do banner, e o card OK mostra `12 (100%)`. O card
+>   `Falha / tmo` continua com `falhas / timeouts`.
+> - V-10: o LED pisca por resultado (verde OK, vermelho FALHA, amarelo TIMEOUT) por 1,2 s e
+>   volta a respirar. Limite: na ultima rodada, a troca para "fim" apaga o pisca antes de aparecer.
+
 - [ ] **V-01. Mapa de layout do PKES.** Escrever `components/cyd/LAYOUT.md` com as faixas de y e a
   posição de cada widget, no formato do `layout.md` do deskrab. **Aceite:** todos os widgets de
   `cyd_ui.c` estão listados com coordenadas. **Depende de:** nada.
 
-- [ ] **V-02. Valores com unidade.** Função `cyd_fmt_us()` que mostra `91.2 ms` e, acima de 1 s,
+- [x] **V-02. Valores com unidade.** Função `cyd_fmt_us()` que mostra `91.2 ms` e, acima de 1 s,
   `1.20 s`. Hoje o veículo mostra `97545` (µs crus) e a chave mostra `Calc us`. Usar em veículo,
   relays e chave. **Arquivos:** `components/cyd/cyd_ui.c`, `cyd_ui.h`. **Depende de:** nada.
 
-- [ ] **V-03. Mascote sobre o banner.** O mascote (58×58, em x 256–314 e y 2–60) cobre o fim do
+- [x] **V-03. Mascote sobre o banner.** O mascote (58×58, em x 256–314 e y 2–60) cobre o fim do
   banner de estado (y 44–74). Reduzir o mascote ou encurtar o banner. Conferir com V-17b ou
   foto da placa. **Arquivos:** `components/cyd/cyd_ui.c`. **Depende de:** V-01.
 
-- [ ] **V-04. Relay B mostra o RTT no modo BLE.** O campo "RTT us" só é atualizado no autoteste
+- [x] **V-04. Relay B mostra o RTT no modo BLE.** O campo "RTT us" só é atualizado no autoteste
   (`relays/main/relay_b.c`, perto da linha 333). No modo BLE fica "-" para sempre. Mostrar o
   turnaround de B. **Arquivos:** `relays/main/relay_b.c`. **Depende de:** nada.
 
-- [ ] **V-05. Progresso e taxa de sucesso.** Barra de progresso (`12/50`) e contadores com
+- [x] **V-05. Progresso e taxa de sucesso.** Barra de progresso (`12/50`) e contadores com
   porcentagem (`OK 12 (100%)`, `FALHA 0`, `TIMEOUT 0`). **Depende de:** M-02, V-02.
 
 - [ ] **V-06. Barra de topo com estado.** Modo (`BASELINE` ou `RELAY`), indicador BLE e indicador
@@ -258,7 +270,7 @@ acentos (regra do `CLAUDE.md`), a menos que V-16b mude isso.
 - [ ] **V-09b. Balão com o resultado.** Mostrar `91 ms OK` ao lado do mascote por cerca de 1 s,
   como o `say()` do deskrab. **Depende de:** V-09a.
 
-- [ ] **V-10. LED por rodada.** Verde curto para OK, vermelho para FALHA, amarelo para TIMEOUT, e
+- [x] **V-10. LED por rodada.** Verde curto para OK, vermelho para FALHA, amarelo para TIMEOUT, e
   depois volta ao respiro da cor do estado (`cyd_led_set`). **Depende de:** M-02.
 
 - [ ] **V-11a. Histograma em RAM.** Guardar os RTTs da campanha e desenhar um histograma de 10
@@ -418,7 +430,9 @@ Nada vai para o remoto sem pedido. Os branches ficam locais.
 | Branch | Conteudo | Estado |
 |---|---|---|
 | `ckpt/01-rodada-ble-ferramentas` | M-01 a M-18, D-02, D-03, D-04a, D-04b | compilado para esp32, nao gravado |
+| `ckpt/02-visual-basico` | V-02, V-03, V-04, V-05, V-10 | compilado para esp32, nao gravado, nao visto na tela |
 
 Regra para voltar: ao gravar, teste do branch mais novo para o mais antigo. Se o mais novo
 falhar, volte um branch, grave e teste de novo. Os itens M-01 a M-05 estao no mesmo commit que os
 demais (o `vehicle/main/main.c` mudou de uma vez), entao nao ha como reverter so eles.
+

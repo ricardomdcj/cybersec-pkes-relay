@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include "esp_timer.h"
 
 /* ---- paleta e medidas --------------------------------------------------- */
 
@@ -32,6 +33,11 @@ static int       s_base_y;        /* y de repouso do mascote */
 static int       s_tick;          /* contador do timer de animacao */
 static int       s_hop;           /* energia do "pulo", decai a cada tick */
 static uint32_t  s_accent;
+
+/* barra de progresso (V-05) e cor do estado guardada para o pisca do LED (V-10) */
+static lv_obj_t *s_bar;
+static uint32_t  s_state_color = 0x33333a;
+static esp_timer_handle_t s_flash_timer;
 
 /* ---- helpers ------------------------------------------------------------ */
 
@@ -208,7 +214,8 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
 
     /* banner de estado */
     s_state_box = lv_obj_create(scr);
-    lv_obj_set_size(s_state_box, 308, 30);
+    /* 240 px (e nao 308): o mascote ocupa x 256..314 em y 2..60 e cobria o fim do banner (V-03). */
+    lv_obj_set_size(s_state_box, 240, 30);
     lv_obj_clear_flag(s_state_box, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_bg_color(s_state_box, lv_color_hex(0x33333a), 0);
     lv_obj_set_style_bg_opa(s_state_box, LV_OPA_COVER, 0);
@@ -221,6 +228,21 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
     lv_obj_set_style_text_color(s_state_lbl, lv_color_hex(0xffffff), 0);
     lv_obj_set_style_text_font(s_state_lbl, &lv_font_montserrat_16, 0);
     lv_obj_align(s_state_lbl, LV_ALIGN_LEFT_MID, 8, 0);
+
+    /* barra de progresso fina entre o banner (y 74) e a grade (y 80); escondida por padrao */
+    s_bar = lv_bar_create(scr);
+    lv_obj_set_size(s_bar, 308, 4);
+    lv_obj_align(s_bar, LV_ALIGN_TOP_LEFT, 6, 76);
+    lv_bar_set_range(s_bar, 0, 100);
+    lv_bar_set_value(s_bar, 0, LV_ANIM_OFF);
+    lv_obj_set_style_bg_color(s_bar, lv_color_hex(0x33333a), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(s_bar, LV_OPA_COVER, LV_PART_MAIN);
+    lv_obj_set_style_radius(s_bar, 2, LV_PART_MAIN);
+    lv_obj_set_style_pad_all(s_bar, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(s_bar, 0, LV_PART_MAIN);
+    lv_obj_set_style_bg_color(s_bar, lv_color_hex(cfg->accent), LV_PART_INDICATOR);
+    lv_obj_set_style_radius(s_bar, 2, LV_PART_INDICATOR);
+    lv_obj_add_flag(s_bar, LV_OBJ_FLAG_HIDDEN);
 
     /* grade de cards (flex, 2 por linha) */
     lv_obj_t *grid = lv_obj_create(scr);
@@ -266,6 +288,7 @@ void cyd_ui_init(const cyd_ui_cfg_t *cfg) {
 }
 
 void cyd_ui_set_state(const char *text, uint32_t color) {
+    s_state_color = color;
     cyd_display_lock();
     if (s_state_lbl) lv_label_set_text(s_state_lbl, text);
     if (s_state_box) lv_obj_set_style_bg_color(s_state_box, lv_color_hex(color), 0);
@@ -304,4 +327,52 @@ void cyd_ui_set_hex(int idx, const uint8_t *data, int n) {
 
 void cyd_ui_pulse(void) {
     s_hop = 16;   /* o timer de animacao faz o pulo decair */
+}
+
+/* ---- valores com unidade (V-02) ---------------------------------------- */
+
+void cyd_fmt_us(char *buf, size_t cap, int64_t us) {
+    if (us < 0) {
+        snprintf(buf, cap, "-");
+    } else if (us >= 1000000) {
+        snprintf(buf, cap, "%lld.%02lld s", (long long) (us / 1000000),
+                 (long long) ((us % 1000000) / 10000));
+    } else {
+        snprintf(buf, cap, "%lld.%01lld ms", (long long) (us / 1000),
+                 (long long) ((us % 1000) / 100));
+    }
+}
+
+/* ---- pisca do LED por resultado (V-10) --------------------------------- */
+
+static void flash_end_cb(void *arg) {
+    cyd_led_set(CYD_LED_BREATHE, s_state_color);   /* volta a respirar na cor do estado */
+}
+
+void cyd_ui_flash(uint32_t color, int ms) {
+    cyd_led_set(CYD_LED_BLINK, color);
+    if (!s_flash_timer) {
+        const esp_timer_create_args_t a = { .callback = flash_end_cb, .name = "led_flash" };
+        if (esp_timer_create(&a, &s_flash_timer) != ESP_OK) return;
+    }
+    esp_timer_stop(s_flash_timer);
+    esp_timer_start_once(s_flash_timer, (uint64_t) ms * 1000);
+}
+
+/* ---- barra de progresso (V-05) ----------------------------------------- */
+
+void cyd_ui_set_progress(int cur, int total) {
+    cyd_display_lock();
+    if (s_bar) {
+        if (total <= 0) {
+            lv_obj_add_flag(s_bar, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            int pct = cur * 100 / total;
+            if (pct < 0) pct = 0;
+            if (pct > 100) pct = 100;
+            lv_obj_clear_flag(s_bar, LV_OBJ_FLAG_HIDDEN);
+            lv_bar_set_value(s_bar, pct, LV_ANIM_ON);
+        }
+    }
+    cyd_display_unlock();
 }

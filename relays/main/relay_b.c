@@ -49,6 +49,13 @@ enum { F_VEIC = 0, F_TUNEL = 1, F_RTT = 2 };
 static uint32_t s_from_vehicle;   /* desafios escritos pelo veiculo -> tunel */
 static uint32_t s_from_tunnel;    /* respostas vindas do tunel -> notify ao veiculo */
 
+/* Rotulo do card de tempo: no autoteste e o RTT do tunel; no BLE e o turnaround de B (V-04). */
+#if RELAY_LINK_SELFTEST
+#define RTT_LABEL "RTT tunel"
+#else
+#define RTT_LABEL "Turnaround"
+#endif
+
 /* Monta display + LED + UI. Chamado no inicio de relay_b_start (ambos os modos). */
 static void relay_b_ui_init(void)
 {
@@ -59,7 +66,7 @@ static void relay_b_ui_init(void)
         .title  = "RELAY B",
         .accent = ACCENT,
         .mascot = CYD_MASCOT_RELAY,
-        .fields = { "Do veic", "Do tunel", "RTT us", NULL },
+        .fields = { "Do veic", "Do tunel", RTT_LABEL, NULL },
         .hex0   = "resp",
         .hex1   = NULL,
     };
@@ -340,6 +347,9 @@ static void notify_worker(void *arg)
 
         s_from_tunnel++;
         cyd_ui_set_field(F_TUNEL, "%lu", (unsigned long) s_from_tunnel);
+        char turn_txt[24];                                                 /* V-04 */
+        cyd_fmt_us(turn_txt, sizeof turn_txt, turn);
+        cyd_ui_set_field(F_RTT, "%s", turn_txt);
         cyd_ui_set_hex(0, it.data, RESPONSE_LEN);
         cyd_ui_pulse();
     }
@@ -378,7 +388,9 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
                  (int) len, (long long) rtt);
         s_from_tunnel++;
         cyd_ui_set_field(F_TUNEL, "%lu", (unsigned long) s_from_tunnel);
-        cyd_ui_set_field(F_RTT, "%lld", (long long) rtt);
+        char rtt_txt[24];
+        cyd_fmt_us(rtt_txt, sizeof rtt_txt, rtt);
+        cyd_ui_set_field(F_RTT, "%s", rtt_txt);
         cyd_ui_set_hex(0, data, (int) len);
         cyd_ui_pulse();
     }
