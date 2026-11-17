@@ -28,7 +28,39 @@
 #include "esp_log.h"
 #include "esp_timer.h"
 
+#include "cyd_display.h"
+#include "cyd_led.h"
+#include "cyd_ui.h"
+
 static const char *TAG = "RELAY_B";
+
+/* Cor de destaque do Relay B (ciano) e indices dos cards na UI. */
+#define ACCENT 0x00B8D4
+enum { F_VEIC = 0, F_TUNEL = 1, F_RTT = 2 };
+
+/* Contadores mostrados no display (validos nos dois modos). */
+static uint32_t s_from_vehicle;   /* desafios escritos pelo veiculo -> tunel */
+static uint32_t s_from_tunnel;    /* respostas vindas do tunel -> notify ao veiculo */
+
+/* Monta display + LED + UI. Chamado no inicio de relay_b_start (ambos os modos). */
+static void relay_b_ui_init(void)
+{
+    cyd_display_init();
+    cyd_led_init();
+    cyd_display_set_backlight(90);
+    cyd_ui_cfg_t cfg = {
+        .title  = "RELAY B",
+        .accent = ACCENT,
+        .mascot = CYD_MASCOT_RELAY,
+        .fields = { "Do veic", "Do tunel", "RTT us", NULL },
+        .hex0   = "resp",
+        .hex1   = NULL,
+    };
+    cyd_ui_init(&cfg);
+    cyd_ui_set_field(F_VEIC, "0");
+    cyd_ui_set_field(F_TUNEL, "0");
+    cyd_ui_set_field(F_RTT, "-");
+}
 
 /* TODO(BLE) virou implementacao: chamado quando o veiculo escreve em CHALLENGE. */
 static inline void forward_challenge(const uint8_t *nonce, size_t len)
@@ -50,6 +82,7 @@ static void selftest_fire(void *arg)
     st_tx_us = esp_timer_get_time();
     link_send(LINK_MSG_CHALLENGE, nonce, NONCE_LEN);
     st_seq++;
+    cyd_ui_set_field(F_VEIC, "%lu", (unsigned long) st_seq);
     esp_timer_start_once(st_timer, 1000000); /* 1 s */
 }
 
@@ -74,6 +107,13 @@ static uint16_t g_conn = BLE_HS_CONN_HANDLE_NONE;
 static uint16_t h_response_val;                 /* handle da RESPONSE, usado no notify */
 static uint8_t  last_response[RESPONSE_LEN];     /* ultima resposta (p/ leitura READ) */
 
+/* Medidas por rodada (paper): o Relay B ve o desafio do veiculo e a resposta voltando;
+ * o turnaround local (rx_chal -> tx_resp) = tunel + lado da chave, visto por B. O nonce
+ * (4 bytes) correlaciona a rodada com os logs do veiculo, do Relay A e da chave. */
+static int64_t  s_t_chal_us;
+static uint8_t  s_nonce4[4];
+static uint32_t s_round;
+
 /* Fila veiculo<-tunel: resposta a notificar, preenchida no callback ESP-NOW (task WiFi)
  * e consumida pela task notify_worker (que pode chamar a API GATT com seguranca). */
 typedef struct { uint8_t data[RESPONSE_LEN]; uint8_t len; } notify_item_t;
@@ -95,8 +135,17 @@ static int gatt_access(uint16_t conn_handle, uint16_t attr_handle,
             uint16_t olen = 0;
             int rc = ble_hs_mbuf_to_flat(ctxt->om, nonce, sizeof nonce, &olen);
             if (rc != 0) return BLE_ATT_ERR_UNLIKELY;
+            s_t_chal_us = esp_timer_get_time();
+            memcpy(s_nonce4, nonce, 4);
+            s_round++;
+            ESP_LOGI(TAG, "HOP B rx_chal rodada=%lu nonce=%02x%02x%02x%02x t=%lld us",
+                     (unsigned long) s_round, nonce[0], nonce[1], nonce[2], nonce[3],
+                     (long long) s_t_chal_us);
             ESP_LOGI(TAG, "desafio do veiculo (%u B) -> tunel", olen);
             forward_challenge(nonce, olen);
+            s_from_vehicle++;
+            cyd_ui_set_field(F_VEIC, "%lu", (unsigned long) s_from_vehicle);
+            cyd_ui_pulse();
             return 0;
         }
         return BLE_ATT_ERR_WRITE_NOT_PERMITTED;
@@ -165,7 +214,8 @@ static void start_advertising(void)
     advp.disc_mode = BLE_GAP_DISC_MODE_GEN;
     rc = ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER, &advp, gap_event, NULL);
     if (rc != 0) ESP_LOGE(TAG, "adv_start rc=%d", rc);
-    else ESP_LOGI(TAG, "anunciando o clone da chave; aguardando o veiculo");
+    else { ESP_LOGI(TAG, "anunciando o clone da chave; aguardando o veiculo");
+           cyd_ui_set_state("anunciando clone", ACCENT); }
 }
 
 /* ---- eventos GAP -------------------------------------------------------- */
@@ -178,6 +228,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
         if (event->connect.status == 0) {
             g_conn = event->connect.conn_handle;
             ESP_LOGI(TAG, "veiculo conectado (handle %u)", g_conn);
+            cyd_ui_set_state("veiculo conectado", 0x1AA260);
         } else {
             ESP_LOGE(TAG, "conexao falhou (status=%d); re-anuncio", event->connect.status);
             start_advertising();
@@ -187,6 +238,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
     case BLE_GAP_EVENT_DISCONNECT:
         ESP_LOGI(TAG, "veiculo desconectou (reason=%d); re-anuncio", event->disconnect.reason);
         g_conn = BLE_HS_CONN_HANDLE_NONE;
+        cyd_ui_set_state("anunciando clone", ACCENT);
         start_advertising();
         break;
 
@@ -225,6 +277,23 @@ static void notify_worker(void *arg)
         int rc = ble_gatts_notify_custom(g_conn, h_response_val, om);  /* consome o mbuf */
         if (rc != 0) ESP_LOGE(TAG, "notify rc=%d", rc);
         else ESP_LOGI(TAG, "resposta (%u B) notificada ao veiculo", it.len);
+
+        /* Turnaround local de B (desafio recebido -> resposta notificada): tunel + lado
+         * da chave. Uma linha CSVB parseavel por rodada, correlacionada pelo nonce. */
+        int64_t turn = esp_timer_get_time() - s_t_chal_us;
+        int8_t rssi = 0;
+        ble_gap_conn_rssi(g_conn, &rssi);
+        ESP_LOGI(TAG, "HOP B tx_resp rodada=%lu nonce=%02x%02x%02x%02x turnaround=%lld us rssi=%d dBm",
+                 (unsigned long) s_round, s_nonce4[0], s_nonce4[1], s_nonce4[2], s_nonce4[3],
+                 (long long) turn, rssi);
+        ESP_LOGI(TAG, "CSVB,%lu,%02x%02x%02x%02x,%lld,%d",
+                 (unsigned long) s_round, s_nonce4[0], s_nonce4[1], s_nonce4[2], s_nonce4[3],
+                 (long long) turn, rssi);
+
+        s_from_tunnel++;
+        cyd_ui_set_field(F_TUNEL, "%lu", (unsigned long) s_from_tunnel);
+        cyd_ui_set_hex(0, it.data, it.len);
+        cyd_ui_pulse();
     }
 }
 
@@ -259,6 +328,11 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
         int64_t rtt = esp_timer_get_time() - st_tx_us;
         ESP_LOGI(TAG, "[selfteste] resposta recebida (%d B); RTT tunel=%lld us",
                  (int) len, (long long) rtt);
+        s_from_tunnel++;
+        cyd_ui_set_field(F_TUNEL, "%lu", (unsigned long) s_from_tunnel);
+        cyd_ui_set_field(F_RTT, "%lld", (long long) rtt);
+        cyd_ui_set_hex(0, data, (int) len);
+        cyd_ui_pulse();
     }
 #else
     {
@@ -278,7 +352,9 @@ static void on_link_rx(link_msg_type_t type, const uint8_t *data, size_t len)
 
 void relay_b_start(void)
 {
+    relay_b_ui_init();
 #if RELAY_LINK_SELFTEST
+    cyd_ui_set_state("selfteste do tunel", ACCENT);
     ESP_ERROR_CHECK(link_init(on_link_rx));
     const esp_timer_create_args_t ta = { .callback = selftest_fire, .name = "selftest" };
     ESP_ERROR_CHECK(esp_timer_create(&ta, &st_timer));

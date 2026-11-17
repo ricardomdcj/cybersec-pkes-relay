@@ -3,13 +3,13 @@
 /*
  * Um unico projeto compila os dois relays; o papel e escolhido por um define.
  *
- *   RELAY_ROLE_A -> central, fica perto do celular (a chave)
+ *   RELAY_ROLE_A -> central, fica perto da chave (key/)
  *   RELAY_ROLE_B -> peripheral, fica perto do veiculo
  *
- * Troque RELAY_ROLE abaixo antes de compilar cada placa. Como A e B rodam em
- * chips diferentes (A = ESP32-S3, B = ESP32-C3), lembre de casar o set-target:
- *   Relay A:  idf.py set-target esp32s3  (RELAY_ROLE_A)
- *   Relay B:  idf.py set-target esp32c3  (RELAY_ROLE_B)
+ * Troque RELAY_ROLE abaixo antes de compilar cada placa. Agora os dois papeis rodam na
+ * MESMA CYD (ESP32 classico); as duas placas se distinguem so pelo papel gravado:
+ *   Relay A:  idf.py set-target esp32  -DRELAY_ROLE=1
+ *   Relay B:  idf.py set-target esp32  -DRELAY_ROLE=2
  *
  * Alternativa sem editar o header: idf.py build -DRELAY_ROLE=1  (ou =2).
  */

@@ -4,6 +4,20 @@ Milestone 1 (ESP-NOW tunnel + RTT self-test) is done. The remaining work is: bri
 BLE up on both relays, then run the measurement campaign the paper needs. Grouped by
 milestone; order within a group is roughly the order to tackle it.
 
+## CYD port (done this session)
+
+All roles moved to CYD boards (ESP32-2432S028R, classic ESP32) with an on-screen status UI
+(shared `components/cyd`, mascot per role). The Android key became the `key/` firmware. Contract
+and HMAC are now a single shared `components/pkes_contract`. Buttonless reflashing via serial OTA
+(`components/serial_ota` + `tools/serial_ota.py`).
+
+- [x] `components/cyd` (display + LED + status UI/mascot), `components/pkes_contract`, `components/serial_ota`.
+- [x] `key/` firmware (replaces `phoneaskey/`), `vehicle/` + `relays/` retargeted to `esp32` with UI.
+- [x] All four firmwares build; `key`, `vehicle` booted on hardware; serial OTA proven (key→vehicle, buttonless).
+- [ ] Boot `relays` (both roles) on hardware and run the full chain on CYDs.
+- [ ] Polish the UI visuals (user wants it richer than the first clean pass).
+- [ ] Optional: raise the console/OTA baud above 115200 to speed up serial OTA (~100 s/push now).
+
 ## Milestone 2 — BLE on both relay ends
 
 Goal: replace the self-test echo with the real phone↔vehicle exchange carried over the

@@ -4,7 +4,11 @@ Central BLE em ESP-IDF (NimBLE) que reproduz o par legítimo com a chave (app `p
 e mede o **RTT do desafio-resposta sem relay**. Esse número é a linha de base contra a qual
 o custo do relay será comparado nos marcos seguintes.
 
-## Protocolo (espelha `BleContract.kt`)
+Agora roda numa **CYD (ESP32-2432S028R)**: além da medida, mostra no display o estado
+(escaneando/conectado/medindo), a rodada, o RTT, OK/FALHA e o nonce/resposta em hex, com um
+mascote de carro no canto (camada `components/cyd`).
+
+## Protocolo (espelha o contrato compartilhado)
 
 1. Varre pelo serviço `8f2a0001-…` e conecta na chave.
 2. Descobre as características, habilita *notify* na `8f2a0003` (response).
@@ -19,12 +23,12 @@ UUIDs, PSK e formato ficam em `main/ble_contract.h` — **precisa ser idêntico 
 Ambiente ESP-IDF v5.4 já instalado em `C:\Users\Ricardo\esp\v5.4`.
 
 ```
-idf.py set-target esp32s3   # placa que você tem para testar agora
+idf.py set-target esp32     # CYD = ESP32 classico
 idf.py build flash monitor
 ```
 
-> O endpoint "veículo" definitivo será um ESP32 clássico; nesse dia é só
-> `idf.py set-target esp32` e recompilar. A lógica NimBLE é a mesma.
+> Gravação na CYD: o auto-reset do esptool não entra em download mode (erro `0x13`).
+> Segure **BOOT**, toque **RST**, solte BOOT e grave com `--before no-reset` (ver CLAUDE.md).
 
 ## Saída esperada no monitor
 

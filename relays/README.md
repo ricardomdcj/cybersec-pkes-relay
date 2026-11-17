@@ -34,12 +34,12 @@ sem editar os headers):
 ```
 del sdkconfig
 
-REM --- Relay A (ESP32-S3) ---
-idf.py set-target esp32s3
+REM --- Relay A (CYD, papel central) ---
+idf.py set-target esp32
 idf.py -DRELAY_ROLE=1 build flash monitor
 
-REM --- Relay B (ESP32-C3) ---
-idf.py set-target esp32c3
+REM --- Relay B (CYD, papel peripheral) ---
+idf.py set-target esp32
 idf.py fullclean
 idf.py -DRELAY_ROLE=2 build flash monitor
 ```
@@ -74,12 +74,12 @@ overhead medido.
 ```
 del sdkconfig
 
-REM --- Relay A (ESP32-S3) ---
-idf.py set-target esp32s3
+REM --- Relay A (CYD, papel central) ---
+idf.py set-target esp32
 idf.py -DRELAY_ROLE=1 -DRELAY_LINK_SELFTEST=0 build flash monitor
 
-REM --- Relay B (ESP32-C3) ---
-idf.py set-target esp32c3
+REM --- Relay B (CYD, papel peripheral) ---
+idf.py set-target esp32
 idf.py fullclean
 idf.py -DRELAY_ROLE=2 -DRELAY_LINK_SELFTEST=0 build flash monitor
 ```
