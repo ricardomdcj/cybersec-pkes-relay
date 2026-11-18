@@ -121,6 +121,25 @@ English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16
   CSV or in the summary. **Files:** `vehicle/main/main.c`, `relays/main/relay_a.c`,
   `relays/main/relay_b.c`, `key/main/main.c`. **Depends on:** nothing.
 
+- [ ] **M-19. Read the connection interval before the first campaign.** The vehicle logs the negotiated
+  interval in its `CONN` line (`components/pkes_contract/ble_link.c`). If `itvl` divides 1000 ms (40 or 50 ms,
+  for example), the fixed 1 s round grid (M-16) can keep rounds at one connection phase, and the samples are
+  correlated. Then add a random start offset to the grid, as a checkpoint, before the campaign. Do not change
+  firmware during a campaign. **Files:** `vehicle/main/main.c`. **Depends on:** M-10, M-16. **Acceptance:** the
+  `itvl` value is in the first campaign's notes, and the offset checkpoint exists if it divides 1000 ms.
+
+- [ ] **M-20. Run the timeout path on a board.** A round with no response ends in `timeout_cb`
+  (`vehicle/main/main.c`), which calls `finish_round`, and so `ble_gap_conn_rssi`, from the esp_timer task.
+  Normal rounds already send their challenge from that task and read RSSI in the host task. The RSSI read during
+  a timeout has not run on a board. **Depends on:** M-01, M-16. **Acceptance:** at least one `TIMEOUT` row in a
+  captured campaign, the next round runs, and the log shows no NimBLE error.
+
+- [ ] **M-21. Key: reject short CHALLENGE writes (optional).** `key/main/main.c` HMACs 16 bytes even when the
+  write was shorter (`answer_challenge`, `gatt_access`), so the unwritten bytes are stack data. Reject writes
+  whose length is not `NONCE_LEN`. The vehicle always sends 16 bytes, so the bench is not affected. Do this only
+  when `key/` is rebuilt for another reason. **Files:** `key/main/main.c`. **Acceptance:** a 5-byte write gets an
+  error status and no notification.
+
 ### D. Run header and labelling
 
 > **Status (2026-11-17):** implemented and compiled for `esp32`; to be validated on hardware.
@@ -195,6 +214,24 @@ English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16
 - [x] **D-06. Update `TESTING.md`.** Done in checkpoint 06: `TESTING.md` was rewritten for the current
   procedure (three stages, `RUN`/`START`, CSV v2, relay peer MAC, bench photos). It must still be
   checked against the first real campaign. **Depends on:** M-18, D-03.
+
+- [ ] **D-07. Analyzer fails loudly.** `tools/analyze_runs.py` drops vehicle CSV lines with too few fields without
+  a message (`parse_rows`, lines 72-85), and it ignores any line whose tag is not `VEHICLE` or `VEICULO`. Change it
+  to count the CSV lines seen and the rows parsed, stop with the line number on any mismatch, check that the row
+  count equals the `n=` of the campaign's `===` summary line, and require exact field counts (10 for v2, 6 for v1).
+  **Files:** `tools/analyze_runs.py`. **Depends on:** D-04a. **Acceptance:** a log with one truncated line stops the
+  analyzer, and the pilot logs still give the numbers in `data/analysis/summary.md`.
+
+- [ ] **D-08. Replicate by session.** At least three sessions per condition (baseline and relayed), each in its own
+  folder under `data/runs/`, with the per-session medians shown next to the pooled CI. The bootstrap treats rounds as
+  independent, so the pooled CI describes the spread within one session only. **Depends on:** D-02, D-03, D-04b.
+  **Acceptance:** three session folders per condition, and the summary shows the spread between sessions.
+
+### F. Paper text (limitations and discussion)
+
+- [ ] **D-09. Limitations and discussion in the paper.** Use `LIMITATIONS.md` as the source. Check the two citations
+  (Hancke and Kuhn, 2005; IEEE 802.15.4z) before they go into the paper. **Depends on:** M-19, D-08.
+  **Acceptance:** the Discussion states the four limits and the mitigations paragraph, with checked references.
 
 ---
 
@@ -482,13 +519,35 @@ decoration.
   A), rebuild and reflash the relays; then one baseline campaign and one relay campaign with
   `tools/capture_run.py --port COMx --label <label> --dist <m> --start`.
 
+- **External review (checkpoint 12).** The gpt-oss analysis was checked against the code and the pilot data, and
+  then deleted. These ideas were dropped:
+  - **R-01 (rate limit on the key):** DoS only. The paper does not measure it, and the check would sit on the timed path.
+  - **R-02 (pairing, encryption, address whitelist):** none of them stops the relay, since the relay is a real
+    central to the key. BLE addresses can be cloned.
+  - **R-03 (counter or timestamp in the nonce):** the vehicle's random nonce already gives freshness. A counter does
+    not stop a relay that forwards the live nonce.
+  - **R-04 (PSK protection, secure boot, flash encryption):** the PSK is a bench constant in the source. Both features
+    are eFuse-based and hard to undo on the ESP32.
+  - **R-05 (HMAC truncation sweep):** the relay forwards the genuine MAC, so its length changes neither the success nor
+    the timing. Forgery odds are analytic.
+  - **R-06 (5 ms turnaround limit):** the smallest relay-A turnaround in the 2026-11-16 pilot is 92.6 ms, so the limit
+    would reject every round. Dropping slow rounds removes the overhead being measured.
+  - **R-07 (sequence wrap detection):** at one round per second the 32-bit seq wraps after about 136 years, and
+    matching is by equality.
+  - **R-08 (power side-channel on the key):** outside `SCOPE.md` (timing and RTT). It moves the work toward key extraction.
+  - **R-09 (replay simulation on a board):** it follows from the HMAC and the fresh nonce. One sentence in the paper covers it.
+  - **R-10 (BOOT-RST automation):** serial OTA already avoids BOOT for updates, and BOOT is needed once per board.
+  - **R-11 (CSV checksum):** replaced by D-07. Failing loudly on bad lines fixes the silent drops.
+  - **R-12 (Hancke-Buchmann fast challenge-response on BLE):** BLE cannot give the per-bit timing it needs. It stays a
+    discussion point (D-09), not an implementation.
+
 ---
 
 ## Checkpoints (local branches)
 
 Each checkpoint is a commit on a `ckpt/...` branch. Each branch starts from the previous one, so an older
 branch is always a complete state of the code. A checkpoint is only created after the code builds for
-`esp32`. Nothing goes to the remote without a request; the branches stay local.
+`esp32`. Branches go to `origin` when the user asks for it. `ckpt/01` to `ckpt/12` are pushed.
 
 | Branch | Content | Status |
 |---|---|---|
@@ -501,6 +560,9 @@ branch is always a complete state of the code. A checkpoint is only created afte
 | `ckpt/07-simulator` | V-17a, V-17b (`tools/sim`); hex lines font 14 to 12 in `cyd_ui.c` | built for esp32 (6 configs), not flashed; frames in `tools/sim/out` |
 | `ckpt/08-analysis-plots` | D-01 (`data/utf8`, `data/README.md`), D-05a, D-05b (`tools/plot_runs.py`, SVG), `TESTING.md` step 6 | analysis tools only, no firmware change, so no esp32 build |
 | `ckpt/09-docs-cleanup` | V-01 (`components/cyd/LAYOUT.md`), header shift in `cyd_ui.c`, `relay_b.c` warning, toolchain doc, translated build-file comments | built for esp32 (6 configs), not flashed; header checked in the simulator |
+| `ckpt/10-home-setup` | `TESTING.md` checklist for a new machine ("Before you start on a new machine") | docs only, no firmware change |
+| `ckpt/11-memory-notes` | Copies of the project memory notes in `memory/`; pilot CSV description corrected in `data/README.md` | docs only, no firmware change |
+| `ckpt/12-review-notes` | `LIMITATIONS.md`; open tasks M-19 to M-21 and D-07 to D-09; dropped ideas R-01 to R-12; `TESTING.md` checks before the first campaign; `CLAUDE.md` pointer; repo copy of the memory note corrected | docs only, no firmware change |
 
 Branch names from checkpoints 01 to 05 keep their original spelling, since they already exist.
 

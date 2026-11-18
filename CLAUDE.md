@@ -8,6 +8,8 @@ Academic research bench (UNIFEI, discipline EC343E) replicating a **PKES relay a
 
 The project is written in **English** (code, comments, logs, documentation) for publication. The original working notes were in Portuguese; see the Conventions section.
 
+Before writing any claim about results, read `LIMITATIONS.md`. It lists what the bench can and cannot show.
+
 ## The roles — all CYD (ESP32-2432S028R)
 
 The system models a key, a car, and a man-in-the-middle. **Every role runs on a CYD

@@ -265,6 +265,10 @@ RTT tables (step 5). Photos of the physical layout help the paper.
 
 For each condition, run the vehicle's 50-round campaign and keep the captures.
 
+Before the first campaign, read the vehicle's `CONN` line at connect and note `itvl`. If it divides 1000 ms (40 or
+50 ms, for example), the 1 s round grid can keep rounds at one connection phase. In that case, ask for the
+start-offset change (M-19) before the first campaign. Do not change firmware during a campaign.
+
 1. **Baseline** (Stage B): vehicle ↔ key directly. Repeat several times for a distribution.
 2. **Relayed** (Stage C): full chain, same `ROUNDS`. Repeat.
 3. **Overhead** = relayed RTT − baseline RTT (median, IQR, and per round).
@@ -275,6 +279,8 @@ For each condition, run the vehicle's 50-round campaign and keep the captures.
    Push until rounds start failing (`TIMEOUT` rows or `FAIL` rows); that failure point is the
    relay's effective range and the basis for a timing/distance-bounding mitigation discussion.
    Use `TXPOW <n>` on the relays to sweep the radio power without moving the boards.
+   The first `TIMEOUT` on a board also tests the timeout path (M-20). The round must be logged as `TIMEOUT`, and the
+   next round must run. If the vehicle stops or resets, keep the log and stop the campaign.
 5. **Collect the dataset.** Use the capture script — it sends `RUN` and `START`, saves the log in UTF-8 and
    writes a manifest with the label, distance, firmware commit and result counts:
 
