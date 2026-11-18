@@ -1,0 +1,76 @@
+# Vehicle through a whole baseline campaign (sample values, not a measurement).
+# Colours: accent 2962FF, OK 2ECC71, FAIL E74C3C, TIMEOUT F1C40F, scanning 9AA5B1.
+init vehicle
+verbose on
+
+# Idle: waiting for the key, before RUN/START.
+tag BASELINE
+link ble 0
+link esp -1
+state 9AA5B1 scanning for the key
+progress 0 50
+field 0 0 / 50
+field 1 -
+field 2 0 (0%)
+field 3 0 / 0
+stats -
+wait 300
+shot vehicle_idle.bmp
+
+# Connected, measuring: 12 of 50 rounds answered.
+link ble 1
+state 2962FF measuring
+progress 12 50
+field 0 12 / 50
+field 1 91.2 ms
+field 2 12 (100%)
+field 3 0 / 0
+hex 0 7c1dbaa5f0e4c291a3b7d85e6f20c4b1
+hex 1 9d4e0a72c58f13b6e2d7a09c41f8e5b2
+stats min 83.0  med 91.2  max 97.5 ms
+spark reset
+spark 88200
+spark 91000
+spark 90400
+spark 93100
+spark 89800
+spark 92000
+spark 94500
+spark 90100
+spark timeout
+spark 87900
+spark 91600
+spark 92800
+band 83000 98000
+wait 1500
+shot vehicle_measuring.bmp
+
+# Reactions to the last round: OK, then a timeout, then a FAIL.
+expr ok 1500
+badge 2ECC71 1200 91.2 ms OK
+flash 2ECC71 1200
+pulse
+wait 400
+shot vehicle_react_ok.bmp
+
+expr timeout 1500
+badge F1C40F 1200 TIMEOUT
+flash F1C40F 1200
+wait 400
+shot vehicle_react_timeout.bmp
+
+expr fail 1500
+badge E74C3C 1200 FAIL
+flash E74C3C 1200
+wait 400
+shot vehicle_react_fail.bmp
+
+# End of the campaign: the summary replaces the card grid (V-11).
+wait 1500
+state 2962FF done
+progress 50 50
+summary 1,4,9,12,8,6,4,2,1,0|RTT (ms), 10 bins from 83 to 98|OK 47 of 50 (94%)   FAIL 1   TIMEOUT 2|median 91.2 ms   IQR 88.0 - 93.1 ms|min 83.0 ms   max 97.5 ms
+wait 500
+shot vehicle_summary.bmp
+wait 5000
+shot vehicle_summary_hist.bmp

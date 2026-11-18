@@ -1,0 +1,23 @@
+# The key: advertising, then answering a challenge. Sample values.
+
+init key
+tag -
+link ble 0
+state F4B400 advertising
+field 0 0
+field 1 -
+hex 0 -
+hex 1 -
+wait 300
+shot key_advertising.bmp
+
+link ble 1
+state 2ECC71 answering
+field 0 12
+field 1 0.4 ms
+hex 0 9d4e0a72c58f13b6e2d7a09c41f8e5b2
+hex 1 7c1dbaa5f0e4c291a3b7d85e6f20c4b1
+expr ok 1500
+pulse
+wait 400
+shot key_answering.bmp

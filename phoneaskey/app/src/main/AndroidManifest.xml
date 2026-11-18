@@ -2,15 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- BLE: a chave atua como peripheral (anuncia) e servidor GATT (aceita conexao). -->
-    <!-- Android 12+ (API 31): permissoes de runtime dedicadas. -->
+    <!-- BLE: the key acts as a peripheral (advertises) and a GATT server (accepts connections). -->
+    <!-- Android 12+ (API 31): dedicated runtime permissions. -->
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <!-- Android 11 e anteriores (API <= 30): permissoes legadas, install-time. -->
+    <!-- Android 11 and older (API <= 30): legacy install-time permissions. -->
     <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
 
-    <!-- So faz sentido em aparelho com BLE. Nao fazemos scan, entao nao pedimos localizacao. -->
+    <!-- Only meaningful on a device with BLE. We do not scan, so we do not request location. -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true" />
 
     <application

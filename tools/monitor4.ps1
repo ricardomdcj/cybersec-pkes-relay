@@ -1,10 +1,10 @@
-# Monitora as 4 CYDs da bancada ao mesmo tempo: multiplexa as 4 seriais num unico log
-# com timestamp do PC + tag de papel, para correlacionar as rodadas pelo nonce.
+# Monitors the 4 CYDs of the bench at the same time: multiplexes the 4 serial ports into a
+# single log with a PC timestamp and a role tag, to correlate the rounds by nonce.
 #
 #   powershell -ExecutionPolicy Bypass -File tools\monitor4.ps1 -seconds 120 -out run.log
 #
-# Abre as portas SEM mexer em DTR/RTS (nao reseta as placas). Ajuste o mapa de portas
-# se os numeros COM mudarem (CH340 re-enumera ao religar).
+# Opens the ports WITHOUT touching DTR/RTS (it does not reset the boards). Adjust the port map
+# if the COM numbers change (the CH340 re-enumerates when the board is powered back on).
 param(
     [int]$seconds = 120,
     [string]$out = "run.log",
@@ -12,7 +12,7 @@ param(
     [string]$relayA = "COM7",
     [string]$relayB = "COM8",
     [string]$vehicle = "COM6",
-    [switch]$resetVehicle   # pulsa RTS no carro ao iniciar, p/ disparar uma campanha nova de rodadas
+    [switch]$resetVehicle   # pulses RTS on the vehicle at start, to trigger a new round campaign
 )
 
 $map = [ordered]@{ "KEY" = $key; "RELAY_A" = $relayA; "RELAY_B" = $relayB; "VEHICLE" = $vehicle }
@@ -21,17 +21,17 @@ $buf = @{}
 foreach ($role in $map.Keys) {
     $x = New-Object System.IO.Ports.SerialPort $map[$role], 115200, None, 8, One
     $x.ReadTimeout = 50
-    try { $x.Open(); $x.DtrEnable = $false; $x.RtsEnable = $false } catch { Write-Output "falha ao abrir $($map[$role]) ($role): $_" }
+    try { $x.Open(); $x.DtrEnable = $false; $x.RtsEnable = $false } catch { Write-Output "failed to open $($map[$role]) ($role): $_" }
     $sp[$role] = $x
     $buf[$role] = ""
 }
 
 if ($resetVehicle -and $sp["VEHICLE"].IsOpen) {
-    # Reset do carro para recomecar a campanha de rodadas (BLE reconecta e refaz ROUNDS).
+    # Reset the vehicle to restart the round campaign (BLE reconnects and runs ROUNDS again).
     $sp["VEHICLE"].RtsEnable = $true; Start-Sleep -Milliseconds 150; $sp["VEHICLE"].RtsEnable = $false
 }
 
-"# monitor iniciado $(Get-Date -Format o) | KEY=$key RELAY_A=$relayA RELAY_B=$relayB VEHICLE=$vehicle" | Out-File -Encoding utf8 $out
+"# monitor started $(Get-Date -Format o) | KEY=$key RELAY_A=$relayA RELAY_B=$relayB VEHICLE=$vehicle" | Out-File -Encoding utf8 $out
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 while ($sw.Elapsed.TotalSeconds -lt $seconds) {
     foreach ($role in $map.Keys) {
@@ -49,4 +49,4 @@ while ($sw.Elapsed.TotalSeconds -lt $seconds) {
     Start-Sleep -Milliseconds 20
 }
 foreach ($role in $map.Keys) { if ($sp[$role].IsOpen) { $sp[$role].Close() } }
-"# monitor encerrado $(Get-Date -Format o)" | Out-File -Append -Encoding utf8 $out
+"# monitor stopped $(Get-Date -Format o)" | Out-File -Append -Encoding utf8 $out

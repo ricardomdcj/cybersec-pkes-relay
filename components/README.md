@@ -1,7 +1,7 @@
-# components — código compartilhado da bancada
+# components — shared bench code
 
-Componentes ESP-IDF reaproveitados por `key/`, `vehicle/` e `relays/`. Cada projeto os
-enxerga porque seu `CMakeLists.txt` raiz faz:
+ESP-IDF components reused by `key/`, `vehicle/` and `relays/`. Each project sees them because its
+root `CMakeLists.txt` does:
 
 ```cmake
 set(EXTRA_COMPONENT_DIRS "${CMAKE_CURRENT_LIST_DIR}/../components")
@@ -9,25 +9,40 @@ set(EXTRA_COMPONENT_DIRS "${CMAKE_CURRENT_LIST_DIR}/../components")
 
 ## `pkes_contract/`
 
-Fonte única do protocolo GATT da bancada (antes duplicado à mão em três lugares):
+The single source of the bench's GATT protocol (it used to be duplicated by hand in three places):
 
-- `ble_contract.h` — UUIDs do serviço/características, `NONCE_LEN`/`RESPONSE_LEN` e a PSK.
-- `pkes_hmac.c/.h` — `HMAC-SHA256(PSK, nonce)` truncado em `RESPONSE_LEN`. Usa **PSA Crypto**
-  no mbedTLS 4 (IDF v6.1) e a API MD legada no mbedTLS 3 (v5.4). Chame `pkes_hmac_init()` uma
-  vez no `app_main`. Só `key/` (calcula) e `vehicle/` (confere) usam; os relays não.
+- `ble_contract.h` — UUIDs of the service and characteristics, `NONCE_LEN` / `RESPONSE_LEN`, and the PSK.
+- `pkes_hmac.c/.h` — `HMAC-SHA256(PSK, nonce)` truncated to `RESPONSE_LEN`. It uses **PSA Crypto**
+  on mbedTLS 4 (IDF v6.1) and the legacy MD API on mbedTLS 3 (v5.4). Call `pkes_hmac_init()` once in
+  `app_main`. Only `key/` (computes) and `vehicle/` (checks) use it; the relays do not.
+- `ble_link_params.h` / `ble_link.c` — the explicit BLE connection parameters (the NimBLE defaults,
+  made visible) and the helpers that log the `CONN` and `MTU` lines.
+- `run_meta.h` / `run_meta.c` — the `RUN_META` line printed at boot: the git commit of the source,
+  the `+mod` flag for uncommitted changes, and the build date. The commit is read by CMake at
+  configure time, so run `idf.py reconfigure` after a commit.
 
-`REQUIRES bt mbedtls` (o header usa os tipos de UUID do NimBLE).
+`REQUIRES bt mbedtls log` (the header uses the NimBLE UUID types).
 
 ## `cyd/`
 
-Camada de apresentação da CYD (ESP32-2432S028R), portada da bancada **deskrab**:
+The presentation layer of the CYD (ESP32-2432S028R), ported from the **deskrab** bench:
 
-- `board.h` — pinos do display ST7789, do touch XPT2046 e do LED RGB.
-- `cyd_display.c/.h` — ST7789 por SPI + LVGL 8.3 (buffers DMA, task do LVGL, lock/unlock).
-- `cyd_led.c/.h` — LED RGB (off/solid/blink/breathe), espelha o estado.
-- `cyd_ui.c/.h` — tela de status comum: cabeçalho colorido, banner de estado, grade de cards
-  rótulo/valor, linhas hex e um **mascote animado** por papel (bob, piscar, "pulo" por evento).
-- `idf_component.yml` — puxa `lvgl/lvgl ~8.3` (component manager).
+- `board.h` — pins of the ST7789 display, the XPT2046 touch and the RGB LED.
+- `cyd_display.c/.h` — ST7789 over SPI + LVGL 8.3 (DMA buffers, the LVGL task, lock/unlock).
+- `cyd_led.c/.h` — RGB LED (off / solid / blink / breathe), mirrors the state.
+- `cyd_ui.c/.h` — the common status screen: a colored header with the mode tag and the link
+  indicators, the state banner, a progress bar, the label/value card grid, the sparkline and its
+  baseline band, the hex lines, an animated **mascot** per role (bob, blink, hop, expressions),
+  the result badge, the end-of-campaign summary and histogram, the relay link diagram, the
+  distance scene, and the boot splash.
+- `idf_component.yml` — pulls in `lvgl/lvgl ~8.3` (component manager).
 
-A bancada é **view-only** (sem controle por toque): o touch do deskrab não foi portado.
+The bench is **view-only** (no touch control): the deskrab touch code was not ported.
 `REQUIRES lvgl__lvgl esp_lcd ...`.
+
+## `serial_ota/`
+
+A minimal firmware update over UART0, so the CYD can be reflashed without the BOOT button. The
+running firmware receives `OTA:*` lines and writes the new image to the other OTA slot. The host
+side is `tools/serial_ota.py`; the protocol is documented in `serial_ota.h`. The UART0 reader also
+delivers the bench commands (`RUN`, `START`, `TXPOW`) through a callback.

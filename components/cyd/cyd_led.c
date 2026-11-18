@@ -5,7 +5,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-// Brilho maximo (0-255): o LED da CYD e forte e fica de frente para quem esta perto
+// Maximum brightness (0-255): the CYD LED is strong and faces whoever is close
 #define LED_MAX 40
 
 static const int s_pins[3] = { PIN_LED_R, PIN_LED_G, PIN_LED_B };
@@ -31,10 +31,10 @@ static void led_task(void *arg) {
         case CYD_LED_SOLID: level = 255; break;
         case CYD_LED_BLINK: level = (ms / 400) % 2 ? 255 : 0; break;
         case CYD_LED_BREATHE: {
-            int p = ms % 2400;                      // triangulo de 2,4 s
+            int p = ms % 2400;                      // 2.4 s triangle
             int t = p < 1200 ? p : 2400 - p;
             level = 20 + t * 235 / 1200;
-            level = level * level / 255;            // curva aproximada de percepcao
+            level = level * level / 255;            // rough perceptual curve
             break;
         }
         }
@@ -44,7 +44,7 @@ static void led_task(void *arg) {
 }
 
 void cyd_led_init(void) {
-    // Usa o timer 0 ja configurado pelo backlight (5 kHz, 8 bits)
+    // Use timer 0, already configured by the backlight (5 kHz, 8 bits)
     for (int i = 0; i < 3; i++) {
         ledc_channel_config_t ch = {
             .speed_mode = LEDC_LOW_SPEED_MODE,
@@ -54,7 +54,7 @@ void cyd_led_init(void) {
             .gpio_num   = s_pins[i],
             .duty       = 0,
             .hpoint     = 0,
-            .flags.output_invert = 1,   // LED ligado ao 3V3, acende com nivel baixo
+            .flags.output_invert = 1,   // LED wired to 3V3: lights up on a low level
         };
         ESP_ERROR_CHECK(ledc_channel_config(&ch));
     }

@@ -11,10 +11,10 @@
 #include "serial_ota.h"
 #include "link.h"
 
-/* Comandos de bancada pela UART0 (via serial_ota), p/ varrer a "distancia efetiva"
- * sem reflashar nem mover placas:
- *   TXPOW <n>   ajusta a potencia de TX do ESP-NOW (n em 0.25dBm, 8..84 = 2..20 dBm)
- * O valor aparece no log (prefixo TXPOW) p/ etiquetar a campanha no dataset. */
+/* Bench commands over UART0 (via serial_ota), to sweep the "effective distance"
+ * without reflashing or moving boards:
+ *   TXPOW <n>   sets the ESP-NOW TX power (n in 0.25 dBm, 8..84 = 2..20 dBm)
+ * The value appears in the log (TXPOW prefix) to label the campaign in the dataset. */
 static void bench_cmd(const char *line)
 {
     if (strncmp(line, "TXPOW ", 6) == 0) {
@@ -26,21 +26,21 @@ static void bench_cmd(const char *line)
 
 void app_main(void)
 {
-    esp_err_t ret = nvs_flash_init();   /* WiFi/ESP-NOW precisam do NVS */
+    esp_err_t ret = nvs_flash_init();   /* WiFi/ESP-NOW need NVS */
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
 
-    serial_ota_init();   /* regravacao pela UART0 sem download mode (tools/serial_ota.py) */
-    serial_ota_set_cmd_handler(bench_cmd);   /* comandos TXPOW... na mesma UART0 */
+    serial_ota_init();   /* reflash over UART0 without download mode (tools/serial_ota.py) */
+    serial_ota_set_cmd_handler(bench_cmd);   /* TXPOW commands on the same UART0 */
 
 #if RELAY_ROLE == RELAY_ROLE_A
     relay_a_start();
 #elif RELAY_ROLE == RELAY_ROLE_B
     relay_b_start();
 #else
-#error "Defina RELAY_ROLE como RELAY_ROLE_A ou RELAY_ROLE_B em relay_config.h"
+#error "Set RELAY_ROLE to RELAY_ROLE_A or RELAY_ROLE_B in relay_config.h"
 #endif
 }

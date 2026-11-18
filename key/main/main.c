@@ -1,16 +1,16 @@
 /*
- * key — a chave digital da bancada PKES, agora numa CYD (ESP32-2432S028R).
+ * key — the digital key of the PKES bench, now on a CYD (ESP32-2432S028R).
  *
- * Porte do antigo app Android phoneaskey/ (KeyPeripheral.kt) para ESP-IDF/NimBLE:
- * peripheral BLE + servidor GATT que anuncia o servico da chave, recebe o nonce do
- * veiculo (ou do Relay B) na caracteristica CHALLENGE, calcula
- * HMAC-SHA256(PSK, nonce) truncado em RESPONSE_LEN e notifica em RESPONSE.
+ * Port of the old Android app phoneaskey/ (KeyPeripheral.kt) to ESP-IDF/NimBLE:
+ * BLE peripheral + GATT server that advertises the key service, receives the nonce from
+ * the vehicle (or Relay B) on the CHALLENGE characteristic, computes
+ * HMAC-SHA256(PSK, nonce) truncated to RESPONSE_LEN, and notifies on RESPONSE.
  *
- * A estrutura GATT espelha relays/main/relay_b.c (clone da chave), mas aqui a chave
- * e a de verdade: ela CALCULA o HMAC (via componente pkes_contract), em vez de tunelar.
+ * The GATT layout mirrors relays/main/relay_b.c (the key clone), but here the key is the
+ * real one: it COMPUTES the HMAC (via the pkes_contract component) instead of tunneling it.
  *
- * O display mostra o estado (anunciando/conectado), quantos desafios respondeu, o tempo
- * de calculo+notify e o ultimo nonce/resposta em hex, com o mascote de chave no canto.
+ * The display shows the state (advertising/connected), how many challenges were answered,
+ * the compute+notify time, and the last nonce/response in hex, with the key mascot in the corner.
  */
 
 #include <string.h>
@@ -28,6 +28,8 @@
 #include "services/gatt/ble_svc_gatt.h"
 
 #include "ble_contract.h"
+#include "ble_link_params.h"
+#include "run_meta.h"
 #include "pkes_hmac.h"
 #include "cyd_display.h"
 #include "cyd_led.h"
@@ -36,7 +38,7 @@
 
 static const char *TAG = "KEY";
 
-/* Cor de destaque da chave (ambar). */
+/* Accent color of the key (amber). */
 #define ACCENT 0xF4B400
 
 static uint8_t  own_addr_type;
@@ -44,13 +46,14 @@ static uint16_t g_conn = BLE_HS_CONN_HANDLE_NONE;
 static uint16_t h_response_val;
 static uint8_t  last_response[RESPONSE_LEN];
 static uint32_t challenge_count;
+static uint32_t disconnects;      /* drops of the vehicle connection since boot (M-12) */
 
-/* ids dos campos na UI (ordem dos rotulos em cfg.fields). */
-enum { F_DESAFIOS = 0, F_CALC_US = 1 };
+/* IDs of the UI fields (order of the labels in cfg.fields). */
+enum { F_CHALLENGES = 0, F_CALC_US = 1 };
 
 static void start_advertising(void);
 
-/* ---- servidor GATT (espelha o KeyPeripheral.kt, agora calculando o HMAC) ---- */
+/* ---- GATT server (mirrors KeyPeripheral.kt, now computing the HMAC) ---- */
 
 static void answer_challenge(const uint8_t *nonce, uint16_t nlen)
 {
@@ -71,13 +74,15 @@ static void answer_challenge(const uint8_t *nonce, uint16_t nlen)
     int64_t dt = esp_timer_get_time() - t0;
     challenge_count++;
 
-    /* nonce (4 B) correlaciona com os logs do veiculo e dos relays; dt = calculo+notify. */
-    ESP_LOGI(TAG, "HOP K resp nonce=%02x%02x%02x%02x calc_notify=%lld us (desafio %lu, %u B) t=%lld us",
+    /* nonce (4 B) correlates with the logs of the vehicle and the relays; dt = compute+notify. */
+    ESP_LOGI(TAG, "HOP K resp nonce=%02x%02x%02x%02x calc_notify=%lld us (challenge %lu, %u B) t=%lld us",
              nonce[0], nonce[1], nonce[2], nonce[3], (long long) dt,
              (unsigned long) challenge_count, nlen, (long long) esp_timer_get_time());
 
-    cyd_ui_set_field(F_DESAFIOS, "%lu", (unsigned long) challenge_count);
-    cyd_ui_set_field(F_CALC_US, "%lld", (long long) dt);
+    cyd_ui_set_field(F_CHALLENGES, "%lu", (unsigned long) challenge_count);
+    char calc_txt[24];                                                 /* V-02 */
+    cyd_fmt_us(calc_txt, sizeof calc_txt, dt);
+    cyd_ui_set_field(F_CALC_US, "%s", calc_txt);
     cyd_ui_set_hex(0, nonce, nlen);
     cyd_ui_set_hex(1, last_response, RESPONSE_LEN);
     cyd_ui_pulse();
@@ -142,23 +147,37 @@ static int gap_event(struct ble_gap_event *event, void *arg)
     case BLE_GAP_EVENT_CONNECT:
         if (event->connect.status == 0) {
             g_conn = event->connect.conn_handle;
-            ESP_LOGI(TAG, "veiculo conectado (handle %u)", g_conn);
-            cyd_ui_set_state("conectado", 0x1AA260);
+            ESP_LOGI(TAG, "vehicle connected (handle %u)", g_conn);
+            ble_link_log_conn(TAG, g_conn);                                    /* M-10 */
+            cyd_ui_set_state("connected", 0x1AA260);
+            cyd_ui_set_link(CYD_LINK_BLE, 1);                             /* V-06 */
         } else {
-            ESP_LOGE(TAG, "conexao falhou (status=%d); re-anuncio", event->connect.status);
+            ESP_LOGE(TAG, "connection failed (status=%d); re-advertising", event->connect.status);
             start_advertising();
         }
         break;
 
     case BLE_GAP_EVENT_DISCONNECT:
-        ESP_LOGI(TAG, "veiculo desconectou (reason=%d); re-anuncio", event->disconnect.reason);
+        disconnects++;                                                    /* M-12 */
+        ESP_LOGW(TAG, "vehicle disconnected (reason=%d, disconnects=%lu); re-advertising",
+                 event->disconnect.reason, (unsigned long) disconnects);
         g_conn = BLE_HS_CONN_HANDLE_NONE;
+        cyd_ui_set_link(CYD_LINK_BLE, 0);                                 /* V-06 */
         start_advertising();
         break;
 
+    case BLE_GAP_EVENT_CONN_UPDATE:                                       /* M-10 */
+        if (event->conn_update.status == 0)
+            ble_link_log_conn(TAG, event->conn_update.conn_handle);
+        break;
+
+    case BLE_GAP_EVENT_MTU:                                               /* M-11 */
+        ble_link_log_mtu(TAG, event->mtu.conn_handle, event->mtu.value);
+        break;
+
     case BLE_GAP_EVENT_SUBSCRIBE:
-        ESP_LOGI(TAG, "veiculo %s notify na RESPONSE",
-                 event->subscribe.cur_notify ? "habilitou" : "desabilitou");
+        ESP_LOGI(TAG, "vehicle %s notify on RESPONSE",
+                 event->subscribe.cur_notify ? "enabled" : "disabled");
         break;
 
     case BLE_GAP_EVENT_ADV_COMPLETE:
@@ -171,7 +190,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
     return 0;
 }
 
-/* ---- ciclo de vida do host ---------------------------------------------- */
+/* ---- host lifecycle ----------------------------------------------------- */
 
 static void start_advertising(void)
 {
@@ -194,13 +213,13 @@ static void start_advertising(void)
     advp.disc_mode = BLE_GAP_DISC_MODE_GEN;
     int rc = ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER, &advp, gap_event, NULL);
     if (rc != 0) ESP_LOGE(TAG, "adv_start rc=%d", rc);
-    else { ESP_LOGI(TAG, "anunciando a chave; aguardando o veiculo"); cyd_ui_set_state("anunciando", ACCENT); }
+    else { ESP_LOGI(TAG, "advertising the key; waiting for the vehicle"); cyd_ui_set_state("advertising", ACCENT); }
 }
 
 static void on_sync(void)
 {
-    if (ble_hs_util_ensure_addr(0) != 0) { ESP_LOGE(TAG, "sem endereco BLE"); return; }
-    if (ble_hs_id_infer_auto(0, &own_addr_type) != 0) { ESP_LOGE(TAG, "infer addr falhou"); return; }
+    if (ble_hs_util_ensure_addr(0) != 0) { ESP_LOGE(TAG, "no BLE address"); return; }
+    if (ble_hs_id_infer_auto(0, &own_addr_type) != 0) { ESP_LOGE(TAG, "address inference failed"); return; }
     start_advertising();
 }
 
@@ -222,22 +241,25 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
     pkes_hmac_init();
-    serial_ota_init();   /* regravacao pela UART0 sem download mode (tools/serial_ota.py) */
+    run_meta_print("key");                                                /* M-13b */
+    serial_ota_init();   /* reflash over UART0 without download mode (tools/serial_ota.py) */
 
-    /* UI primeiro, para a tela acender mesmo antes do BLE. */
+    /* UI first, so the screen lights up even before BLE. */
     cyd_display_init();
     cyd_led_init();
     cyd_display_set_backlight(90);
     cyd_ui_cfg_t cfg = {
-        .title  = "CHAVE",
+        .title  = "KEY",
         .accent = ACCENT,
         .mascot = CYD_MASCOT_KEY,
-        .fields = { "Desafios", "Calc us", NULL },
+        .fields = { "Challenges", "Calc", NULL },
         .hex0   = "nonce",
         .hex1   = "resp",
     };
     cyd_ui_init(&cfg);
-    cyd_ui_set_field(F_DESAFIOS, "0");
+    cyd_ui_set_field(F_CHALLENGES, "0");
+    cyd_ui_set_link(CYD_LINK_BLE, 0);                                     /* V-06: no vehicle yet */
+    cyd_ui_splash(run_meta_commit(), 2000);                               /* V-15 */
 
     ret = nimble_port_init();
     if (ret != ESP_OK) { ESP_LOGE(TAG, "nimble_port_init rc=%d", ret); return; }
@@ -255,5 +277,5 @@ void app_main(void)
     if (rc != 0) { ESP_LOGE(TAG, "gatts_add_svcs rc=%d", rc); return; }
 
     nimble_port_freertos_init(host_task);
-    ESP_LOGI(TAG, "chave iniciada (peripheral BLE + display CYD)");
+    ESP_LOGI(TAG, "key started (BLE peripheral + CYD display)");
 }

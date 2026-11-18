@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-/** Permissoes de runtime necessarias no Android 12+ (nenhuma abaixo disso). */
+/** Runtime permissions required on Android 12+ (none below that). */
 private fun requiredBlePerms(): Array<String> =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
         arrayOf(Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.BLUETOOTH_CONNECT)
@@ -98,7 +98,7 @@ fun KeyScreen(peripheral: KeyPeripheral, modifier: Modifier = Modifier) {
     ) {
         Text("phone-as-key", style = MaterialTheme.typography.headlineSmall)
         Text(
-            "Chave digital BLE (peripheral + servidor GATT)",
+            "Digital key over BLE (peripheral + GATT server)",
             style = MaterialTheme.typography.bodyMedium
         )
 
@@ -115,22 +115,22 @@ fun KeyScreen(peripheral: KeyPeripheral, modifier: Modifier = Modifier) {
                     }
                 },
                 enabled = idle
-            ) { Text("Iniciar chave") }
+            ) { Text("Start key") }
 
             OutlinedButton(
                 onClick = { peripheral.stop() },
                 enabled = !idle
-            ) { Text("Parar") }
+            ) { Text("Stop") }
         }
 
         Text(
-            "Servico: ${BleContract.SERVICE_UUID}",
+            "Service: ${BleContract.SERVICE_UUID}",
             style = MaterialTheme.typography.labelSmall,
             fontFamily = FontFamily.Monospace
         )
 
         HorizontalDivider()
-        Text("Eventos", style = MaterialTheme.typography.titleSmall)
+        Text("Events", style = MaterialTheme.typography.titleSmall)
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
@@ -152,17 +152,17 @@ fun KeyScreen(peripheral: KeyPeripheral, modifier: Modifier = Modifier) {
 @Composable
 private fun StatusRow(status: PeripheralStatus, peer: String?) {
     val (label, color) = when (status) {
-        PeripheralStatus.IDLE -> "Parada" to MaterialTheme.colorScheme.outline
-        PeripheralStatus.ADVERTISING -> "Anunciando" to MaterialTheme.colorScheme.primary
+        PeripheralStatus.IDLE -> "Stopped" to MaterialTheme.colorScheme.outline
+        PeripheralStatus.ADVERTISING -> "Advertising" to MaterialTheme.colorScheme.primary
         PeripheralStatus.CONNECTED ->
-            ("Conectada" + (peer?.let { " ($it)" } ?: "")) to MaterialTheme.colorScheme.tertiary
-        PeripheralStatus.ERROR -> "Erro" to MaterialTheme.colorScheme.error
+            ("Connected" + (peer?.let { " ($it)" } ?: "")) to MaterialTheme.colorScheme.tertiary
+        PeripheralStatus.ERROR -> "Error" to MaterialTheme.colorScheme.error
     }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("Estado:", style = MaterialTheme.typography.titleSmall)
+        Text("State:", style = MaterialTheme.typography.titleSmall)
         Text(label, color = color, style = MaterialTheme.typography.titleSmall)
     }
 }

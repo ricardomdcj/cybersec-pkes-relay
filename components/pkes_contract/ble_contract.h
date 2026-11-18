@@ -4,27 +4,27 @@
 #include "host/ble_uuid.h"
 
 /*
- * Contrato GATT da bancada PKES relay — FONTE UNICA de verdade (C).
+ * GATT contract of the PKES relay bench: the SINGLE source of truth (C).
  *
- * Antes este arquivo era duplicado a mao em vehicle/ e relays/, e espelhado tambem
- * no BleContract.kt do app Android. Com a chave virando uma CYD (projeto key/), os
- * tres consumidores em C (key, vehicle, relays) passam a incluir ESTE header via o
- * componente compartilhado components/pkes_contract. O app phoneaskey/ segue como
- * registro historico e, se mantido, precisa continuar casando estes valores.
+ * This header used to be copied by hand into vehicle/ and relays/, and mirrored in the
+ * BleContract.kt of the Android app. Now that the key is a CYD (project key/), the three C
+ * consumers (key, vehicle, relays) include THIS header through the shared component
+ * components/pkes_contract. The phoneaskey/ app stays as a historical record; if it is kept,
+ * it must keep matching these values.
  *
- * Papeis:
- *   - key (peripheral + servidor GATT): anuncia SVC_UUID, recebe o nonce em CHALLENGE,
- *     calcula HMAC-SHA256(PSK, nonce) truncado em RESPONSE_LEN e notifica em RESPONSE.
- *   - vehicle (central): varre pelo SVC_UUID, escreve o nonce e confere o HMAC (baseline).
- *   - relays: Relay B clona o servico; Relay A conversa com a chave real. Os relays NAO
- *     interpretam o HMAC (sao canos burros), mas precisam dos mesmos UUIDs/tamanhos.
+ * Roles:
+ *   - key (peripheral + GATT server): advertises SVC_UUID, receives the nonce on CHALLENGE,
+ *     computes HMAC-SHA256(PSK, nonce) truncated to RESPONSE_LEN and notifies on RESPONSE.
+ *   - vehicle (central): scans for SVC_UUID, writes the nonce and checks the HMAC (baseline).
+ *   - relays: Relay B clones the service; Relay A talks to the real key. The relays do NOT
+ *     interpret the HMAC (they are dumb pipes), but they need the same UUIDs and sizes.
  *
- * UUIDs de 128 bits: BLE_UUID128_INIT recebe os bytes em LITTLE-ENDIAN, ou seja, na
- * ordem inversa da string. Ex.: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10 vira
+ * 128-bit UUIDs: BLE_UUID128_INIT takes the bytes in LITTLE-ENDIAN order, that is, reversed
+ * relative to the string. Example: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10 becomes
  * 10,0a,5b,1e,7c,2a,3d,9f,6a,4e,2c,1b,01,00,2a,8f.
  */
 
-/* Servico: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10 */
+/* Service: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10 */
 static const ble_uuid128_t SVC_UUID = BLE_UUID128_INIT(
     0x10, 0x0a, 0x5b, 0x1e, 0x7c, 0x2a, 0x3d, 0x9f,
     0x6a, 0x4e, 0x2c, 0x1b, 0x01, 0x00, 0x2a, 0x8f);
@@ -42,9 +42,9 @@ static const ble_uuid128_t CHR_RESPONSE_UUID = BLE_UUID128_INIT(
 #define NONCE_LEN     16
 #define RESPONSE_LEN  16
 
-/* Segredo pre-compartilhado APENAS de bancada: o texto "PKES-RELAY-BENCH".
- * A confidencialidade da chave nao faz parte da superficie de ataque estudada; por
- * isso e fixa e identica nos dois lados. Os relays nao usam este array. */
+/* Bench-only pre-shared secret: the text "PKES-RELAY-BENCH".
+ * Confidentiality of the key is not part of the attack surface under study, so it is fixed
+ * and identical on both sides. The relays do not use this array. */
 static const uint8_t PSK[16] = {
     0x50, 0x4b, 0x45, 0x53, 0x2d, 0x52, 0x45, 0x4c,
     0x41, 0x59, 0x2d, 0x42, 0x45, 0x4e, 0x43, 0x48};

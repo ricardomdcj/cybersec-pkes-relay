@@ -50,7 +50,7 @@ void cyd_display_set_backlight(uint8_t percent) {
     ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
 }
 
-// Flush: envia o buffer do LVGL para o painel; o fim do DMA libera o buffer
+// Flush: send the LVGL buffer to the panel; the end of the DMA transfer releases the buffer
 static void flush_cb(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_map) {
     esp_lcd_panel_draw_bitmap(drv->user_data, area->x1, area->y1,
                               area->x2 + 1, area->y2 + 1, color_map);
@@ -118,7 +118,7 @@ void cyd_display_init(void) {
 
     lv_init();
 
-    // Dois buffers de 40 linhas em RAM interna (DMA)
+    // Two 40-line buffers in internal RAM (DMA)
     size_t buf_px = LCD_W * DRAW_BUF_LINES;
     lv_color_t *buf1 = heap_caps_malloc(buf_px * sizeof(lv_color_t), MALLOC_CAP_DMA);
     lv_color_t *buf2 = heap_caps_malloc(buf_px * sizeof(lv_color_t), MALLOC_CAP_DMA);
@@ -139,7 +139,7 @@ void cyd_display_init(void) {
     ESP_ERROR_CHECK(esp_timer_start_periodic(tick, 2000));
 
     xTaskCreatePinnedToCore(lvgl_task, "lvgl", 8192, NULL, 5, NULL, 1);
-    ESP_LOGI(TAG, "ST7789 + LVGL prontos");
+    ESP_LOGI(TAG, "ST7789 + LVGL ready");
 }
 
 void cyd_display_lock(void)   { xSemaphoreTakeRecursive(s_mux, portMAX_DELAY); }

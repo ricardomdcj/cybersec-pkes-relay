@@ -1,4 +1,4 @@
 #pragma once
 
-/* Relay A: central BLE (perto do celular) + enlace ESP-NOW para o Relay B. */
+/* Relay A: BLE central (near the phone/key) + ESP-NOW link to Relay B. */
 void relay_a_start(void);

@@ -4,17 +4,17 @@
 #include <stddef.h>
 
 /*
- * HMAC-SHA256(PSK, nonce) truncado em RESPONSE_LEN, compartilhado entre a chave (key/,
- * que o calcula para responder) e o veiculo (vehicle/, que o confere no baseline).
+ * HMAC-SHA256(PSK, nonce) truncated to RESPONSE_LEN, shared between the key (key/, which
+ * computes it to answer) and the vehicle (vehicle/, which checks it in the baseline).
  *
- * Dois caminhos conforme a versao do mbedTLS (ver CLAUDE.md):
- *   - mbedTLS 4.x (IDF v6.1): PSA Crypto. Exige pkes_hmac_init() uma vez no app_main.
- *   - mbedTLS 3.x (IDF v5.4): API MD legada. pkes_hmac_init() e no-op.
+ * Two paths, depending on the mbedTLS version (see CLAUDE.md):
+ *   - mbedTLS 4.x (IDF v6.1): PSA Crypto. Requires one pkes_hmac_init() in app_main.
+ *   - mbedTLS 3.x (IDF v5.4): legacy MD API. pkes_hmac_init() is a no-op.
  */
 
-/* Chame uma vez no app_main antes do primeiro pkes_hmac_response(). */
+/* Call once in app_main, before the first pkes_hmac_response(). */
 void pkes_hmac_init(void);
 
-/* out recebe 32 bytes (SHA-256 cheio); o chamador usa os primeiros RESPONSE_LEN. */
+/* out receives 32 bytes (the full SHA-256); the caller uses the first RESPONSE_LEN. */
 void pkes_hmac_response(const uint8_t *key, size_t key_len,
                         const uint8_t *msg, size_t msg_len, uint8_t out[32]);

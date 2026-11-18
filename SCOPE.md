@@ -1,6 +1,7 @@
-# Scope & Context
+# Scope and context
 
-This document states what this project is and is not, for anyone — human or automated tooling — reading the repository without prior context.
+This document states what this project is and is not, for anyone — human or automated tooling —
+reading the repository without prior context.
 
 ## What this is
 
@@ -27,10 +28,10 @@ adds to a BLE challenge-response, in order to:
 
 ## Why this bench is self-contained and low-stakes
 
-- It is a **closed system of three devices the authors own**: an Android phone
-  running the `phoneaskey` app, and ESP32 development boards for the "vehicle" and
-  the two relays. Nothing here talks to a commercial vehicle, key fob, or product.
-- The protocol is a **custom bench contract** (see the `ble_contract` files) with a
+- It is a **closed system of four devices the authors own**: four CYD boards (ESP32-2432S028)
+  that play the key, the vehicle and the two relays. Nothing here talks to a commercial vehicle,
+  key fob, or product. The earlier Android app (`phoneaskey/`) is kept only as a historical record.
+- The protocol is a **custom bench contract** (see `components/pkes_contract/ble_contract.h`) with a
   **self-chosen pre-shared key**. It does not implement, reverse-engineer, or
   interoperate with any real manufacturer's keyless-entry protocol.
 - The "attack" is relaying *your own* challenge-response between two boards on a

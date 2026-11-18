@@ -3,11 +3,11 @@
 #include "lvgl.h"
 
 /*
- * Display ST7789 + LVGL 8.3 da CYD. Adaptado do deskrab (main/display.c), sem o
- * recurso de rotacao por settings/NVS: a bancada PKES e view-only e fixa.
+ * ST7789 display + LVGL 8.3 for the CYD. Adapted from deskrab (main/display.c), without the
+ * rotation feature driven by settings/NVS: the PKES bench is view-only and fixed.
  *
- * Toda chamada ao LVGL (criar/alterar objetos) tem que ocorrer entre
- * cyd_display_lock() e cyd_display_unlock(), pois a task 'lvgl' redesenha em paralelo.
+ * Every LVGL call (creating/changing objects) must happen between cyd_display_lock() and
+ * cyd_display_unlock(), because the 'lvgl' task redraws in parallel.
  */
 void cyd_display_init(void);
 void cyd_display_lock(void);
