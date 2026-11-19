@@ -1,0 +1,79 @@
+# Campaign summary, 2026-11-18
+
+Each condition pools the campaigns of one setup: three campaigns of 50 rounds. Distance is the car-key separation. For relayed conditions, CSVB rounds equal the OK rounds (every answered round went through the relays).
+
+## Outcomes
+
+| Condition | Tunnel | Car-key (m) | Campaigns | Rounds | OK | FAIL | TIMEOUT | CSVB rounds | Success (95 % CI) |
+|---|---|---|---|---|---|---|---|---|---|
+| baseline 0.52 | direct | 0.52 | 3 | 150 | 150 | 0 | 0 | 0 | 100.0 % (97.5-100.0) |
+| broadcast 0.52 | broadcast | 0.52 | 3 | 150 | 139 | 0 | 11 | 139 | 92.7 % (87.3-95.9) |
+| unicast 0.52 | unicast | 0.52 | 3 | 150 | 150 | 0 | 0 | 150 | 100.0 % (97.5-100.0) |
+| unicast 2 dBm 0.52 | unicast, TXPOW 8 | 0.52 | 3 | 150 | 150 | 0 | 0 | 150 | 100.0 % (97.5-100.0) |
+| baseline 0.99 | direct | 0.99 | 3 | 150 | 150 | 0 | 0 | 0 | 100.0 % (97.5-100.0) |
+| unicast A-B 0.75 (car-key 0.99) | unicast, A-B 0.75 m | 0.99 | 3 | 150 | 150 | 0 | 0 | 150 | 100.0 % (97.5-100.0) |
+| baseline 2.24 | direct | 2.24 | 3 | 150 | 150 | 0 | 0 | 0 | 100.0 % (97.5-100.0) |
+| unicast A-B 2 (car-key 2.24) | unicast, A-B 2 m | 2.24 | 3 | 150 | 150 | 0 | 0 | 150 | 100.0 % (97.5-100.0) |
+
+## Vehicle RTT, answered rounds (ms)
+
+| Condition | n | min | Q1 | median (95 % CI) | Q3 | p90 | max | mean |
+|---|---|---|---|---|---|---|---|---|
+| baseline 0.52 | 150 | 57.7 | 67.9 | 76.9 (75.2-78.7) | 101.3 | 105.0 | 128.2 | 81.9 |
+| broadcast 0.52 | 139 | 167.7 | 295.2 | 366.1 (358.0-384.4) | 393.4 | 416.6 | 458.8 | 348.9 |
+| unicast 0.52 | 150 | 169.7 | 313.5 | 384.6 (339.9-387.5) | 390.6 | 441.2 | 443.9 | 354.0 |
+| unicast 2 dBm 0.52 | 150 | 164.2 | 312.6 | 367.4 (365.9-411.6) | 415.6 | 433.5 | 468.4 | 355.9 |
+| baseline 0.99 | 150 | 62.7 | 68.2 | 82.0 (80.2-83.6) | 93.1 | 96.4 | 142.4 | 82.5 |
+| unicast A-B 0.75 (car-key 0.99) | 150 | 112.4 | 327.6 | 376.6 (366.1-408.5) | 411.2 | 430.0 | 528.6 | 362.9 |
+| baseline 2.24 | 150 | 63.8 | 69.1 | 85.7 (84.4-86.6) | 88.4 | 90.6 | 139.9 | 82.3 |
+| unicast A-B 2 (car-key 2.24) | 150 | 158.2 | 311.1 | 364.5 (362.8-365.7) | 412.2 | 453.9 | 456.7 | 357.8 |
+
+## Round legs, median (IQR) in ms
+
+| Condition | vehicle<->B | tunnel | A<->key |
+|---|---|---|---|
+| baseline 0.52 | - | - | - |
+| broadcast 0.52 | 151.6 (144.8-170.4) | 23.9 (22.8-25.6) | 177.6 (171.1-198.7) |
+| unicast 0.52 | 157.1 (115.4-173.4) | 24.0 (23.2-26.0) | 188.7 (172.5-240.1) |
+| unicast 2 dBm 0.52 | 169.8 (118.7-226.6) | 24.4 (22.9-26.6) | 178.8 (167.5-188.5) |
+| baseline 0.99 | - | - | - |
+| unicast A-B 0.75 (car-key 0.99) | 144.5 (121.3-172.5) | 24.3 (23.5-26.4) | 215.0 (195.5-232.3) |
+| baseline 2.24 | - | - | - |
+| unicast A-B 2 (car-key 2.24) | 131.2 (96.3-192.9) | 24.4 (23.3-26.6) | 209.0 (193.0-235.0) |
+
+## Tunnel counters
+
+| Condition | tx_failures (relay A + B) | TIMEOUT |
+|---|---|---|
+| baseline 0.52 | 0 | 0 |
+| broadcast 0.52 | 0 | 11 |
+| unicast 0.52 | 0 | 0 |
+| unicast 2 dBm 0.52 | 0 | 0 |
+| baseline 0.99 | 0 | 0 |
+| unicast A-B 0.75 (car-key 0.99) | 0 | 0 |
+| baseline 2.24 | 0 | 0 |
+| unicast A-B 2 (car-key 2.24) | 0 | 0 |
+
+## Comparisons (difference of medians, ms)
+
+| Comparison | Reference median | Compared median | Difference (95 % CI) |
+|---|---|---|---|
+| relayed unicast minus direct, car-key 0.52 m | 76.9 | 384.6 | 307.7 (262.7 to 311.4) |
+| relayed broadcast minus direct, car-key 0.52 m | 76.9 | 366.1 | 289.2 (280.4 to 313.1) |
+| relayed unicast 2 dBm minus direct, car-key 0.52 m | 76.9 | 367.4 | 290.5 (287.9 to 334.9) |
+| relayed unicast minus direct, car-key 0.99 m | 82.0 | 376.6 | 294.6 (283.8 to 327.3) |
+| relayed unicast minus direct, car-key 2.24 m | 85.7 | 364.5 | 278.9 (277.0 to 280.4) |
+| unicast minus broadcast, car-key 0.52 m | 366.1 | 384.6 | 18.5 (-40.2 to 28.6) |
+| 2 dBm minus default power, car-key 0.52 m | 384.6 | 367.4 | -17.2 (-20.9 to 69.6) |
+| direct baseline, 0.99 m minus 0.52 m | 76.9 | 82.0 | 5.1 (2.8 to 7.4) |
+| direct baseline, 2.24 m minus 0.99 m | 82.0 | 85.7 | 3.7 (1.6 to 5.6) |
+
+## Notes
+
+- TIMEOUT rounds are excluded from the RTT statistics and counted in the success rate.
+- Wilson 95 % CI for the success rate; bootstrap (2000 resamples, fixed seed) for medians and differences.
+- Round legs follow analyze_runs.py: vehicle<->B = vehicle RTT - turnaround of B; tunnel = turnaround of B - turnaround of A; A<->key = turnaround of A.
+- Broadcast sessions ran with RELAY_PEER_MAC unset; unicast sessions with it set (branch relay-unicast-peer-mac).
+- 2 dBm sessions applied TXPOW 8 to both relays after the bring-up; the relay logs confirm it.
+- Car-key separations of 2.24 m are estimated from the layout (12 cm + about 2 m + 12 cm).
+- Rounds are not independent: the RTT moves in plateaus within a campaign. The bootstrap intervals assume independent rounds, so they are optimistic.
