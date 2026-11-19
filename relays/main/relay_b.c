@@ -79,12 +79,48 @@ static void relay_b_ui_init(void)
     cyd_ui_set_field(F_RTT, "-");
 }
 
+/* Injected delay (bench only, BLE build): Relay B holds each vehicle challenge for s_delay_ms
+ * before it goes on the tunnel, to measure where the verifier's timeout stops the relay. Set with
+ * "DELAY <ms>" on UART0; 0 is the normal relay. The hold is an esp_timer one-shot, so the NimBLE
+ * host task is not blocked. The injected time lands in the tunnel leg of the round's breakdown. */
+#if !RELAY_LINK_SELFTEST
+static volatile uint32_t s_delay_ms;
+static esp_timer_handle_t s_delay_timer;
+static uint8_t s_delay_frame[LINK_CHAL_LEN];
+
+static void delayed_chal_cb(void *arg)
+{
+    link_send(LINK_MSG_CHALLENGE, s_delay_frame, sizeof s_delay_frame);
+}
+#endif
+
+void relay_b_set_delay_ms(uint32_t ms)
+{
+#if !RELAY_LINK_SELFTEST
+    s_delay_ms = ms;
+#else
+    (void) ms;
+#endif
+}
+
 /* Frame B -> A: [seq][nonce]. The seq is the round assigned by B; A returns the same seq. */
 static inline void forward_challenge(uint32_t seq, const uint8_t *nonce)
 {
     uint8_t frame[LINK_CHAL_LEN];
     memcpy(frame, &seq, LINK_SEQ_LEN);
     memcpy(frame + LINK_SEQ_LEN, nonce, NONCE_LEN);
+#if !RELAY_LINK_SELFTEST
+    if (s_delay_ms > 0) {
+        memcpy(s_delay_frame, frame, sizeof frame);
+        if (s_delay_timer == NULL) {
+            const esp_timer_create_args_t a = { .callback = delayed_chal_cb, .name = "chal_delay" };
+            esp_timer_create(&a, &s_delay_timer);
+        }
+        esp_timer_stop(s_delay_timer);   /* a newer challenge replaces a held one */
+        esp_timer_start_once(s_delay_timer, (uint64_t) s_delay_ms * 1000u);
+        return;
+    }
+#endif
     link_send(LINK_MSG_CHALLENGE, frame, sizeof frame);
 }
 
