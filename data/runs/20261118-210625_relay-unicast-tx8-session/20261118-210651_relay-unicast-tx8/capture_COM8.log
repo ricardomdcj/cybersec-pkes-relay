@@ -1,0 +1,416 @@
+21:06:52.697271 0x1 (POWERON_RESET),boot:0x13 (SPI_�ets Jul 29 2019 12:21:46
+21:06:52.697441 
+21:06:52.697485 rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+21:06:52.697523 configsip: 0, SPIWP:0xee
+21:06:52.697560 clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+21:06:52.697592 mode:DIO, clock div:2
+21:06:52.697622 load:0x3fff0040,len:6272
+21:06:52.697652 load:0x40078000,len:15824
+21:06:52.697684 load:0x40080400,len:3988
+21:06:52.697719 entry 0x40080644
+21:06:52.697750 I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+21:06:52.697780 I (27) boot: compile time Nov 18 2026 19:27:43
+21:06:52.697945 I (27) boot: Multicore bootloader
+21:06:52.697971 I (29) boot: chip revision: v3.1
+21:06:52.697986 I (31) boot.esp32: SPI Speed      : 40MHz
+21:06:52.697999 I (35) boot.esp32: SPI Mode       : DIO
+21:06:52.698010 I (39) boot.esp32: SPI Flash Size : 4MB
+21:06:52.698021 I (42) boot: Enabling RNG early entropy source...
+21:06:52.698031 I (47) boot: Partition Table:
+21:06:52.698041 I (49) boot: ## Label            Usage          Type ST Offset   Length
+21:06:52.698052 I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+21:06:52.698062 I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+21:06:52.698072 I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+21:06:52.698082 I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+21:06:52.698091 I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+21:06:52.698100 I (88) boot: End of partition table
+21:06:52.698110 I (92) esp_image: segment 0: paddr=00020020 vaddr=3f400020 size=33be0h (211936) map
+21:06:52.698121 I (175) esp_image: segment 1: paddr=00053c08 vaddr=3ffbdb60 size=0531ch ( 21276) load
+21:06:52.698130 I (183) esp_image: segment 2: paddr=00058f2c vaddr=40080000 size=070ech ( 28908) load
+21:06:52.698140 I (195) esp_image: segment 3: paddr=00060020 vaddr=400d0020 size=899e0h (563680) map
+21:06:52.698149 I (396) esp_image: segment 4: paddr=000e9a08 vaddr=400870ec size=12424h ( 74788) load
+21:06:52.698159 I (427) esp_image: segment 5: paddr=000fbe34 vaddr=50000000 size=00028h (    40) load
+21:06:52.698168 I (440) boot: Loaded app from partition at offset 0x20000
+21:06:52.698204 I (440) boot: Disabling RNG early entropy source...
+21:06:52.698220 I (451) cpu_start: Multicore app
+21:06:52.698231 I (459) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+21:06:52.698242 I (460) cpu_start: Pro cpu start user code
+21:06:52.698252 I (460) cpu_start: cpu freq: 240000000 Hz
+21:06:52.698262 I (461) app_init: Application information:
+21:06:52.698271 I (465) app_init: Project name:     vehicle
+21:06:52.698281 I (469) app_init: App version:      1cf7f0c
+21:06:52.698290 I (473) app_init: Compile time:     Nov 18 2026 19:27:13
+21:06:52.698300 I (478) app_init: ELF file SHA256:  448622bd4...
+21:06:52.698309 I (482) app_init: ESP-IDF:          v6.1
+21:06:52.698319 I (486) efuse_init: Min chip rev:     v0.0
+21:06:52.698329 I (490) efuse_init: Max chip rev:     v3.99 
+21:06:52.698338 I (494) efuse_init: Chip rev:         v3.1
+21:06:52.698348 I (498) heap_init: Initializing. RAM available for dynamic allocation:
+21:06:52.698358 I (504) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+21:06:52.698367 I (509) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+21:06:52.698377 I (514) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+21:06:52.698387 I (519) heap_init: At 3FFD1960 len 0000E6A0 (57 KiB): DRAM
+21:06:52.698396 I (525) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+21:06:52.698406 I (530) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+21:06:52.698416 I (535) heap_init: At 40099510 len 00006AF0 (26 KiB): IRAM
+21:06:52.698425 I (542) spi_flash: detected chip: gd
+21:06:52.698435 I (544) spi_flash: flash io: dio
+21:06:52.698445 I (548) coexist: coex firmware version: a830d28
+21:06:52.698455 I (552) main_task: Started on CPU0
+21:06:52.698465 I (554) main_task: Calling app_main()
+21:06:52.698474 I (566) RUN_META: role=vehicle fw=1cf7f0c build=2026-11-18 19:26
+21:06:52.698513 I (568) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+21:06:52.698528 I (698) cyd_display: ST7789 + LVGL ready
+21:06:52.698539 I (893) BTDM_INIT: BT controller compile version [4a0f94d]
+21:06:52.698548 I (893) BTDM_INIT: Using main XTAL as clock source
+21:06:52.698557 I (895) BTDM_INIT: Bluetooth MAC: b8:bb:11:83:e5:f2
+21:06:52.698567 I (901) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+21:06:52.997793 I (1144) main_task: Returned from app_main()
+21:06:52.997844 I (1191) NimBLE: GAP procedure initiated: discovery; 
+21:06:52.997860 I (1191) NimBLE: own_addr_type=0 filter_policy=0 passive=0 limited=0 filter_duplicates=1 
+21:06:52.997871 I (1193) NimBLE: duration=forever
+21:06:52.997881 I (1196) NimBLE: 
+21:06:52.997892 
+21:06:52.997902 I (1203) VEHICLE: scanning for the key service...
+21:06:54.212938 I (2397) VEHICLE: key found, connecting...
+21:06:54.213003 I (2400) NimBLE: GAP procedure initiated: connect; 
+21:06:54.213024 I (2401) NimBLE: peer_addr_type=0 peer_addr=
+21:06:54.213044 I (2401) NimBLE: 48:af:f3:70:1d:5a
+21:06:54.213068 I (2402) NimBLE:  scan_itvl=16 scan_window=16 itvl_min=24 itvl_max=40 latency=0 supervision_timeout=256 min_ce_len=0 max_ce_len=0 own_addr_type=0
+21:06:54.213087 I (2415) NimBLE: 
+21:06:54.213104 
+21:06:55.340898 I (2652) VEHICLE: connected (handle 0); discovering service
+21:06:55.340952 I (2660) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+21:06:55.340968 
+21:06:55.340981 I (2661) VEHICLE: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=central phy_tx=? phy_rx=?
+21:06:55.340992 I (2669) NimBLE: GATT procedure initiated: exchange mtu
+21:06:55.341003 
+21:06:55.341013 I (2678) NimBLE: GATT procedure initiated: discover service by uuid; uuid=
+21:06:55.341023 I (2680) NimBLE: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10
+21:06:55.341033 I (2685) NimBLE: 
+21:06:55.341044 
+21:06:55.341053 I (2752) VEHICLE: MTU handle=0 mtu=256
+21:06:55.341063 I (2949) VEHICLE: service at 14..19
+21:06:55.341073 I (2949) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+21:06:55.341083 I (2949) NimBLE: start_handle=14 end_handle=19 uuid=
+21:06:55.341092 I (2953) NimBLE: 8f2a0002-1b2c-4e6a-9f3d-2a7c1e5b0a10
+21:06:55.341102 I (2957) NimBLE: 
+21:06:55.341111 
+21:06:55.341121 I (3149) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+21:06:55.341130 I (3149) NimBLE: start_handle=14 end_handle=19 uuid=
+21:06:55.341140 I (3150) NimBLE: 8f2a0003-1b2c-4e6a-9f3d-2a7c1e5b0a10
+21:06:55.341149 I (3154) NimBLE: 
+21:06:55.341158 
+21:06:55.341166 I (3349) NimBLE: GATT procedure initiated: discover all descriptors; 
+21:06:55.341176 I (3349) NimBLE: chr_val_handle=18 end_handle=19
+21:06:55.341185 
+21:06:55.341193 I (3449) NimBLE: GATT procedure initiated: write; 
+21:06:55.341202 I (3450) NimBLE: att_handle=19 len=2
+21:06:55.341211 
+21:06:55.341220 I (3549) VEHICLE: subscribed to notify; ready. Send START to begin the campaign
+21:06:55.945677[HOST] > RUN label=relay-unicast-tx8 dist=0.52
+21:06:55.948795[HOST] > START
+21:06:56.311938 W (4477) VEHICLE: RUN label=relay-unicast-tx8 dist=0.52
+21:06:56.311989 I (4478) VEHICLE: campaign started: label=relay-unicast-tx8 dist=0.52 rounds=50 interval=1000 ms timeout=2000 ms
+21:06:56.312007 I (4481) VEHICLE: CSVHDR v2 label,dist_m,round,nonce,t_tx_us,rtt_us,result,rssi_dbm,itvl_1_25ms,mtu
+21:06:56.312021 I (4513) VEHICLE: HOP V tx_chal nonce=952b1502 t=3973106 us
+21:06:56.312035 I (4514) NimBLE: GATT procedure initiated: write; 
+21:06:56.312047 I (4514) NimBLE: att_handle=16 len=16
+21:06:56.312060 
+21:06:56.654299 I (4854) VEHICLE: round 1/50: OK  RTT=335428 us  RSSI=-32 dBm  nonce=952b1502
+21:06:56.654350 I (4855) VEHICLE: CSV,relay-unicast-tx8,0.52,1,952b1502,3973106,335428,OK,-32,40,256
+21:06:57.311711 I (5513) VEHICLE: HOP V tx_chal nonce=3532514d t=4973258 us
+21:06:57.311754 I (5514) NimBLE: GATT procedure initiated: write; 
+21:06:57.311768 I (5514) NimBLE: att_handle=16 len=16
+21:06:57.311779 
+21:06:57.753365 I (5954) VEHICLE: round 2/50: OK  RTT=435284 us  RSSI=-28 dBm  nonce=3532514d
+21:06:57.753459 I (5954) VEHICLE: CSV,relay-unicast-tx8,0.52,2,3532514d,4973258,435284,OK,-28,40,256
+21:06:58.312729 I (6514) VEHICLE: HOP V tx_chal nonce=879c906c t=5973419 us
+21:06:58.312772 I (6514) NimBLE: GATT procedure initiated: write; 
+21:06:58.312788 I (6515) NimBLE: att_handle=16 len=16
+21:06:58.312799 
+21:06:58.753106 I (6954) VEHICLE: round 3/50: OK  RTT=435143 us  RSSI=-31 dBm  nonce=879c906c
+21:06:58.753156 I (6954) VEHICLE: CSV,relay-unicast-tx8,0.52,3,879c906c,5973419,435143,OK,-31,40,256
+21:06:59.313137 I (7514) VEHICLE: HOP V tx_chal nonce=074a9755 t=6973582 us
+21:06:59.313179 I (7515) NimBLE: GATT procedure initiated: write; 
+21:06:59.313195 I (7515) NimBLE: att_handle=16 len=16
+21:06:59.313206 
+21:06:59.753770 I (7954) VEHICLE: round 4/50: OK  RTT=435244 us  RSSI=-30 dBm  nonce=074a9755
+21:06:59.753830 I (7955) VEHICLE: CSV,relay-unicast-tx8,0.52,4,074a9755,6973582,435244,OK,-30,40,256
+21:07:00.312321 I (8514) VEHICLE: HOP V tx_chal nonce=fc4cc16d t=7973741 us
+21:07:00.312386 I (8515) NimBLE: GATT procedure initiated: write; 
+21:07:00.312405 I (8515) NimBLE: att_handle=16 len=16
+21:07:00.312419 
+21:07:00.753592 I (8954) VEHICLE: round 5/50: OK  RTT=434879 us  RSSI=-28 dBm  nonce=fc4cc16d
+21:07:00.753649 I (8954) VEHICLE: CSV,relay-unicast-tx8,0.52,5,fc4cc16d,7973741,434879,OK,-28,40,256
+21:07:01.314233 I (9514) VEHICLE: HOP V tx_chal nonce=9a9d3482 t=8973902 us
+21:07:01.314290 I (9515) NimBLE: GATT procedure initiated: write; 
+21:07:01.314306 I (9515) NimBLE: att_handle=16 len=16
+21:07:01.314318 
+21:07:01.753974 I (9954) VEHICLE: round 6/50: OK  RTT=434750 us  RSSI=-30 dBm  nonce=9a9d3482
+21:07:01.754026 I (9954) VEHICLE: CSV,relay-unicast-tx8,0.52,6,9a9d3482,8973902,434750,OK,-30,40,256
+21:07:02.314244 I (10514) VEHICLE: HOP V tx_chal nonce=014ccd0b t=9974063 us
+21:07:02.314295 I (10515) NimBLE: GATT procedure initiated: write; 
+21:07:02.314310 I (10515) NimBLE: att_handle=16 len=16
+21:07:02.314322 
+21:07:02.753799 I (10954) VEHICLE: round 7/50: OK  RTT=434598 us  RSSI=-32 dBm  nonce=014ccd0b
+21:07:02.753858 I (10954) VEHICLE: CSV,relay-unicast-tx8,0.52,7,014ccd0b,9974063,434598,OK,-32,40,256
+21:07:03.313777 I (11514) VEHICLE: HOP V tx_chal nonce=712a9c69 t=10974223 us
+21:07:03.313821 I (11515) NimBLE: GATT procedure initiated: write; 
+21:07:03.313836 I (11515) NimBLE: att_handle=16 len=16
+21:07:03.313848 
+21:07:03.755375 I (11955) VEHICLE: round 8/50: OK  RTT=434712 us  RSSI=-31 dBm  nonce=712a9c69
+21:07:03.755430 I (11956) VEHICLE: CSV,relay-unicast-tx8,0.52,8,712a9c69,10974223,434712,OK,-31,40,256
+21:07:04.312857 I (12515) VEHICLE: HOP V tx_chal nonce=46b2ec8b t=11974387 us
+21:07:04.312900 I (12515) NimBLE: GATT procedure initiated: write; 
+21:07:04.312915 I (12516) NimBLE: att_handle=16 len=16
+21:07:04.312927 
+21:07:04.756127 I (12956) VEHICLE: round 9/50: OK  RTT=434627 us  RSSI=-28 dBm  nonce=46b2ec8b
+21:07:04.756187 I (12956) VEHICLE: CSV,relay-unicast-tx8,0.52,9,46b2ec8b,11974387,434627,OK,-28,40,256
+21:07:05.314124 I (13515) VEHICLE: HOP V tx_chal nonce=d94db08c t=12974545 us
+21:07:05.314168 I (13516) NimBLE: GATT procedure initiated: write; 
+21:07:05.314183 I (13516) NimBLE: att_handle=16 len=16
+21:07:05.314195 
+21:07:05.753847 I (13954) VEHICLE: round 10/50: OK  RTT=434176 us  RSSI=-29 dBm  nonce=d94db08c
+21:07:05.753900 I (13954) VEHICLE: CSV,relay-unicast-tx8,0.52,10,d94db08c,12974545,434176,OK,-29,40,256
+21:07:06.314220 I (14515) VEHICLE: HOP V tx_chal nonce=7a7a01c9 t=13974704 us
+21:07:06.314269 I (14516) NimBLE: GATT procedure initiated: write; 
+21:07:06.314441 I (14516) NimBLE: att_handle=16 len=16
+21:07:06.314458 
+21:07:06.753970 I (14954) VEHICLE: round 11/50: OK  RTT=434069 us  RSSI=-29 dBm  nonce=7a7a01c9
+21:07:06.754022 I (14954) VEHICLE: CSV,relay-unicast-tx8,0.52,11,7a7a01c9,13974704,434069,OK,-29,40,256
+21:07:07.313949 I (15515) VEHICLE: HOP V tx_chal nonce=0986cb75 t=14974860 us
+21:07:07.313996 I (15516) NimBLE: GATT procedure initiated: write; 
+21:07:07.314011 I (15516) NimBLE: att_handle=16 len=16
+21:07:07.314022 
+21:07:07.753162 I (15954) VEHICLE: round 12/50: OK  RTT=433938 us  RSSI=-33 dBm  nonce=0986cb75
+21:07:07.753220 I (15954) VEHICLE: CSV,relay-unicast-tx8,0.52,12,0986cb75,14974860,433938,OK,-33,40,256
+21:07:08.314311 I (16515) VEHICLE: HOP V tx_chal nonce=d9df7f43 t=15975023 us
+21:07:08.314365 I (16516) NimBLE: GATT procedure initiated: write; 
+21:07:08.314381 I (16516) NimBLE: att_handle=16 len=16
+21:07:08.314393 
+21:07:08.754216 I (16954) VEHICLE: round 13/50: OK  RTT=434085 us  RSSI=-30 dBm  nonce=d9df7f43
+21:07:08.754268 I (16955) VEHICLE: CSV,relay-unicast-tx8,0.52,13,d9df7f43,15975023,434085,OK,-30,40,256
+21:07:09.314729 I (17515) VEHICLE: HOP V tx_chal nonce=63f5bcf0 t=16975191 us
+21:07:09.314777 I (17516) NimBLE: GATT procedure initiated: write; 
+21:07:09.314793 I (17516) NimBLE: att_handle=16 len=16
+21:07:09.314804 
+21:07:09.756266 I (17956) VEHICLE: round 14/50: OK  RTT=433973 us  RSSI=-30 dBm  nonce=63f5bcf0
+21:07:09.756322 I (17956) VEHICLE: CSV,relay-unicast-tx8,0.52,14,63f5bcf0,16975191,433973,OK,-30,40,256
+21:07:10.314055 I (18516) VEHICLE: HOP V tx_chal nonce=5240fcc0 t=17975355 us
+21:07:10.314098 I (18516) NimBLE: GATT procedure initiated: write; 
+21:07:10.314114 I (18516) NimBLE: att_handle=16 len=16
+21:07:10.314125 
+21:07:10.753842 I (18954) VEHICLE: round 15/50: OK  RTT=433509 us  RSSI=-30 dBm  nonce=5240fcc0
+21:07:10.753895 I (18954) VEHICLE: CSV,relay-unicast-tx8,0.52,15,5240fcc0,17975355,433509,OK,-30,40,256
+21:07:11.315040 I (19516) VEHICLE: HOP V tx_chal nonce=1488c735 t=18975514 us
+21:07:11.315087 I (19516) NimBLE: GATT procedure initiated: write; 
+21:07:11.315103 I (19517) NimBLE: att_handle=16 len=16
+21:07:11.315115 
+21:07:11.754106 I (19954) VEHICLE: round 16/50: OK  RTT=433357 us  RSSI=-29 dBm  nonce=1488c735
+21:07:11.754167 I (19954) VEHICLE: CSV,relay-unicast-tx8,0.52,16,1488c735,18975514,433357,OK,-29,40,256
+21:07:12.316052 I (20516) VEHICLE: HOP V tx_chal nonce=a66b1557 t=19975679 us
+21:07:12.316106 I (20517) NimBLE: GATT procedure initiated: write; 
+21:07:12.316123 I (20517) NimBLE: att_handle=16 len=16
+21:07:12.316134 
+21:07:12.754838 I (20954) VEHICLE: round 17/50: OK  RTT=433663 us  RSSI=-31 dBm  nonce=a66b1557
+21:07:12.754891 I (20955) VEHICLE: CSV,relay-unicast-tx8,0.52,17,a66b1557,19975679,433663,OK,-31,40,256
+21:07:13.315697 I (21516) VEHICLE: HOP V tx_chal nonce=6559c401 t=20975842 us
+21:07:13.315756 I (21517) NimBLE: GATT procedure initiated: write; 
+21:07:13.315772 I (21517) NimBLE: att_handle=16 len=16
+21:07:13.315783 
+21:07:13.754534 I (21955) VEHICLE: round 18/50: OK  RTT=433399 us  RSSI=-28 dBm  nonce=6559c401
+21:07:13.754589 I (21955) VEHICLE: CSV,relay-unicast-tx8,0.52,18,6559c401,20975842,433399,OK,-28,40,256
+21:07:14.314567 I (22516) VEHICLE: HOP V tx_chal nonce=463a97cf t=21976007 us
+21:07:14.314617 I (22517) NimBLE: GATT procedure initiated: write; 
+21:07:14.314632 I (22517) NimBLE: att_handle=16 len=16
+21:07:14.314644 
+21:07:14.753728 I (22954) VEHICLE: round 19/50: OK  RTT=432879 us  RSSI=-29 dBm  nonce=463a97cf
+21:07:14.753794 I (22955) VEHICLE: CSV,relay-unicast-tx8,0.52,19,463a97cf,21976007,432879,OK,-29,40,256
+21:07:15.316185 I (23516) VEHICLE: HOP V tx_chal nonce=17509040 t=22976165 us
+21:07:15.316237 I (23517) NimBLE: GATT procedure initiated: write; 
+21:07:15.316253 I (23517) NimBLE: att_handle=16 len=16
+21:07:15.316264 
+21:07:15.754814 I (23954) VEHICLE: round 20/50: OK  RTT=432745 us  RSSI=-28 dBm  nonce=17509040
+21:07:15.754866 I (23955) VEHICLE: CSV,relay-unicast-tx8,0.52,20,17509040,22976165,432745,OK,-28,40,256
+21:07:16.315863 I (24517) VEHICLE: HOP V tx_chal nonce=8e6923de t=23976329 us
+21:07:16.315915 I (24517) NimBLE: GATT procedure initiated: write; 
+21:07:16.315931 I (24517) NimBLE: att_handle=16 len=16
+21:07:16.315943 
+21:07:16.754568 I (24954) VEHICLE: round 21/50: OK  RTT=432621 us  RSSI=-33 dBm  nonce=8e6923de
+21:07:16.754620 I (24955) VEHICLE: CSV,relay-unicast-tx8,0.52,21,8e6923de,23976329,432621,OK,-33,40,256
+21:07:17.316308 I (25517) VEHICLE: HOP V tx_chal nonce=15a3e528 t=24976485 us
+21:07:17.316383 I (25517) NimBLE: GATT procedure initiated: write; 
+21:07:17.316476 I (25518) NimBLE: att_handle=16 len=16
+21:07:17.316500 
+21:07:17.754676 I (25955) VEHICLE: round 22/50: OK  RTT=432659 us  RSSI=-30 dBm  nonce=15a3e528
+21:07:17.754740 I (25956) VEHICLE: CSV,relay-unicast-tx8,0.52,22,15a3e528,24976485,432659,OK,-30,40,256
+21:07:18.316343 I (26517) VEHICLE: HOP V tx_chal nonce=96422f72 t=25976650 us
+21:07:18.316396 I (26518) NimBLE: GATT procedure initiated: write; 
+21:07:18.316414 I (26518) NimBLE: att_handle=16 len=16
+21:07:18.316427 
+21:07:18.705089 I (26904) VEHICLE: round 23/50: OK  RTT=382317 us  RSSI=-28 dBm  nonce=96422f72
+21:07:18.705142 I (26905) VEHICLE: CSV,relay-unicast-tx8,0.52,23,96422f72,25976650,382317,OK,-28,40,256
+21:07:19.316033 I (27517) VEHICLE: HOP V tx_chal nonce=66d0457e t=26976802 us
+21:07:19.316088 I (27518) NimBLE: GATT procedure initiated: write; 
+21:07:19.316106 I (27518) NimBLE: att_handle=16 len=16
+21:07:19.316120 
+21:07:19.753611 I (27954) VEHICLE: round 24/50: OK  RTT=432213 us  RSSI=-28 dBm  nonce=66d0457e
+21:07:19.753666 I (27955) VEHICLE: CSV,relay-unicast-tx8,0.52,24,66d0457e,26976802,432213,OK,-28,40,256
+21:07:20.316488 I (28517) VEHICLE: HOP V tx_chal nonce=ab9a93ca t=27976952 us
+21:07:20.316542 I (28518) NimBLE: GATT procedure initiated: write; 
+21:07:20.316560 I (28518) NimBLE: att_handle=16 len=16
+21:07:20.316571 
+21:07:20.755747 I (28955) VEHICLE: round 25/50: OK  RTT=432079 us  RSSI=-27 dBm  nonce=ab9a93ca
+21:07:20.755798 I (28956) VEHICLE: CSV,relay-unicast-tx8,0.52,25,ab9a93ca,27976952,432079,OK,-27,40,256
+21:07:21.316775 I (29517) VEHICLE: HOP V tx_chal nonce=5a117bae t=28977106 us
+21:07:21.316821 I (29518) NimBLE: GATT procedure initiated: write; 
+21:07:21.316835 I (29519) NimBLE: att_handle=16 len=16
+21:07:21.316844 
+21:07:21.753681 I (29954) VEHICLE: round 26/50: OK  RTT=431944 us  RSSI=-31 dBm  nonce=5a117bae
+21:07:21.753751 I (29955) VEHICLE: CSV,relay-unicast-tx8,0.52,26,5a117bae,28977106,431944,OK,-31,40,256
+21:07:22.316692 I (30517) VEHICLE: HOP V tx_chal nonce=e686be75 t=29977267 us
+21:07:22.316743 I (30518) NimBLE: GATT procedure initiated: write; 
+21:07:22.316759 I (30518) NimBLE: att_handle=16 len=16
+21:07:22.316770 
+21:07:22.753505 I (30954) VEHICLE: round 27/50: OK  RTT=431822 us  RSSI=-29 dBm  nonce=e686be75
+21:07:22.753560 I (30955) VEHICLE: CSV,relay-unicast-tx8,0.52,27,e686be75,29977267,431822,OK,-29,40,256
+21:07:23.317549 I (31518) VEHICLE: HOP V tx_chal nonce=a6a5a793 t=30977423 us
+21:07:23.317615 I (31518) NimBLE: GATT procedure initiated: write; 
+21:07:23.317637 I (31519) NimBLE: att_handle=16 len=16
+21:07:23.317654 
+21:07:23.754646 I (31955) VEHICLE: round 28/50: OK  RTT=431901 us  RSSI=-27 dBm  nonce=a6a5a793
+21:07:23.754701 I (31956) VEHICLE: CSV,relay-unicast-tx8,0.52,28,a6a5a793,30977423,431901,OK,-27,40,256
+21:07:24.316708 I (32518) VEHICLE: HOP V tx_chal nonce=956e195a t=31977586 us
+21:07:24.316776 I (32519) NimBLE: GATT procedure initiated: write; 
+21:07:24.316799 I (32519) NimBLE: att_handle=16 len=16
+21:07:24.316815 
+21:07:24.754034 I (32954) VEHICLE: round 29/50: OK  RTT=431534 us  RSSI=-30 dBm  nonce=956e195a
+21:07:24.754087 I (32955) VEHICLE: CSV,relay-unicast-tx8,0.52,29,956e195a,31977586,431534,OK,-30,40,256
+21:07:25.316678 I (33518) VEHICLE: HOP V tx_chal nonce=e79e318a t=32977743 us
+21:07:25.316727 I (33519) NimBLE: GATT procedure initiated: write; 
+21:07:25.316744 I (33519) NimBLE: att_handle=16 len=16
+21:07:25.316755 
+21:07:25.754578 I (33954) VEHICLE: round 30/50: OK  RTT=431421 us  RSSI=-28 dBm  nonce=e79e318a
+21:07:25.754632 I (33955) VEHICLE: CSV,relay-unicast-tx8,0.52,30,e79e318a,32977743,431421,OK,-28,40,256
+21:07:26.317467 I (34518) VEHICLE: HOP V tx_chal nonce=47f92c5a t=33977901 us
+21:07:26.317516 I (34519) NimBLE: GATT procedure initiated: write; 
+21:07:26.317531 I (34519) NimBLE: att_handle=16 len=16
+21:07:26.317542 
+21:07:26.753930 I (34954) VEHICLE: round 31/50: OK  RTT=431255 us  RSSI=-31 dBm  nonce=47f92c5a
+21:07:26.753989 I (34955) VEHICLE: CSV,relay-unicast-tx8,0.52,31,47f92c5a,33977901,431255,OK,-31,40,256
+21:07:27.317318 I (35518) VEHICLE: HOP V tx_chal nonce=cf49510e t=34978051 us
+21:07:27.317442 I (35519) NimBLE: GATT procedure initiated: write; 
+21:07:27.317462 I (35519) NimBLE: att_handle=16 len=16
+21:07:27.317475 
+21:07:27.754152 I (35954) VEHICLE: round 32/50: OK  RTT=431141 us  RSSI=-28 dBm  nonce=cf49510e
+21:07:27.754212 I (35955) VEHICLE: CSV,relay-unicast-tx8,0.52,32,cf49510e,34978051,431141,OK,-28,40,256
+21:07:28.317747 I (36518) VEHICLE: HOP V tx_chal nonce=b0e95cdd t=35978203 us
+21:07:28.317802 I (36519) NimBLE: GATT procedure initiated: write; 
+21:07:28.317818 I (36519) NimBLE: att_handle=16 len=16
+21:07:28.317829 
+21:07:28.756235 I (36956) VEHICLE: round 33/50: OK  RTT=431204 us  RSSI=-28 dBm  nonce=b0e95cdd
+21:07:28.756288 I (36957) VEHICLE: CSV,relay-unicast-tx8,0.52,33,b0e95cdd,35978203,431204,OK,-28,40,256
+21:07:29.318328 I (37519) VEHICLE: HOP V tx_chal nonce=4e338ec4 t=36978385 us
+21:07:29.318409 I (37520) NimBLE: GATT procedure initiated: write; 
+21:07:29.318433 I (37520) NimBLE: att_handle=16 len=16
+21:07:29.318453 
+21:07:29.754438 I (37954) VEHICLE: round 34/50: OK  RTT=430857 us  RSSI=-29 dBm  nonce=4e338ec4
+21:07:29.754492 I (37955) VEHICLE: CSV,relay-unicast-tx8,0.52,34,4e338ec4,36978385,430857,OK,-29,40,256
+21:07:30.317811 I (38519) VEHICLE: HOP V tx_chal nonce=cbb221c9 t=37978546 us
+21:07:30.317883 I (38520) NimBLE: GATT procedure initiated: write; 
+21:07:30.317905 I (38520) NimBLE: att_handle=16 len=16
+21:07:30.317919 
+21:07:30.654360 I (38855) VEHICLE: round 35/50: OK  RTT=330713 us  RSSI=-29 dBm  nonce=cbb221c9
+21:07:30.654431 I (38855) VEHICLE: CSV,relay-unicast-tx8,0.52,35,cbb221c9,37978546,330713,OK,-29,40,256
+21:07:31.317263 I (39519) VEHICLE: HOP V tx_chal nonce=60d3a7e5 t=38978704 us
+21:07:31.317312 I (39520) NimBLE: GATT procedure initiated: write; 
+21:07:31.317328 I (39520) NimBLE: att_handle=16 len=16
+21:07:31.317339 
+21:07:31.656896 I (39856) VEHICLE: round 36/50: OK  RTT=330767 us  RSSI=-28 dBm  nonce=60d3a7e5
+21:07:31.656963 I (39857) VEHICLE: CSV,relay-unicast-tx8,0.52,36,60d3a7e5,38978704,330767,OK,-28,40,256
+21:07:32.318111 I (40519) VEHICLE: HOP V tx_chal nonce=808aa613 t=39978865 us
+21:07:32.318177 I (40520) NimBLE: GATT procedure initiated: write; 
+21:07:32.318191 I (40520) NimBLE: att_handle=16 len=16
+21:07:32.318201 
+21:07:32.654164 I (40854) VEHICLE: round 37/50: OK  RTT=330456 us  RSSI=-29 dBm  nonce=808aa613
+21:07:32.654226 I (40855) VEHICLE: CSV,relay-unicast-tx8,0.52,37,808aa613,39978865,330456,OK,-29,40,256
+21:07:33.317571 I (41519) VEHICLE: HOP V tx_chal nonce=ca631913 t=40979015 us
+21:07:33.317625 I (41520) NimBLE: GATT procedure initiated: write; 
+21:07:33.317641 I (41520) NimBLE: att_handle=16 len=16
+21:07:33.317653 
+21:07:33.654441 I (41854) VEHICLE: round 38/50: OK  RTT=330317 us  RSSI=-33 dBm  nonce=ca631913
+21:07:33.654500 I (41855) VEHICLE: CSV,relay-unicast-tx8,0.52,38,ca631913,40979015,330317,OK,-33,40,256
+21:07:34.318311 I (42519) VEHICLE: HOP V tx_chal nonce=81084119 t=41979176 us
+21:07:34.318361 I (42520) NimBLE: GATT procedure initiated: write; 
+21:07:34.318377 I (42520) NimBLE: att_handle=16 len=16
+21:07:34.318388 
+21:07:34.656532 I (42856) VEHICLE: round 39/50: OK  RTT=330510 us  RSSI=-31 dBm  nonce=81084119
+21:07:34.656585 I (42857) VEHICLE: CSV,relay-unicast-tx8,0.52,39,81084119,41979176,330510,OK,-31,40,256
+21:07:35.318326 I (43520) VEHICLE: HOP V tx_chal nonce=3ad96e7f t=42979341 us
+21:07:35.318386 I (43520) NimBLE: GATT procedure initiated: write; 
+21:07:35.318401 I (43520) NimBLE: att_handle=16 len=16
+21:07:35.318413 
+21:07:35.654889 I (43854) VEHICLE: round 40/50: OK  RTT=330035 us  RSSI=-30 dBm  nonce=3ad96e7f
+21:07:35.654941 I (43855) VEHICLE: CSV,relay-unicast-tx8,0.52,40,3ad96e7f,42979341,330035,OK,-30,40,256
+21:07:36.318260 I (44520) VEHICLE: HOP V tx_chal nonce=78921a6a t=43979493 us
+21:07:36.318333 I (44520) NimBLE: GATT procedure initiated: write; 
+21:07:36.318355 I (44521) NimBLE: att_handle=16 len=16
+21:07:36.318372 
+21:07:36.654358 I (44854) VEHICLE: round 41/50: OK  RTT=329922 us  RSSI=-30 dBm  nonce=78921a6a
+21:07:36.654409 I (44855) VEHICLE: CSV,relay-unicast-tx8,0.52,41,78921a6a,43979493,329922,OK,-30,40,256
+21:07:37.317852 I (45520) VEHICLE: HOP V tx_chal nonce=55d9855f t=44979724 us
+21:07:37.317916 I (45521) NimBLE: GATT procedure initiated: write; 
+21:07:37.317936 I (45521) NimBLE: att_handle=16 len=16
+21:07:37.317950 
+21:07:37.653970 I (45854) VEHICLE: round 42/50: OK  RTT=329708 us  RSSI=-28 dBm  nonce=55d9855f
+21:07:37.654022 I (45855) VEHICLE: CSV,relay-unicast-tx8,0.52,42,55d9855f,44979724,329708,OK,-28,40,256
+21:07:38.319360 I (46520) VEHICLE: HOP V tx_chal nonce=365719b6 t=45979883 us
+21:07:38.319409 I (46521) NimBLE: GATT procedure initiated: write; 
+21:07:38.319425 I (46521) NimBLE: att_handle=16 len=16
+21:07:38.319436 
+21:07:38.653991 I (46854) VEHICLE: round 43/50: OK  RTT=329573 us  RSSI=-31 dBm  nonce=365719b6
+21:07:38.654187 I (46855) VEHICLE: CSV,relay-unicast-tx8,0.52,43,365719b6,45979883,329573,OK,-31,40,256
+21:07:39.318934 I (47520) VEHICLE: HOP V tx_chal nonce=6975d42a t=46980033 us
+21:07:39.318986 I (47521) NimBLE: GATT procedure initiated: write; 
+21:07:39.319002 I (47521) NimBLE: att_handle=16 len=16
+21:07:39.319014 
+21:07:39.656933 I (47856) VEHICLE: round 44/50: OK  RTT=329731 us  RSSI=-29 dBm  nonce=6975d42a
+21:07:39.656984 I (47857) VEHICLE: CSV,relay-unicast-tx8,0.52,44,6975d42a,46980033,329731,OK,-29,40,256
+21:07:40.319362 I (48520) VEHICLE: HOP V tx_chal nonce=61615d74 t=47980194 us
+21:07:40.319413 I (48521) NimBLE: GATT procedure initiated: write; 
+21:07:40.319428 I (48521) NimBLE: att_handle=16 len=16
+21:07:40.319440 
+21:07:40.654830 I (48855) VEHICLE: round 45/50: OK  RTT=329311 us  RSSI=-28 dBm  nonce=61615d74
+21:07:40.654888 I (48855) VEHICLE: CSV,relay-unicast-tx8,0.52,45,61615d74,47980194,329311,OK,-28,40,256
+21:07:41.319636 I (49521) VEHICLE: HOP V tx_chal nonce=e482af66 t=48980363 us
+21:07:41.319688 I (49521) NimBLE: GATT procedure initiated: write; 
+21:07:41.319705 I (49522) NimBLE: att_handle=16 len=16
+21:07:41.319716 
+21:07:41.554782 I (49755) VEHICLE: round 46/50: OK  RTT=229244 us  RSSI=-32 dBm  nonce=e482af66
+21:07:41.554836 I (49755) VEHICLE: CSV,relay-unicast-tx8,0.52,46,e482af66,48980363,229244,OK,-32,40,256
+21:07:42.319155 I (50521) VEHICLE: HOP V tx_chal nonce=84a00611 t=49980512 us
+21:07:42.319198 I (50522) NimBLE: GATT procedure initiated: write; 
+21:07:42.319213 I (50522) NimBLE: att_handle=16 len=16
+21:07:42.319225 
+21:07:42.654332 I (50855) VEHICLE: round 47/50: OK  RTT=329115 us  RSSI=-33 dBm  nonce=84a00611
+21:07:42.654387 I (50855) VEHICLE: CSV,relay-unicast-tx8,0.52,47,84a00611,49980512,329115,OK,-33,40,256
+21:07:43.320643 I (51521) VEHICLE: HOP V tx_chal nonce=9983c067 t=50980666 us
+21:07:43.320695 I (51522) NimBLE: GATT procedure initiated: write; 
+21:07:43.320711 I (51522) NimBLE: att_handle=16 len=16
+21:07:43.320722 
+21:07:43.655219 I (51855) VEHICLE: round 48/50: OK  RTT=328985 us  RSSI=-30 dBm  nonce=9983c067
+21:07:43.655271 I (51855) VEHICLE: CSV,relay-unicast-tx8,0.52,48,9983c067,50980666,328985,OK,-30,40,256
+21:07:44.320148 I (52521) VEHICLE: HOP V tx_chal nonce=c7b71630 t=51980824 us
+21:07:44.320200 I (52522) NimBLE: GATT procedure initiated: write; 
+21:07:44.320215 I (52522) NimBLE: att_handle=16 len=16
+21:07:44.320227 
+21:07:44.655842 I (52857) VEHICLE: round 49/50: OK  RTT=329061 us  RSSI=-29 dBm  nonce=c7b71630
+21:07:44.655909 I (52857) VEHICLE: CSV,relay-unicast-tx8,0.52,49,c7b71630,51980824,329061,OK,-29,40,256
+21:07:45.319627 I (53521) VEHICLE: HOP V tx_chal nonce=f823bb66 t=52980987 us
+21:07:45.319679 I (53522) NimBLE: GATT procedure initiated: write; 
+21:07:45.319694 I (53522) NimBLE: att_handle=16 len=16
+21:07:45.319706 
+21:07:45.666782 I (53855) VEHICLE: round 50/50: OK  RTT=328691 us  RSSI=-29 dBm  nonce=f823bb66
+21:07:45.666835 I (53855) VEHICLE: CSV,relay-unicast-tx8,0.52,50,f823bb66,52980987,328691,OK,-29,40,256
+21:07:45.666850 I (53864) VEHICLE: === relay-unicast-tx8 dist=0.52 n=50 ok=50 fail=0 timeout=0 disconnects=0 | RTT us (answered): min=229244 avg=395111 max=435284 ===

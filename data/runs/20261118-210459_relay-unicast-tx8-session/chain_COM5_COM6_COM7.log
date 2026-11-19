@@ -1,0 +1,1398 @@
+21:05:05.216 [LOGGER] COM5 logged as RELAY_A (DTR/RTS idle)
+21:05:05.235 [LOGGER] COM6 logged as KEY (DTR/RTS idle)
+21:05:05.254 [LOGGER] COM7 logged as RELAY_B (DTR/RTS idle)
+21:05:05.458 [LOGGER] reset pulse on COM5 (start)
+21:05:05.661 [LOGGER] reset pulse on COM7 (start)
+21:05:05.718 [RELAY_A] ets Jul 29 2019 12:21:46
+21:05:05.718 [RELAY_A] 
+21:05:05.718 [RELAY_A] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+21:05:05.718 [RELAY_A] configsip: 0, SPIWP:0xee
+21:05:05.718 [RELAY_A] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+21:05:05.718 [RELAY_A] mode:DIO, clock div:2
+21:05:05.718 [RELAY_A] load:0x3fff0040,len:6272
+21:05:05.718 [RELAY_A] load:0x40078000,len:15824
+21:05:05.718 [RELAY_A] load:0x40080400,len:3988
+21:05:05.718 [RELAY_A] entry 0x40080644
+21:05:05.718 [RELAY_A] I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+21:05:05.718 [RELAY_A] I (27) boot: compile time Nov 18 2026 19:31:31
+21:05:05.718 [RELAY_A] I (27) boot: Multicore bootloader
+21:05:05.718 [RELAY_A] I (29) boot: chip revision: v3.1
+21:05:05.718 [RELAY_A] I (31) boot.esp32: SPI Speed      : 40MHz
+21:05:05.718 [RELAY_A] I (35) boot.esp32: SPI Mode       : DIO
+21:05:05.718 [RELAY_A] I (39) boot.esp32: SPI Flash Size : 4MB
+21:05:05.718 [RELAY_A] I (42) boot: Enabling RNG early entropy source...
+21:05:05.718 [RELAY_A] I (47) boot: Partition Table:
+21:05:05.718 [RELAY_A] I (49) boot: ## Label            Usage          Type ST Offset   Length
+21:05:05.718 [RELAY_A] I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+21:05:05.718 [RELAY_A] I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+21:05:05.718 [RELAY_A] I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+21:05:05.718 [RELAY_A] I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+21:05:05.718 [RELAY_A] I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+21:05:05.718 [RELAY_A] I (88) boot: End of partition table
+21:05:05.718 [RELAY_A] I (92) esp_image: segment 0: paddr=001d0020 vaddr=3f400020 size=3f3bch (259004) map
+21:05:05.718 [RELAY_A] I (191) esp_image: segment 1: paddr=0020f3e4 vaddr=3ffbdb60 size=00c34h (  3124) load
+21:05:05.718 [RELAY_A] I (193) esp_image: segment 2: paddr=00210020 vaddr=400d0020 size=e92a0h (955040) map
+21:05:05.824 [RELAY_B] ets Jul 29 2019 12:21:46
+21:05:05.824 [RELAY_B] 
+21:05:05.824 [RELAY_B] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+21:05:05.824 [RELAY_B] configsip: 0, SPIWP:0xee
+21:05:05.824 [RELAY_B] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+21:05:05.824 [RELAY_B] mode:DIO, clock div:2
+21:05:05.824 [RELAY_B] load:0x3fff0040,len:6272
+21:05:05.824 [RELAY_B] load:0x40078000,len:15824
+21:05:05.824 [RELAY_B] load:0x40080400,len:3988
+21:05:05.824 [RELAY_B] entry 0x40080644
+21:05:05.824 [RELAY_B] I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+21:05:05.824 [RELAY_B] I (27) boot: compile time Nov 18 2026 19:35:16
+21:05:05.824 [RELAY_B] I (28) boot: Multicore bootloader
+21:05:05.824 [RELAY_B] I (29) boot: chip revision: v3.1
+21:05:05.824 [RELAY_B] I (31) boot.esp32: SPI Speed      : 40MHz
+21:05:05.824 [RELAY_B] I (35) boot.esp32: SPI Mode       : DIO
+21:05:05.824 [RELAY_B] I (39) boot.esp32: SPI Flash Size : 4MB
+21:05:05.824 [RELAY_B] I (42) boot: Enabling RNG early entropy source...
+21:05:05.824 [RELAY_B] I (47) boot: Partition Table:
+21:05:05.824 [RELAY_B] I (49) boot: ## Label            Usage          Type ST Offset   Length
+21:05:05.824 [RELAY_B] I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+21:05:05.824 [RELAY_B] I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+21:05:05.824 [RELAY_B] I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+21:05:05.824 [RELAY_B] I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+21:05:05.824 [RELAY_B] I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+21:05:05.824 [RELAY_B] I (88) boot: End of partition table
+21:05:05.824 [RELAY_B] I (92) esp_image: segment 0: paddr=001d0020 vaddr=3f400020 size=3f28ch (258700) map
+21:05:05.979 [RELAY_B] I (191) esp_image: segment 1: paddr=0020f2b4 vaddr=3ffbdb60 size=00d64h (  3428) load
+21:05:05.979 [RELAY_B] I (193) esp_image: segment 2: paddr=00210020 vaddr=400d0020 size=e974ch (956236) map
+21:05:06.248 [RELAY_A] I (535) esp_image: segment 3: paddr=002f92c8 vaddr=3ffbe794 size=056b4h ( 22196) load
+21:05:06.248 [RELAY_A] I (544) esp_image: segment 4: paddr=002fe984 vaddr=40080000 size=1a09ch (106652) load
+21:05:06.248 [RELAY_A] I (588) esp_image: segment 5: paddr=00318a28 vaddr=50000000 size=00028h (    40) load
+21:05:06.248 [RELAY_A] I (602) boot: Loaded app from partition at offset 0x1d0000
+21:05:06.248 [RELAY_A] I (602) boot: Disabling RNG early entropy source...
+21:05:06.248 [RELAY_A] I (613) cpu_start: Multicore app
+21:05:06.248 [RELAY_A] I (621) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+21:05:06.248 [RELAY_A] I (621) cpu_start: Pro cpu start user code
+21:05:06.248 [RELAY_A] I (621) cpu_start: cpu freq: 240000000 Hz
+21:05:06.248 [RELAY_A] I (623) app_init: Application information:
+21:05:06.248 [RELAY_A] I (627) app_init: Project name:     relays
+21:05:06.248 [RELAY_A] I (631) app_init: App version:      1cf7f0c-dirty
+21:05:06.248 [RELAY_A] I (635) app_init: Compile time:     Nov 18 2026 20:14:32
+21:05:06.248 [RELAY_A] I (640) app_init: ELF file SHA256:  f178143d0...
+21:05:06.248 [RELAY_A] I (645) app_init: ESP-IDF:          v6.1
+21:05:06.248 [RELAY_A] I (648) efuse_init: Min chip rev:     v0.0
+21:05:06.248 [RELAY_A] I (652) efuse_init: Max chip rev:     v3.99 
+21:05:06.248 [RELAY_A] I (656) efuse_init: Chip rev:         v3.1
+21:05:06.248 [RELAY_A] I (660) heap_init: Initializing. RAM available for dynamic allocation:
+21:05:06.248 [RELAY_A] I (666) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+21:05:06.248 [RELAY_A] I (671) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+21:05:06.248 [RELAY_A] I (676) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+21:05:06.248 [RELAY_A] I (682) heap_init: At 3FFD65D0 len 00009A30 (38 KiB): DRAM
+21:05:06.248 [RELAY_A] I (687) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+21:05:06.248 [RELAY_A] I (692) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+21:05:06.248 [RELAY_A] I (698) heap_init: At 4009A09C len 00005F64 (23 KiB): IRAM
+21:05:06.248 [RELAY_A] I (705) spi_flash: detected chip: gd
+21:05:06.248 [RELAY_A] I (706) spi_flash: flash io: dio
+21:05:06.248 [RELAY_A] I (711) coexist: coex firmware version: a830d28
+21:05:06.248 [RELAY_A] I (714) main_task: Started on CPU0
+21:05:06.248 [RELAY_A] I (716) main_task: Calling app_main()
+21:05:06.248 [RELAY_A] I (729) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+21:05:06.453 [RELAY_B] I (536) esp_image: segment 3: paddr=002f9774 vaddr=3ffbe8c4 size=055e4h ( 21988) load
+21:05:06.453 [RELAY_B] I (545) esp_image: segment 4: paddr=002fed60 vaddr=40080000 size=1a09ch (106652) load
+21:05:06.453 [RELAY_B] I (588) esp_image: segment 5: paddr=00318e04 vaddr=50000000 size=00028h (    40) load
+21:05:06.453 [RELAY_B] I (602) boot: Loaded app from partition at offset 0x1d0000
+21:05:06.453 [RELAY_B] I (602) boot: Disabling RNG early entropy source...
+21:05:06.453 [RELAY_B] I (613) cpu_start: Multicore app
+21:05:06.453 [RELAY_B] I (621) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+21:05:06.453 [RELAY_B] I (622) cpu_start: Pro cpu start user code
+21:05:06.453 [RELAY_B] I (622) cpu_start: cpu freq: 240000000 Hz
+21:05:06.453 [RELAY_B] I (623) app_init: Application information:
+21:05:06.453 [RELAY_B] I (627) app_init: Project name:     relays
+21:05:06.453 [RELAY_B] I (631) app_init: App version:      1cf7f0c
+21:05:06.453 [RELAY_B] I (635) app_init: Compile time:     Nov 18 2026 19:33:55
+21:05:06.453 [RELAY_B] I (640) app_init: ELF file SHA256:  525f9e47f...
+21:05:06.453 [RELAY_B] I (644) app_init: ESP-IDF:          v6.1
+21:05:06.453 [RELAY_B] I (648) efuse_init: Min chip rev:     v0.0
+21:05:06.453 [RELAY_B] I (652) efuse_init: Max chip rev:     v3.99 
+21:05:06.453 [RELAY_B] I (656) efuse_init: Chip rev:         v3.1
+21:05:06.453 [RELAY_B] I (660) heap_init: Initializing. RAM available for dynamic allocation:
+21:05:06.453 [RELAY_B] I (666) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+21:05:06.453 [RELAY_B] I (671) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+21:05:06.453 [RELAY_B] I (676) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+21:05:06.453 [RELAY_B] I (681) heap_init: At 3FFD6650 len 000099B0 (38 KiB): DRAM
+21:05:06.453 [RELAY_B] I (686) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+21:05:06.453 [RELAY_B] I (692) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+21:05:06.453 [RELAY_B] I (697) heap_init: At 4009A09C len 00005F64 (23 KiB): IRAM
+21:05:06.453 [RELAY_B] I (704) spi_flash: detected chip: generic
+21:05:06.453 [RELAY_B] I (706) spi_flash: flash io: dio
+21:05:06.453 [RELAY_B] I (711) coexist: coex firmware version: a830d28
+21:05:06.453 [RELAY_B] I (715) main_task: Started on CPU0
+21:05:06.453 [RELAY_B] I (717) main_task: Calling app_main()
+21:05:06.453 [RELAY_B] I (730) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+21:05:06.503 [RELAY_A] I (863) cyd_display: ST7789 + LVGL ready
+21:05:06.607 [RELAY_B] I (864) cyd_display: ST7789 + LVGL ready
+21:05:06.749 [RELAY_A] I (1094) RUN_META: role=relay-a fw=1cf7f0c+mod build=2026-11-18 20:14
+21:05:06.749 [RELAY_A] I (1152) wifi:wifi driver task: 3ffdfdf4, prio:23, stack:6656, core=0
+21:05:06.749 [RELAY_A] I (1159) wifi:wifi firmware version: e12a754
+21:05:06.749 [RELAY_A] I (1159) wifi:wifi certification version: v7.0
+21:05:06.749 [RELAY_A] I (1159) wifi:config NVS flash: enabled
+21:05:06.749 [RELAY_A] I (1161) wifi:config nano formatting: disabled
+21:05:06.749 [RELAY_A] I (1166) wifi:Init data frame dynamic rx buffer num: 32
+21:05:06.749 [RELAY_A] I (1171) wifi:Init static rx mgmt buffer num: 5
+21:05:06.749 [RELAY_A] I (1174) wifi:Init management short buffer num: 32
+21:05:06.749 [RELAY_A] I (1179) wifi:Init dynamic tx buffer num: 32
+21:05:06.749 [RELAY_A] I (1183) wifi:Init static rx buffer size: 1600
+21:05:06.749 [RELAY_A] I (1187) wifi:Init static rx buffer num: 10
+21:05:06.749 [RELAY_A] I (1191) wifi:Init dynamic rx buffer num: 32
+21:05:06.749 [RELAY_A] I (1197) wifi_init: rx ba win: 6
+21:05:06.749 [RELAY_A] I (1198) wifi_init: accept mbox: 6
+21:05:06.749 [RELAY_A] I (1201) wifi_init: tcpip mbox: 32
+21:05:06.749 [RELAY_A] I (1204) wifi_init: udp mbox: 6
+21:05:06.749 [RELAY_A] I (1207) wifi_init: tcp mbox: 6
+21:05:06.749 [RELAY_A] I (1210) wifi_init: tcp tx win: 5760
+21:05:06.749 [RELAY_A] I (1213) wifi_init: tcp rx win: 5760
+21:05:06.749 [RELAY_A] I (1217) wifi_init: tcp mss: 1440
+21:05:06.749 [RELAY_A] I (1220) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+21:05:06.958 [RELAY_B] I (1102) RUN_META: role=relay-b fw=1cf7f0c build=2026-11-18 19:32
+21:05:06.958 [RELAY_B] I (1160) wifi:wifi driver task: 3ffdfd80, prio:23, stack:6656, core=0
+21:05:06.958 [RELAY_B] I (1166) wifi:wifi firmware version: e12a754
+21:05:06.958 [RELAY_B] I (1167) wifi:wifi certification version: v7.0
+21:05:06.958 [RELAY_B] I (1167) wifi:config NVS flash: enabled
+21:05:06.958 [RELAY_B] I (1169) wifi:config nano formatting: disabled
+21:05:06.958 [RELAY_B] I (1173) wifi:Init data frame dynamic rx buffer num: 32
+21:05:06.958 [RELAY_B] I (1178) wifi:Init static rx mgmt buffer num: 5
+21:05:06.958 [RELAY_B] I (1182) wifi:Init management short buffer num: 32
+21:05:06.958 [RELAY_B] I (1187) wifi:Init dynamic tx buffer num: 32
+21:05:06.958 [RELAY_B] I (1191) wifi:Init static rx buffer size: 1600
+21:05:06.958 [RELAY_B] I (1195) wifi:Init static rx buffer num: 10
+21:05:06.958 [RELAY_B] I (1199) wifi:Init dynamic rx buffer num: 32
+21:05:06.958 [RELAY_B] I (1205) wifi_init: rx ba win: 6
+21:05:06.958 [RELAY_B] I (1206) wifi_init: accept mbox: 6
+21:05:06.958 [RELAY_B] I (1209) wifi_init: tcpip mbox: 32
+21:05:06.958 [RELAY_B] I (1212) wifi_init: udp mbox: 6
+21:05:06.958 [RELAY_B] I (1215) wifi_init: tcp mbox: 6
+21:05:06.958 [RELAY_B] I (1218) wifi_init: tcp tx win: 5760
+21:05:06.958 [RELAY_B] I (1221) wifi_init: tcp rx win: 5760
+21:05:06.958 [RELAY_B] I (1225) wifi_init: tcp mss: 1440
+21:05:06.958 [RELAY_B] I (1228) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+21:05:07.073 [RELAY_A] I (1302) wifi:mode : sta (b8:bb:11:83:a9:80)
+21:05:07.073 [RELAY_A] I (1302) wifi:enable tsf
+21:05:07.073 [RELAY_A] I (1308) wifi:Set ps type: 0, coexist: 0
+21:05:07.073 [RELAY_A] 
+21:05:07.073 [RELAY_A] I (1309) LINK: power save WiFi = NONE (rc=0)
+21:05:07.073 [RELAY_A] I (1310) LINK: this board MAC: b8:bb:11:83:a9:80
+21:05:07.073 [RELAY_A] I (1313) ESPNOW: espnow [version: 2.0] init
+21:05:07.073 [RELAY_A] I (1316) LINK: ESP-NOW ready (channel 1), unicast to 48:af:f3:70:1d:58
+21:05:07.073 [RELAY_A] I (1325) BTDM_INIT: BT controller compile version [4a0f94d]
+21:05:07.073 [RELAY_A] I (1328) BTDM_INIT: Using main XTAL as clock source
+21:05:07.073 [RELAY_A] I (1333) BTDM_INIT: Bluetooth MAC: b8:bb:11:83:a9:82
+21:05:07.073 [RELAY_A] I (1340) wifi:Coexist!!! Wi-Fi station would only keep waked when available
+21:05:07.073 [RELAY_A] 
+21:05:07.073 [RELAY_A] I (1502) RELAY_A: Relay A started (BLE central: connects to the key and tunnels)
+21:05:07.073 [RELAY_A] I (1504) main_task: Returned from app_main()
+21:05:07.073 [RELAY_A] I (1538) NimBLE: GAP procedure initiated: discovery; 
+21:05:07.073 [RELAY_A] I (1538) NimBLE: own_addr_type=0 filter_policy=0 passive=0 limited=0 filter_duplicates=1 
+21:05:07.073 [RELAY_A] I (1540) NimBLE: duration=forever
+21:05:07.073 [RELAY_A] I (1543) NimBLE: 
+21:05:07.073 [RELAY_A] 
+21:05:07.073 [RELAY_A] I (1550) RELAY_A: scanning for the key service...
+21:05:07.175 [RELAY_B] I (1313) wifi:mode : sta (48:af:f3:70:1d:58)
+21:05:07.175 [RELAY_B] I (1314) wifi:enable tsf
+21:05:07.175 [RELAY_B] I (1318) wifi:Set ps type: 0, coexist: 0
+21:05:07.175 [RELAY_B] 
+21:05:07.175 [RELAY_B] I (1319) LINK: power save WiFi = NONE (rc=0)
+21:05:07.175 [RELAY_B] I (1319) LINK: this board MAC: 48:af:f3:70:1d:58
+21:05:07.175 [RELAY_B] I (1322) ESPNOW: espnow [version: 2.0] init
+21:05:07.175 [RELAY_B] I (1325) LINK: ESP-NOW ready (channel 1), unicast to b8:bb:11:83:a9:80
+21:05:07.175 [RELAY_B] I (1333) BTDM_INIT: BT controller compile version [4a0f94d]
+21:05:07.175 [RELAY_B] I (1337) BTDM_INIT: Using main XTAL as clock source
+21:05:07.175 [RELAY_B] I (1342) BTDM_INIT: Bluetooth MAC: 48:af:f3:70:1d:5a
+21:05:07.175 [RELAY_B] I (1349) wifi:Coexist!!! Wi-Fi station would only keep waked when available
+21:05:07.175 [RELAY_B] 
+21:05:07.328 [RELAY_B] I (1518) RELAY_B: Relay B started (BLE peripheral: key clone)
+21:05:07.328 [RELAY_B] I (1522) main_task: Returned from app_main()
+21:05:07.328 [RELAY_B] I (1557) NimBLE: GAP procedure initiated: advertise; 
+21:05:07.328 [RELAY_B] I (1558) NimBLE: disc_mode=2
+21:05:07.328 [RELAY_B] I (1558) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+21:05:07.328 [RELAY_B] I (1563) NimBLE: 
+21:05:07.328 [RELAY_B] 
+21:05:07.328 [RELAY_B] I (1570) RELAY_B: advertising the key clone; waiting for the vehicle
+21:05:07.383 [RELAY_A] I (1840) RELAY_A: key found, connecting...
+21:05:07.383 [RELAY_A] I (1843) NimBLE: GAP procedure initiated: connect; 
+21:05:07.383 [RELAY_A] I (1843) NimBLE: peer_addr_type=0 peer_addr=
+21:05:07.383 [RELAY_A] I (1843) NimBLE: 48:af:f3:70:1d:5a
+21:05:07.383 [RELAY_A] I (1845) NimBLE:  scan_itvl=16 scan_window=16 itvl_min=24 itvl_max=40 latency=0 supervision_timeout=256 min_ce_len=0 max_ce_len=0 own_addr_type=0
+21:05:07.383 [RELAY_A] I (1858) NimBLE: 
+21:05:07.383 [RELAY_A] 
+21:05:07.542 [RELAY_B] I (1805) RELAY_B: vehicle connected (handle 0)
+21:05:07.542 [RELAY_B] I (1807) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+21:05:07.542 [RELAY_B] 
+21:05:07.542 [RELAY_B] I (1808) RELAY_B: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+21:05:07.612 [RELAY_A] I (2056) RELAY_A: connected to key (handle 0); discovering service
+21:05:07.612 [RELAY_A] I (2059) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+21:05:07.612 [RELAY_A] 
+21:05:07.612 [RELAY_A] I (2061) RELAY_A: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=central phy_tx=? phy_rx=?
+21:05:07.612 [RELAY_A] I (2071) NimBLE: GATT procedure initiated: exchange mtu
+21:05:07.612 [RELAY_A] 
+21:05:07.612 [RELAY_A] I (2080) NimBLE: GATT procedure initiated: discover service by uuid; uuid=
+21:05:07.612 [RELAY_A] I (2082) NimBLE: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10
+21:05:07.612 [RELAY_A] I (2087) NimBLE: 
+21:05:07.612 [RELAY_A] 
+21:05:07.714 [RELAY_B] I (1906) RELAY_B: MTU handle=0 mtu=256
+21:05:07.766 [RELAY_A] I (2158) RELAY_A: MTU handle=0 mtu=256
+21:05:07.884 [KEY] I (4723433) KEY: vehicle disabled notify on RESPONSE
+21:05:07.884 [KEY] W (4723434) KEY: vehicle disconnected (reason=520, disconnects=26); re-advertising
+21:05:07.884 [KEY] I (4723444) NimBLE: GAP procedure initiated: advertise; 
+21:05:07.884 [KEY] I (4723445) NimBLE: disc_mode=2
+21:05:07.884 [KEY] I (4723445) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+21:05:07.884 [KEY] I (4723451) NimBLE: 
+21:05:07.884 [KEY] 
+21:05:07.884 [KEY] I (4723459) KEY: advertising the key; waiting for the vehicle
+21:05:07.988 [RELAY_A] I (2455) RELAY_A: service at 14..19
+21:05:07.988 [RELAY_A] I (2455) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+21:05:07.988 [RELAY_A] I (2455) NimBLE: start_handle=14 end_handle=19 uuid=
+21:05:07.988 [RELAY_A] I (2459) NimBLE: 8f2a0002-1b2c-4e6a-9f3d-2a7c1e5b0a10
+21:05:07.988 [RELAY_A] I (2463) NimBLE: 
+21:05:07.988 [RELAY_A] 
+21:05:08.450 [RELAY_A] I (2855) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+21:05:08.450 [RELAY_A] I (2855) NimBLE: start_handle=14 end_handle=19 uuid=
+21:05:08.450 [RELAY_A] I (2856) NimBLE: 8f2a0003-1b2c-4e6a-9f3d-2a7c1e5b0a10
+21:05:08.450 [RELAY_A] I (2860) NimBLE: 
+21:05:08.450 [RELAY_A] 
+21:05:08.778 [RELAY_A] I (3255) NimBLE: GATT procedure initiated: discover all descriptors; 
+21:05:08.779 [RELAY_A] I (3255) NimBLE: chr_val_handle=18 end_handle=19
+21:05:08.779 [RELAY_A] 
+21:05:08.976 [RELAY_A] I (3456) NimBLE: GATT procedure initiated: write; 
+21:05:08.976 [RELAY_A] I (3456) NimBLE: att_handle=19 len=2
+21:05:08.976 [RELAY_A] 
+21:05:09.079 [RELAY_B] I (3353) RELAY_B: vehicle enabled notify on RESPONSE
+21:05:09.173 [RELAY_A] I (3655) RELAY_A: subscribed to key notify; ready to forward tunnel challenges
+21:05:12.873 [LOGGER] reset pulse on COM5 (command)
+21:05:13.035 [RELAY_A] ets Jul 29 2019 12:21:46
+21:05:13.035 [RELAY_A] 
+21:05:13.035 [RELAY_A] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+21:05:13.035 [RELAY_A] configsip: 0, SPIWP:0xee
+21:05:13.035 [RELAY_A] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+21:05:13.035 [RELAY_A] mode:DIO, clock div:2
+21:05:13.035 [RELAY_A] load:0x3fff0040,len:6272
+21:05:13.035 [RELAY_A] load:0x40078000,len:15824
+21:05:13.036 [RELAY_A] load:0x40080400,len:3988
+21:05:13.036 [RELAY_A] entry 0x40080644
+21:05:13.036 [RELAY_A] I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+21:05:13.036 [RELAY_A] I (27) boot: compile time Nov 18 2026 19:31:31
+21:05:13.036 [RELAY_A] I (28) boot: Multicore bootloader
+21:05:13.036 [RELAY_A] I (29) boot: chip revision: v3.1
+21:05:13.036 [RELAY_A] I (31) boot.esp32: SPI Speed      : 40MHz
+21:05:13.036 [RELAY_A] I (35) boot.esp32: SPI Mode       : DIO
+21:05:13.036 [RELAY_A] I (39) boot.esp32: SPI Flash Size : 4MB
+21:05:13.036 [RELAY_A] I (42) boot: Enabling RNG early entropy source...
+21:05:13.036 [RELAY_A] I (47) boot: Partition Table:
+21:05:13.036 [RELAY_A] I (49) boot: ## Label            Usage          Type ST Offset   Length
+21:05:13.036 [RELAY_A] I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+21:05:13.036 [RELAY_A] I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+21:05:13.036 [RELAY_A] I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+21:05:13.036 [RELAY_A] I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+21:05:13.036 [RELAY_A] I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+21:05:13.036 [RELAY_A] I (88) boot: End of partition table
+21:05:13.036 [RELAY_A] I (92) esp_image: segment 0: paddr=001d0020 vaddr=3f400020 size=3f3bch (259004) map
+21:05:13.189 [RELAY_A] I (191) esp_image: segment 1: paddr=0020f3e4 vaddr=3ffbdb60 size=00c34h (  3124) load
+21:05:13.190 [RELAY_A] I (193) esp_image: segment 2: paddr=00210020 vaddr=400d0020 size=e92a0h (955040) map
+21:05:13.664 [RELAY_A] I (535) esp_image: segment 3: paddr=002f92c8 vaddr=3ffbe794 size=056b4h ( 22196) load
+21:05:13.664 [RELAY_A] I (544) esp_image: segment 4: paddr=002fe984 vaddr=40080000 size=1a09ch (106652) load
+21:05:13.664 [RELAY_A] I (588) esp_image: segment 5: paddr=00318a28 vaddr=50000000 size=00028h (    40) load
+21:05:13.664 [RELAY_A] I (602) boot: Loaded app from partition at offset 0x1d0000
+21:05:13.664 [RELAY_A] I (602) boot: Disabling RNG early entropy source...
+21:05:13.664 [RELAY_A] I (613) cpu_start: Multicore app
+21:05:13.664 [RELAY_A] I (621) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+21:05:13.664 [RELAY_A] I (621) cpu_start: Pro cpu start user code
+21:05:13.664 [RELAY_A] I (621) cpu_start: cpu freq: 240000000 Hz
+21:05:13.664 [RELAY_A] I (623) app_init: Application information:
+21:05:13.664 [RELAY_A] I (627) app_init: Project name:     relays
+21:05:13.664 [RELAY_A] I (631) app_init: App version:      1cf7f0c-dirty
+21:05:13.664 [RELAY_A] I (635) app_init: Compile time:     Nov 18 2026 20:14:32
+21:05:13.664 [RELAY_A] I (640) app_init: ELF file SHA256:  f178143d0...
+21:05:13.664 [RELAY_A] I (645) app_init: ESP-IDF:          v6.1
+21:05:13.664 [RELAY_A] I (648) efuse_init: Min chip rev:     v0.0
+21:05:13.664 [RELAY_A] I (652) efuse_init: Max chip rev:     v3.99 
+21:05:13.664 [RELAY_A] I (656) efuse_init: Chip rev:         v3.1
+21:05:13.664 [RELAY_A] I (660) heap_init: Initializing. RAM available for dynamic allocation:
+21:05:13.664 [RELAY_A] I (666) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+21:05:13.664 [RELAY_A] I (671) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+21:05:13.664 [RELAY_A] I (676) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+21:05:13.664 [RELAY_A] I (682) heap_init: At 3FFD65D0 len 00009A30 (38 KiB): DRAM
+21:05:13.664 [RELAY_A] I (687) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+21:05:13.664 [RELAY_A] I (692) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+21:05:13.664 [RELAY_A] I (698) heap_init: At 4009A09C len 00005F64 (23 KiB): IRAM
+21:05:13.664 [RELAY_A] I (705) spi_flash: detected chip: gd
+21:05:13.664 [RELAY_A] I (706) spi_flash: flash io: dio
+21:05:13.664 [RELAY_A] I (711) coexist: coex firmware version: a830d28
+21:05:13.664 [RELAY_A] I (714) main_task: Started on CPU0
+21:05:13.664 [RELAY_A] I (716) main_task: Calling app_main()
+21:05:13.664 [RELAY_A] I (729) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+21:05:13.820 [RELAY_A] I (863) cyd_display: ST7789 + LVGL ready
+21:05:14.028 [RELAY_A] I (1094) RUN_META: role=relay-a fw=1cf7f0c+mod build=2026-11-18 20:14
+21:05:14.281 [RELAY_A] I (1152) wifi:wifi driver task: 3ffdfdf4, prio:23, stack:6656, core=0
+21:05:14.281 [RELAY_A] I (1159) wifi:wifi firmware version: e12a754
+21:05:14.281 [RELAY_A] I (1159) wifi:wifi certification version: v7.0
+21:05:14.281 [RELAY_A] I (1159) wifi:config NVS flash: enabled
+21:05:14.281 [RELAY_A] I (1161) wifi:config nano formatting: disabled
+21:05:14.281 [RELAY_A] I (1166) wifi:Init data frame dynamic rx buffer num: 32
+21:05:14.281 [RELAY_A] I (1171) wifi:Init static rx mgmt buffer num: 5
+21:05:14.281 [RELAY_A] I (1174) wifi:Init management short buffer num: 32
+21:05:14.281 [RELAY_A] I (1179) wifi:Init dynamic tx buffer num: 32
+21:05:14.281 [RELAY_A] I (1183) wifi:Init static rx buffer size: 1600
+21:05:14.281 [RELAY_A] I (1187) wifi:Init static rx buffer num: 10
+21:05:14.281 [RELAY_A] I (1191) wifi:Init dynamic rx buffer num: 32
+21:05:14.281 [RELAY_A] I (1197) wifi_init: rx ba win: 6
+21:05:14.282 [RELAY_A] I (1198) wifi_init: accept mbox: 6
+21:05:14.282 [RELAY_A] I (1201) wifi_init: tcpip mbox: 32
+21:05:14.282 [RELAY_A] I (1204) wifi_init: udp mbox: 6
+21:05:14.282 [RELAY_A] I (1207) wifi_init: tcp mbox: 6
+21:05:14.282 [RELAY_A] I (1210) wifi_init: tcp tx win: 5760
+21:05:14.282 [RELAY_A] I (1213) wifi_init: tcp rx win: 5760
+21:05:14.282 [RELAY_A] I (1217) wifi_init: tcp mss: 1440
+21:05:14.282 [RELAY_A] I (1220) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+21:05:14.282 [RELAY_A] I (1302) wifi:mode : sta (b8:bb:11:83:a9:80)
+21:05:14.282 [RELAY_A] I (1303) wifi:enable tsf
+21:05:14.282 [RELAY_A] I (1309) wifi:Set ps type: 0, coexist: 0
+21:05:14.282 [RELAY_A] 
+21:05:14.282 [RELAY_A] I (1310) LINK: power save WiFi = NONE (rc=0)
+21:05:14.282 [RELAY_A] I (1310) LINK: this board MAC: b8:bb:11:83:a9:80
+21:05:14.282 [RELAY_A] I (1314) ESPNOW: espnow [version: 2.0] init
+21:05:14.282 [RELAY_A] I (1317) LINK: ESP-NOW ready (channel 1), unicast to 48:af:f3:70:1d:58
+21:05:14.282 [RELAY_A] I (1324) BTDM_INIT: BT controller compile version [4a0f94d]
+21:05:14.282 [RELAY_A] I (1328) BTDM_INIT: Using main XTAL as clock source
+21:05:14.282 [RELAY_A] I (1333) BTDM_INIT: Bluetooth MAC: b8:bb:11:83:a9:82
+21:05:14.282 [RELAY_A] I (1341) wifi:Coexist!!! Wi-Fi station would only keep waked when available
+21:05:14.282 [RELAY_A] 
+21:05:14.491 [RELAY_A] I (1505) RELAY_A: Relay A started (BLE central: connects to the key and tunnels)
+21:05:14.491 [RELAY_A] I (1505) main_task: Returned from app_main()
+21:05:14.491 [RELAY_A] I (1542) NimBLE: GAP procedure initiated: discovery; 
+21:05:14.491 [RELAY_A] I (1542) NimBLE: own_addr_type=0 filter_policy=0 passive=0 limited=0 filter_duplicates=1 
+21:05:14.491 [RELAY_A] I (1544) NimBLE: duration=forever
+21:05:14.491 [RELAY_A] I (1547) NimBLE: 
+21:05:14.491 [RELAY_A] 
+21:05:14.491 [RELAY_A] I (1554) RELAY_A: scanning for the key service...
+21:05:14.645 [RELAY_A] I (1638) RELAY_A: key found, connecting...
+21:05:14.645 [RELAY_A] I (1641) NimBLE: GAP procedure initiated: connect; 
+21:05:14.645 [RELAY_A] I (1641) NimBLE: peer_addr_type=0 peer_addr=
+21:05:14.645 [RELAY_A] I (1641) NimBLE: c8:8a:7b:be:0d:f2
+21:05:14.645 [RELAY_A] I (1643) NimBLE:  scan_itvl=16 scan_window=16 itvl_min=24 itvl_max=40 latency=0 supervision_timeout=256 min_ce_len=0 max_ce_len=0 own_addr_type=0
+21:05:14.645 [RELAY_A] I (1656) NimBLE: 
+21:05:14.645 [RELAY_A] 
+21:05:15.062 [KEY] I (4730623) KEY: vehicle connected (handle 0)
+21:05:15.062 [KEY] I (4730627) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+21:05:15.062 [KEY] 
+21:05:15.062 [KEY] I (4730628) KEY: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+21:05:15.165 [RELAY_A] I (2161) RELAY_A: connected to key (handle 0); discovering service
+21:05:15.165 [RELAY_A] I (2164) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+21:05:15.165 [RELAY_A] 
+21:05:15.165 [RELAY_A] I (2165) RELAY_A: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=central phy_tx=? phy_rx=?
+21:05:15.165 [RELAY_A] I (2175) NimBLE: GATT procedure initiated: exchange mtu
+21:05:15.165 [RELAY_A] 
+21:05:15.165 [RELAY_A] I (2185) NimBLE: GATT procedure initiated: discover service by uuid; uuid=
+21:05:15.165 [RELAY_A] I (2187) NimBLE: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10
+21:05:15.165 [RELAY_A] I (2192) NimBLE: 
+21:05:15.165 [RELAY_A] 
+21:05:15.216 [KEY] I (4730725) KEY: MTU handle=0 mtu=256
+21:05:15.267 [RELAY_B] I (9511) RELAY_B: vehicle disabled notify on RESPONSE
+21:05:15.267 [RELAY_B] W (9512) RELAY_B: vehicle disconnected (reason=520, disconnects=1); re-advertising
+21:05:15.267 [RELAY_B] I (9521) NimBLE: GAP procedure initiated: advertise; 
+21:05:15.267 [RELAY_B] I (9522) NimBLE: disc_mode=2
+21:05:15.267 [RELAY_B] I (9522) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+21:05:15.267 [RELAY_B] I (9529) NimBLE: 
+21:05:15.267 [RELAY_B] 
+21:05:15.267 [RELAY_B] I (9537) RELAY_B: advertising the key clone; waiting for the vehicle
+21:05:15.318 [RELAY_A] I (2311) RELAY_A: MTU handle=0 mtu=256
+21:05:15.627 [RELAY_A] I (2608) RELAY_A: service at 14..19
+21:05:15.627 [RELAY_A] I (2609) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+21:05:15.627 [RELAY_A] I (2609) NimBLE: start_handle=14 end_handle=19 uuid=
+21:05:15.627 [RELAY_A] I (2613) NimBLE: 8f2a0002-1b2c-4e6a-9f3d-2a7c1e5b0a10
+21:05:15.627 [RELAY_A] I (2617) NimBLE: 
+21:05:15.627 [RELAY_A] 
+21:05:15.954 [RELAY_A] I (3009) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+21:05:15.954 [RELAY_A] I (3009) NimBLE: start_handle=14 end_handle=19 uuid=
+21:05:15.954 [RELAY_A] I (3009) NimBLE: 8f2a0003-1b2c-4e6a-9f3d-2a7c1e5b0a10
+21:05:15.954 [RELAY_A] I (3014) NimBLE: 
+21:05:15.954 [RELAY_A] 
+21:05:16.416 [RELAY_A] I (3409) NimBLE: GATT procedure initiated: discover all descriptors; 
+21:05:16.416 [RELAY_A] I (3409) NimBLE: chr_val_handle=18 end_handle=19
+21:05:16.416 [RELAY_A] 
+21:05:16.571 [RELAY_A] I (3609) NimBLE: GATT procedure initiated: write; 
+21:05:16.571 [RELAY_A] I (3609) NimBLE: att_handle=19 len=2
+21:05:16.571 [RELAY_A] 
+21:05:16.640 [KEY] I (4732221) KEY: vehicle enabled notify on RESPONSE
+21:05:16.743 [RELAY_A] I (3808) RELAY_A: subscribed to key notify; ready to forward tunnel challenges
+21:05:20.704 [LOGGER] sent 'TXPOW 8' to COM5
+21:05:20.704 [LOGGER] sent 'TXPOW 8' to COM7
+21:05:20.868 [RELAY_B] I (15144) LINK: TX power -> 8 (0.25dBm) = 2.00 dBm (rc=0)
+21:05:20.868 [RELAY_B] W (15145) BENCH: TXPOW set=8 (0.25dBm)
+21:05:20.919 [RELAY_A] I (7931) LINK: TX power -> 8 (0.25dBm) = 2.00 dBm (rc=0)
+21:05:20.920 [RELAY_A] W (7932) BENCH: TXPOW set=8 (0.25dBm)
+21:05:23.179 [RELAY_B] I (17414) RELAY_B: vehicle connected (handle 0)
+21:05:23.179 [RELAY_B] I (17416) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+21:05:23.179 [RELAY_B] 
+21:05:23.179 [RELAY_B] I (17417) RELAY_B: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+21:05:23.334 [RELAY_B] I (17516) RELAY_B: MTU handle=0 mtu=256
+21:05:24.721 [RELAY_B] I (18962) RELAY_B: vehicle enabled notify on RESPONSE
+21:05:27.970 [RELAY_B] I (22220) RELAY_B: vehicle disabled notify on RESPONSE
+21:05:27.970 [RELAY_B] W (22220) RELAY_B: vehicle disconnected (reason=520, disconnects=2); re-advertising
+21:05:27.970 [RELAY_B] I (22229) NimBLE: GAP procedure initiated: advertise; 
+21:05:27.970 [RELAY_B] I (22229) NimBLE: disc_mode=2
+21:05:27.970 [RELAY_B] I (22229) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+21:05:27.970 [RELAY_B] I (22238) NimBLE: 
+21:05:27.970 [RELAY_B] 
+21:05:27.970 [RELAY_B] I (22244) RELAY_B: advertising the key clone; waiting for the vehicle
+21:05:28.132 [RELAY_B] I (22394) RELAY_B: vehicle connected (handle 0)
+21:05:28.132 [RELAY_B] I (22397) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+21:05:28.132 [RELAY_B] 
+21:05:28.132 [RELAY_B] I (22397) RELAY_B: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+21:05:28.286 [RELAY_B] I (22496) RELAY_B: MTU handle=0 mtu=256
+21:05:29.676 [RELAY_B] I (23942) RELAY_B: vehicle enabled notify on RESPONSE
+21:05:30.385 [RELAY_A] I (17443) RELAY_A: HOP A tx_chal round=1 nonce=960831c4 t=16740457 us
+21:05:30.385 [RELAY_A] I (17444) NimBLE: GATT procedure initiated: write; 
+21:05:30.385 [RELAY_A] I (17444) NimBLE: att_handle=16 len=16
+21:05:30.385 [RELAY_A] 
+21:05:30.454 [KEY] I (4746023) NimBLE: GATT procedure initiated: notify; 
+21:05:30.454 [KEY] I (4746023) NimBLE: att_handle=18
+21:05:30.454 [KEY] 
+21:05:30.454 [KEY] I (4746027) KEY: HOP K resp nonce=960831c4 calc_notify=6014 us (challenge 648, 16 B) t=4745490170 us
+21:05:30.577 [RELAY_B] I (24642) RELAY_B: HOP B rx_chal round=1 nonce=960831c4 t=23939321 us
+21:05:30.577 [RELAY_B] I (24643) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:30.577 [RELAY_B] I (24837) NimBLE: GATT procedure initiated: notify; 
+21:05:30.577 [RELAY_B] I (24838) NimBLE: att_handle=18
+21:05:30.577 [RELAY_B] 
+21:05:30.577 [RELAY_B] I (24839) RELAY_B: response (16 B) notified to the vehicle
+21:05:30.577 [RELAY_B] I (24841) RELAY_B: HOP B tx_resp round=1 nonce=960831c4 turnaround=197524 us rssi=-31 dBm
+21:05:30.577 [RELAY_B] I (24848) RELAY_B: CSVB,1,960831c4,197524,-31,166911,0
+21:05:30.628 [RELAY_A] I (17612) RELAY_A: HOP A rx_resp round=1 nonce=960831c4 turnaround=166911 us rssi=-27 dBm
+21:05:30.628 [RELAY_A] I (17613) RELAY_A: CSVA,1,960831c4,166911,-27,0
+21:05:30.628 [RELAY_A] I (17616) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:31.367 [RELAY_B] I (25642) RELAY_B: HOP B rx_chal round=2 nonce=c993e95b t=24939381 us
+21:05:31.367 [RELAY_B] I (25643) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:31.419 [RELAY_A] I (18436) RELAY_A: HOP A tx_chal round=2 nonce=c993e95b t=17733486 us
+21:05:31.419 [RELAY_A] I (18437) NimBLE: GATT procedure initiated: write; 
+21:05:31.419 [RELAY_A] I (18437) NimBLE: att_handle=16 len=16
+21:05:31.419 [RELAY_A] 
+21:05:31.471 [KEY] I (4747024) NimBLE: GATT procedure initiated: notify; 
+21:05:31.471 [KEY] I (4747024) NimBLE: att_handle=18
+21:05:31.471 [KEY] 
+21:05:31.471 [KEY] I (4747029) KEY: HOP K resp nonce=c993e95b calc_notify=6737 us (challenge 649, 16 B) t=4746491444 us
+21:05:31.575 [RELAY_B] I (25835) NimBLE: GATT procedure initiated: notify; 
+21:05:31.575 [RELAY_B] I (25836) NimBLE: att_handle=18
+21:05:31.575 [RELAY_B] 
+21:05:31.575 [RELAY_B] I (25837) RELAY_B: response (16 B) notified to the vehicle
+21:05:31.575 [RELAY_B] I (25838) RELAY_B: HOP B tx_resp round=2 nonce=c993e95b turnaround=195417 us rssi=-29 dBm
+21:05:31.575 [RELAY_B] I (25845) RELAY_B: CSVB,2,c993e95b,195417,-29,173855,0
+21:05:31.626 [RELAY_A] I (18612) RELAY_A: HOP A rx_resp round=2 nonce=c993e95b turnaround=173855 us rssi=-48 dBm
+21:05:31.626 [RELAY_A] I (18613) RELAY_A: CSVA,2,c993e95b,173855,-48,0
+21:05:31.626 [RELAY_A] I (18618) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:32.368 [RELAY_B] I (26642) RELAY_B: HOP B rx_chal round=3 nonce=e289d4af t=25939407 us
+21:05:32.368 [RELAY_B] I (26643) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:32.420 [RELAY_A] I (19436) RELAY_A: HOP A tx_chal round=3 nonce=e289d4af t=18733856 us
+21:05:32.420 [RELAY_A] I (19437) NimBLE: GATT procedure initiated: write; 
+21:05:32.420 [RELAY_A] I (19437) NimBLE: att_handle=16 len=16
+21:05:32.420 [RELAY_A] 
+21:05:32.471 [KEY] I (4748023) NimBLE: GATT procedure initiated: notify; 
+21:05:32.471 [KEY] I (4748023) NimBLE: att_handle=18
+21:05:32.471 [KEY] 
+21:05:32.471 [KEY] I (4748027) KEY: HOP K resp nonce=e289d4af calc_notify=5957 us (challenge 650, 16 B) t=4747490202 us
+21:05:32.574 [RELAY_B] I (26834) NimBLE: GATT procedure initiated: notify; 
+21:05:32.574 [RELAY_B] I (26835) NimBLE: att_handle=18
+21:05:32.574 [RELAY_B] 
+21:05:32.574 [RELAY_B] I (26837) RELAY_B: response (16 B) notified to the vehicle
+21:05:32.574 [RELAY_B] I (26839) RELAY_B: HOP B tx_resp round=3 nonce=e289d4af turnaround=195665 us rssi=-28 dBm
+21:05:32.574 [RELAY_B] I (26844) RELAY_B: CSVB,3,e289d4af,195665,-28,173533,0
+21:05:32.626 [RELAY_A] I (19612) RELAY_A: HOP A rx_resp round=3 nonce=e289d4af turnaround=173533 us rssi=-32 dBm
+21:05:32.626 [RELAY_A] I (19612) RELAY_A: CSVA,3,e289d4af,173533,-32,0
+21:05:32.626 [RELAY_A] I (19616) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:33.367 [RELAY_B] I (27642) RELAY_B: HOP B rx_chal round=4 nonce=bf27dcb1 t=26939497 us
+21:05:33.367 [RELAY_B] I (27643) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:33.419 [RELAY_A] I (20439) RELAY_A: HOP A tx_chal round=4 nonce=bf27dcb1 t=19736828 us
+21:05:33.419 [RELAY_A] I (20440) NimBLE: GATT procedure initiated: write; 
+21:05:33.419 [RELAY_A] I (20440) NimBLE: att_handle=16 len=16
+21:05:33.419 [RELAY_A] 
+21:05:33.471 [KEY] I (4749023) NimBLE: GATT procedure initiated: notify; 
+21:05:33.471 [KEY] I (4749023) NimBLE: att_handle=18
+21:05:33.471 [KEY] 
+21:05:33.471 [KEY] I (4749027) KEY: HOP K resp nonce=bf27dcb1 calc_notify=5956 us (challenge 651, 16 B) t=4748490236 us
+21:05:33.577 [RELAY_B] I (27836) NimBLE: GATT procedure initiated: notify; 
+21:05:33.577 [RELAY_B] I (27837) NimBLE: att_handle=18
+21:05:33.577 [RELAY_B] 
+21:05:33.577 [RELAY_B] I (27838) RELAY_B: response (16 B) notified to the vehicle
+21:05:33.577 [RELAY_B] I (27840) RELAY_B: HOP B tx_resp round=4 nonce=bf27dcb1 turnaround=196695 us rssi=-25 dBm
+21:05:33.577 [RELAY_B] I (27847) RELAY_B: CSVB,4,bf27dcb1,196695,-25,170879,0
+21:05:33.628 [RELAY_A] I (20612) RELAY_A: HOP A rx_resp round=4 nonce=bf27dcb1 turnaround=170879 us rssi=-28 dBm
+21:05:33.628 [RELAY_A] I (20613) RELAY_A: CSVA,4,bf27dcb1,170879,-28,0
+21:05:33.628 [RELAY_A] I (20616) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:34.349 [RELAY_B] I (28592) RELAY_B: HOP B rx_chal round=5 nonce=f6ed5b06 t=27889558 us
+21:05:34.349 [RELAY_B] I (28593) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:34.401 [RELAY_A] I (21386) RELAY_A: HOP A tx_chal round=5 nonce=f6ed5b06 t=20683972 us
+21:05:34.401 [RELAY_A] I (21387) NimBLE: GATT procedure initiated: write; 
+21:05:34.401 [RELAY_A] I (21387) NimBLE: att_handle=16 len=16
+21:05:34.401 [RELAY_A] 
+21:05:34.456 [KEY] I (4750024) NimBLE: GATT procedure initiated: notify; 
+21:05:34.456 [KEY] I (4750025) NimBLE: att_handle=18
+21:05:34.456 [KEY] 
+21:05:34.456 [KEY] I (4750029) KEY: HOP K resp nonce=f6ed5b06 calc_notify=6698 us (challenge 652, 16 B) t=4749491496 us
+21:05:34.575 [RELAY_B] I (28835) NimBLE: GATT procedure initiated: notify; 
+21:05:34.575 [RELAY_B] I (28835) NimBLE: att_handle=18
+21:05:34.575 [RELAY_B] 
+21:05:34.575 [RELAY_B] I (28837) RELAY_B: response (16 B) notified to the vehicle
+21:05:34.575 [RELAY_B] I (28839) RELAY_B: HOP B tx_resp round=5 nonce=f6ed5b06 turnaround=245215 us rssi=-26 dBm
+21:05:34.575 [RELAY_B] I (28845) RELAY_B: CSVB,5,f6ed5b06,245215,-26,223452,0
+21:05:34.627 [RELAY_A] I (21612) RELAY_A: HOP A rx_resp round=5 nonce=f6ed5b06 turnaround=223452 us rssi=-26 dBm
+21:05:34.627 [RELAY_A] I (21613) RELAY_A: CSVA,5,f6ed5b06,223452,-26,0
+21:05:34.627 [RELAY_A] I (21616) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:35.345 [RELAY_B] I (29593) RELAY_B: HOP B rx_chal round=6 nonce=7f88669a t=28889930 us
+21:05:35.346 [RELAY_B] I (29593) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:35.397 [RELAY_A] I (22386) RELAY_A: HOP A tx_chal round=6 nonce=7f88669a t=21684117 us
+21:05:35.397 [RELAY_A] I (22387) NimBLE: GATT procedure initiated: write; 
+21:05:35.397 [RELAY_A] I (22388) NimBLE: att_handle=16 len=16
+21:05:35.397 [RELAY_A] 
+21:05:35.453 [KEY] I (4751023) NimBLE: GATT procedure initiated: notify; 
+21:05:35.454 [KEY] I (4751023) NimBLE: att_handle=18
+21:05:35.454 [KEY] 
+21:05:35.454 [KEY] I (4751027) KEY: HOP K resp nonce=7f88669a calc_notify=5954 us (challenge 653, 16 B) t=4750490273 us
+21:05:35.577 [RELAY_B] I (29836) NimBLE: GATT procedure initiated: notify; 
+21:05:35.577 [RELAY_B] I (29837) NimBLE: att_handle=18
+21:05:35.577 [RELAY_B] 
+21:05:35.577 [RELAY_B] I (29839) RELAY_B: response (16 B) notified to the vehicle
+21:05:35.577 [RELAY_B] I (29840) RELAY_B: HOP B tx_resp round=6 nonce=7f88669a turnaround=246370 us rssi=-26 dBm
+21:05:35.577 [RELAY_B] I (29847) RELAY_B: CSVB,6,7f88669a,246370,-26,223596,0
+21:05:35.628 [RELAY_A] I (22613) RELAY_A: HOP A rx_resp round=6 nonce=7f88669a turnaround=223596 us rssi=-49 dBm
+21:05:35.628 [RELAY_A] I (22614) RELAY_A: CSVA,6,7f88669a,223596,-49,0
+21:05:35.628 [RELAY_A] I (22617) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:36.347 [RELAY_B] I (30592) RELAY_B: HOP B rx_chal round=7 nonce=da1bc626 t=29889570 us
+21:05:36.347 [RELAY_B] I (30593) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:36.399 [RELAY_A] I (23386) RELAY_A: HOP A tx_chal round=7 nonce=da1bc626 t=22684004 us
+21:05:36.399 [RELAY_A] I (23388) NimBLE: GATT procedure initiated: write; 
+21:05:36.399 [RELAY_A] I (23388) NimBLE: att_handle=16 len=16
+21:05:36.399 [RELAY_A] 
+21:05:36.455 [KEY] I (4752023) NimBLE: GATT procedure initiated: notify; 
+21:05:36.456 [KEY] I (4752023) NimBLE: att_handle=18
+21:05:36.456 [KEY] 
+21:05:36.456 [KEY] I (4752027) KEY: HOP K resp nonce=da1bc626 calc_notify=5896 us (challenge 654, 16 B) t=4751490240 us
+21:05:36.576 [RELAY_B] I (30836) NimBLE: GATT procedure initiated: notify; 
+21:05:36.576 [RELAY_B] I (30837) NimBLE: att_handle=18
+21:05:36.576 [RELAY_B] 
+21:05:36.576 [RELAY_B] I (30838) RELAY_B: response (16 B) notified to the vehicle
+21:05:36.576 [RELAY_B] I (30839) RELAY_B: HOP B tx_resp round=7 nonce=da1bc626 turnaround=246158 us rssi=-25 dBm
+21:05:36.576 [RELAY_B] I (30846) RELAY_B: CSVB,7,da1bc626,246158,-25,223798,0
+21:05:36.627 [RELAY_A] I (23613) RELAY_A: HOP A rx_resp round=7 nonce=da1bc626 turnaround=223798 us rssi=-47 dBm
+21:05:36.627 [RELAY_A] I (23614) RELAY_A: CSVA,7,da1bc626,223798,-47,0
+21:05:36.627 [RELAY_A] I (23617) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:37.345 [RELAY_B] I (31592) RELAY_B: HOP B rx_chal round=8 nonce=c283a24a t=30889590 us
+21:05:37.345 [RELAY_B] I (31593) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:37.397 [RELAY_A] I (24394) RELAY_A: HOP A tx_chal round=8 nonce=c283a24a t=23691885 us
+21:05:37.397 [RELAY_A] I (24395) NimBLE: GATT procedure initiated: write; 
+21:05:37.397 [RELAY_A] I (24395) NimBLE: att_handle=16 len=16
+21:05:37.397 [RELAY_A] 
+21:05:37.455 [KEY] I (4753024) NimBLE: GATT procedure initiated: notify; 
+21:05:37.455 [KEY] I (4753025) NimBLE: att_handle=18
+21:05:37.455 [KEY] 
+21:05:37.455 [KEY] I (4753029) KEY: HOP K resp nonce=c283a24a calc_notify=6719 us (challenge 655, 16 B) t=4752491561 us
+21:05:37.576 [RELAY_B] I (31835) NimBLE: GATT procedure initiated: notify; 
+21:05:37.576 [RELAY_B] I (31836) NimBLE: att_handle=18
+21:05:37.576 [RELAY_B] 
+21:05:37.576 [RELAY_B] I (31838) RELAY_B: response (16 B) notified to the vehicle
+21:05:37.576 [RELAY_B] I (31839) RELAY_B: HOP B tx_resp round=8 nonce=c283a24a turnaround=245572 us rssi=-26 dBm
+21:05:37.576 [RELAY_B] I (31846) RELAY_B: CSVB,8,c283a24a,245572,-26,215596,0
+21:05:37.628 [RELAY_A] I (24612) RELAY_A: HOP A rx_resp round=8 nonce=c283a24a turnaround=215596 us rssi=-31 dBm
+21:05:37.628 [RELAY_A] I (24613) RELAY_A: CSVA,8,c283a24a,215596,-31,0
+21:05:37.628 [RELAY_A] I (24616) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:38.346 [RELAY_B] I (32592) RELAY_B: HOP B rx_chal round=9 nonce=4baadf93 t=31889634 us
+21:05:38.346 [RELAY_B] I (32593) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:38.397 [RELAY_A] I (25394) RELAY_A: HOP A tx_chal round=9 nonce=4baadf93 t=24691449 us
+21:05:38.397 [RELAY_A] I (25395) NimBLE: GATT procedure initiated: write; 
+21:05:38.397 [RELAY_A] I (25395) NimBLE: att_handle=16 len=16
+21:05:38.397 [RELAY_A] 
+21:05:38.455 [KEY] I (4754023) NimBLE: GATT procedure initiated: notify; 
+21:05:38.455 [KEY] I (4754023) NimBLE: att_handle=18
+21:05:38.455 [KEY] 
+21:05:38.455 [KEY] I (4754027) KEY: HOP K resp nonce=4baadf93 calc_notify=5908 us (challenge 656, 16 B) t=4753490285 us
+21:05:38.575 [RELAY_B] I (32835) NimBLE: GATT procedure initiated: notify; 
+21:05:38.575 [RELAY_B] I (32835) NimBLE: att_handle=18
+21:05:38.575 [RELAY_B] 
+21:05:38.575 [RELAY_B] I (32839) RELAY_B: response (16 B) notified to the vehicle
+21:05:38.575 [RELAY_B] I (32842) RELAY_B: HOP B tx_resp round=9 nonce=4baadf93 turnaround=247230 us rssi=-25 dBm
+21:05:38.575 [RELAY_B] I (32845) RELAY_B: CSVB,9,4baadf93,247230,-25,216458,0
+21:05:38.626 [RELAY_A] I (25613) RELAY_A: HOP A rx_resp round=9 nonce=4baadf93 turnaround=216458 us rssi=-27 dBm
+21:05:38.626 [RELAY_A] I (25613) RELAY_A: CSVA,9,4baadf93,216458,-27,0
+21:05:38.626 [RELAY_A] I (25616) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:39.348 [RELAY_B] I (33592) RELAY_B: HOP B rx_chal round=10 nonce=89bf29a1 t=32889618 us
+21:05:39.348 [RELAY_B] I (33593) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:39.399 [RELAY_A] I (26391) RELAY_A: HOP A tx_chal round=10 nonce=89bf29a1 t=25689240 us
+21:05:39.400 [RELAY_A] I (26393) NimBLE: GATT procedure initiated: write; 
+21:05:39.400 [RELAY_A] I (26393) NimBLE: att_handle=16 len=16
+21:05:39.400 [RELAY_A] 
+21:05:39.455 [KEY] I (4755023) NimBLE: GATT procedure initiated: notify; 
+21:05:39.455 [KEY] I (4755023) NimBLE: att_handle=18
+21:05:39.455 [KEY] 
+21:05:39.455 [KEY] I (4755027) KEY: HOP K resp nonce=89bf29a1 calc_notify=5907 us (challenge 657, 16 B) t=4754490319 us
+21:05:39.576 [RELAY_B] I (33836) NimBLE: GATT procedure initiated: notify; 
+21:05:39.576 [RELAY_B] I (33836) NimBLE: att_handle=18
+21:05:39.576 [RELAY_B] 
+21:05:39.576 [RELAY_B] I (33838) RELAY_B: response (16 B) notified to the vehicle
+21:05:39.576 [RELAY_B] I (33839) RELAY_B: HOP B tx_resp round=10 nonce=89bf29a1 turnaround=245740 us rssi=-31 dBm
+21:05:39.576 [RELAY_B] I (33846) RELAY_B: CSVB,10,89bf29a1,245740,-31,218262,0
+21:05:39.627 [RELAY_A] I (26612) RELAY_A: HOP A rx_resp round=10 nonce=89bf29a1 turnaround=218262 us rssi=-25 dBm
+21:05:39.627 [RELAY_A] I (26613) RELAY_A: CSVA,10,89bf29a1,218262,-25,0
+21:05:39.627 [RELAY_A] I (26616) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:40.436 [RELAY_A] I (27494) RELAY_A: HOP A tx_chal round=11 nonce=6c1a3fb3 t=26791605 us
+21:05:40.436 [RELAY_A] I (27495) NimBLE: GATT procedure initiated: write; 
+21:05:40.436 [RELAY_A] I (27495) NimBLE: att_handle=16 len=16
+21:05:40.436 [RELAY_A] 
+21:05:40.539 [RELAY_B] I (34692) RELAY_B: HOP B rx_chal round=11 nonce=6c1a3fb3 t=33989678 us
+21:05:40.539 [RELAY_B] I (34693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:40.642 [KEY] I (4756123) NimBLE: GATT procedure initiated: notify; 
+21:05:40.642 [KEY] I (4756123) NimBLE: att_handle=18
+21:05:40.642 [KEY] 
+21:05:40.642 [KEY] I (4756127) KEY: HOP K resp nonce=6c1a3fb3 calc_notify=5911 us (challenge 658, 16 B) t=4755590335 us
+21:05:40.694 [RELAY_B] I (34937) NimBLE: GATT procedure initiated: notify; 
+21:05:40.694 [RELAY_B] I (34938) NimBLE: att_handle=18
+21:05:40.694 [RELAY_B] 
+21:05:40.694 [RELAY_B] I (34939) RELAY_B: response (16 B) notified to the vehicle
+21:05:40.694 [RELAY_B] I (34940) RELAY_B: HOP B tx_resp round=11 nonce=6c1a3fb3 turnaround=246927 us rssi=-25 dBm
+21:05:40.694 [RELAY_B] I (34947) RELAY_B: CSVB,11,6c1a3fb3,246927,-25,216229,0
+21:05:40.745 [RELAY_A] I (27713) RELAY_A: HOP A rx_resp round=11 nonce=6c1a3fb3 turnaround=216229 us rssi=-30 dBm
+21:05:40.745 [RELAY_A] I (27713) RELAY_A: CSVA,11,6c1a3fb3,216229,-30,0
+21:05:40.745 [RELAY_A] I (27716) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:41.464 [RELAY_B] I (35692) RELAY_B: HOP B rx_chal round=12 nonce=80bc3b44 t=34989686 us
+21:05:41.464 [RELAY_B] I (35693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:41.516 [RELAY_A] I (28486) RELAY_A: HOP A tx_chal round=12 nonce=80bc3b44 t=27783611 us
+21:05:41.516 [RELAY_A] I (28487) NimBLE: GATT procedure initiated: write; 
+21:05:41.516 [RELAY_A] I (28487) NimBLE: att_handle=16 len=16
+21:05:41.516 [RELAY_A] 
+21:05:41.568 [KEY] I (4757123) NimBLE: GATT procedure initiated: notify; 
+21:05:41.568 [KEY] I (4757123) NimBLE: att_handle=18
+21:05:41.568 [KEY] 
+21:05:41.568 [KEY] I (4757127) KEY: HOP K resp nonce=80bc3b44 calc_notify=5888 us (challenge 659, 16 B) t=4756590361 us
+21:05:41.677 [RELAY_B] I (35936) NimBLE: GATT procedure initiated: notify; 
+21:05:41.677 [RELAY_B] I (35937) NimBLE: att_handle=18
+21:05:41.677 [RELAY_B] 
+21:05:41.677 [RELAY_B] I (35938) RELAY_B: response (16 B) notified to the vehicle
+21:05:41.677 [RELAY_B] I (35940) RELAY_B: HOP B tx_resp round=12 nonce=80bc3b44 turnaround=246550 us rssi=-25 dBm
+21:05:41.677 [RELAY_B] I (35947) RELAY_B: CSVB,12,80bc3b44,246550,-25,223943,0
+21:05:41.728 [RELAY_A] I (28713) RELAY_A: HOP A rx_resp round=12 nonce=80bc3b44 turnaround=223943 us rssi=-27 dBm
+21:05:41.728 [RELAY_A] I (28714) RELAY_A: CSVA,12,80bc3b44,223943,-27,0
+21:05:41.728 [RELAY_A] I (28718) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:42.447 [RELAY_B] I (36692) RELAY_B: HOP B rx_chal round=13 nonce=cb59b26f t=35989702 us
+21:05:42.447 [RELAY_B] I (36693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:42.498 [RELAY_A] I (29488) RELAY_A: HOP A tx_chal round=13 nonce=cb59b26f t=28785999 us
+21:05:42.498 [RELAY_A] I (29490) NimBLE: GATT procedure initiated: write; 
+21:05:42.498 [RELAY_A] I (29490) NimBLE: att_handle=16 len=16
+21:05:42.498 [RELAY_A] 
+21:05:42.556 [KEY] I (4758124) NimBLE: GATT procedure initiated: notify; 
+21:05:42.556 [KEY] I (4758125) NimBLE: att_handle=18
+21:05:42.556 [KEY] 
+21:05:42.556 [KEY] I (4758129) KEY: HOP K resp nonce=cb59b26f calc_notify=6755 us (challenge 660, 16 B) t=4757591685 us
+21:05:42.677 [RELAY_B] I (36936) NimBLE: GATT procedure initiated: notify; 
+21:05:42.677 [RELAY_B] I (36937) NimBLE: att_handle=18
+21:05:42.677 [RELAY_B] 
+21:05:42.677 [RELAY_B] I (36938) RELAY_B: response (16 B) notified to the vehicle
+21:05:42.677 [RELAY_B] I (36940) RELAY_B: HOP B tx_resp round=13 nonce=cb59b26f turnaround=246476 us rssi=-25 dBm
+21:05:42.677 [RELAY_B] I (36947) RELAY_B: CSVB,13,cb59b26f,246476,-25,221583,0
+21:05:42.728 [RELAY_A] I (29713) RELAY_A: HOP A rx_resp round=13 nonce=cb59b26f turnaround=221583 us rssi=-50 dBm
+21:05:42.728 [RELAY_A] I (29713) RELAY_A: CSVA,13,cb59b26f,221583,-50,0
+21:05:42.729 [RELAY_A] I (29716) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:43.317 [RELAY_B] I (37592) RELAY_B: HOP B rx_chal round=14 nonce=242da624 t=36889706 us
+21:05:43.317 [RELAY_B] I (37593) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:43.369 [RELAY_A] I (30386) RELAY_A: HOP A tx_chal round=14 nonce=242da624 t=29683912 us
+21:05:43.369 [RELAY_A] I (30387) NimBLE: GATT procedure initiated: write; 
+21:05:43.369 [RELAY_A] I (30387) NimBLE: att_handle=16 len=16
+21:05:43.369 [RELAY_A] 
+21:05:43.456 [KEY] I (4759024) NimBLE: GATT procedure initiated: notify; 
+21:05:43.456 [KEY] I (4759025) NimBLE: att_handle=18
+21:05:43.456 [KEY] 
+21:05:43.456 [KEY] I (4759029) KEY: HOP K resp nonce=242da624 calc_notify=6723 us (challenge 661, 16 B) t=4758491706 us
+21:05:43.577 [RELAY_B] I (37837) NimBLE: GATT procedure initiated: notify; 
+21:05:43.577 [RELAY_B] I (37838) NimBLE: att_handle=18
+21:05:43.577 [RELAY_B] 
+21:05:43.577 [RELAY_B] I (37839) RELAY_B: response (16 B) notified to the vehicle
+21:05:43.577 [RELAY_B] I (37840) RELAY_B: HOP B tx_resp round=14 nonce=242da624 turnaround=247137 us rssi=-25 dBm
+21:05:43.577 [RELAY_B] I (37848) RELAY_B: CSVB,14,242da624,247137,-25,223687,0
+21:05:43.628 [RELAY_A] I (30613) RELAY_A: HOP A rx_resp round=14 nonce=242da624 turnaround=223687 us rssi=-29 dBm
+21:05:43.628 [RELAY_A] I (30613) RELAY_A: CSVA,14,242da624,223687,-29,0
+21:05:43.628 [RELAY_A] I (30616) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:44.427 [RELAY_A] I (31486) RELAY_A: HOP A tx_chal round=15 nonce=787054a6 t=30783790 us
+21:05:44.427 [RELAY_A] I (31487) NimBLE: GATT procedure initiated: write; 
+21:05:44.427 [RELAY_A] I (31487) NimBLE: att_handle=16 len=16
+21:05:44.427 [RELAY_A] 
+21:05:44.530 [RELAY_B] I (38692) RELAY_B: HOP B rx_chal round=15 nonce=787054a6 t=37989706 us
+21:05:44.530 [RELAY_B] I (38693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:44.633 [KEY] I (4760123) NimBLE: GATT procedure initiated: notify; 
+21:05:44.633 [KEY] I (4760123) NimBLE: att_handle=18
+21:05:44.633 [KEY] 
+21:05:44.633 [KEY] I (4760128) KEY: HOP K resp nonce=787054a6 calc_notify=5899 us (challenge 662, 16 B) t=4759590420 us
+21:05:44.684 [RELAY_B] I (38936) NimBLE: GATT procedure initiated: notify; 
+21:05:44.684 [RELAY_B] I (38936) NimBLE: att_handle=18
+21:05:44.684 [RELAY_B] 
+21:05:44.684 [RELAY_B] I (38938) RELAY_B: response (16 B) notified to the vehicle
+21:05:44.684 [RELAY_B] I (38939) RELAY_B: HOP B tx_resp round=15 nonce=787054a6 turnaround=245635 us rssi=-27 dBm
+21:05:44.684 [RELAY_B] I (38946) RELAY_B: CSVB,15,787054a6,245635,-27,223830,0
+21:05:44.735 [RELAY_A] I (31713) RELAY_A: HOP A rx_resp round=15 nonce=787054a6 turnaround=223830 us rssi=-30 dBm
+21:05:44.736 [RELAY_A] I (31714) RELAY_A: CSVA,15,787054a6,223830,-30,0
+21:05:44.736 [RELAY_A] I (31717) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:45.456 [RELAY_B] I (39693) RELAY_B: HOP B rx_chal round=16 nonce=d8e653ba t=38989731 us
+21:05:45.456 [RELAY_B] I (39693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:45.507 [RELAY_A] I (32486) RELAY_A: HOP A tx_chal round=16 nonce=d8e653ba t=31783968 us
+21:05:45.507 [RELAY_A] I (32487) NimBLE: GATT procedure initiated: write; 
+21:05:45.507 [RELAY_A] I (32487) NimBLE: att_handle=16 len=16
+21:05:45.507 [RELAY_A] 
+21:05:45.558 [KEY] I (4761124) NimBLE: GATT procedure initiated: notify; 
+21:05:45.558 [KEY] I (4761125) NimBLE: att_handle=18
+21:05:45.558 [KEY] 
+21:05:45.558 [KEY] I (4761129) KEY: HOP K resp nonce=d8e653ba calc_notify=6747 us (challenge 663, 16 B) t=4760591760 us
+21:05:45.676 [RELAY_B] I (39935) NimBLE: GATT procedure initiated: notify; 
+21:05:45.676 [RELAY_B] I (39936) NimBLE: att_handle=18
+21:05:45.676 [RELAY_B] 
+21:05:45.676 [RELAY_B] I (39937) RELAY_B: response (16 B) notified to the vehicle
+21:05:45.676 [RELAY_B] I (39938) RELAY_B: HOP B tx_resp round=16 nonce=d8e653ba turnaround=245140 us rssi=-27 dBm
+21:05:45.676 [RELAY_B] I (39946) RELAY_B: CSVB,16,d8e653ba,245140,-27,223667,0
+21:05:45.727 [RELAY_A] I (32713) RELAY_A: HOP A rx_resp round=16 nonce=d8e653ba turnaround=223667 us rssi=-27 dBm
+21:05:45.727 [RELAY_A] I (32713) RELAY_A: CSVA,16,d8e653ba,223667,-27,0
+21:05:45.727 [RELAY_A] I (32718) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:46.446 [RELAY_B] I (40693) RELAY_B: HOP B rx_chal round=17 nonce=760cdc47 t=39989758 us
+21:05:46.446 [RELAY_B] I (40693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:46.497 [RELAY_A] I (33486) RELAY_A: HOP A tx_chal round=17 nonce=760cdc47 t=32783874 us
+21:05:46.497 [RELAY_A] I (33487) NimBLE: GATT procedure initiated: write; 
+21:05:46.497 [RELAY_A] I (33487) NimBLE: att_handle=16 len=16
+21:05:46.497 [RELAY_A] 
+21:05:46.555 [KEY] I (4762123) NimBLE: GATT procedure initiated: notify; 
+21:05:46.555 [KEY] I (4762124) NimBLE: att_handle=18
+21:05:46.555 [KEY] 
+21:05:46.555 [KEY] I (4762128) KEY: HOP K resp nonce=760cdc47 calc_notify=5912 us (challenge 664, 16 B) t=4761590476 us
+21:05:46.677 [RELAY_B] I (40937) NimBLE: GATT procedure initiated: notify; 
+21:05:46.677 [RELAY_B] I (40938) NimBLE: att_handle=18
+21:05:46.677 [RELAY_B] 
+21:05:46.677 [RELAY_B] I (40939) RELAY_B: response (16 B) notified to the vehicle
+21:05:46.677 [RELAY_B] I (40940) RELAY_B: HOP B tx_resp round=17 nonce=760cdc47 turnaround=246837 us rssi=-26 dBm
+21:05:46.677 [RELAY_B] I (40947) RELAY_B: CSVB,17,760cdc47,246837,-26,223804,0
+21:05:46.729 [RELAY_A] I (33713) RELAY_A: HOP A rx_resp round=17 nonce=760cdc47 turnaround=223804 us rssi=-50 dBm
+21:05:46.729 [RELAY_A] I (33713) RELAY_A: CSVA,17,760cdc47,223804,-50,0
+21:05:46.729 [RELAY_A] I (33718) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:47.449 [RELAY_B] I (41693) RELAY_B: HOP B rx_chal round=18 nonce=dec87087 t=40989775 us
+21:05:47.449 [RELAY_B] I (41693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:47.500 [RELAY_A] I (34486) RELAY_A: HOP A tx_chal round=18 nonce=dec87087 t=33783830 us
+21:05:47.500 [RELAY_A] I (34487) NimBLE: GATT procedure initiated: write; 
+21:05:47.500 [RELAY_A] I (34487) NimBLE: att_handle=16 len=16
+21:05:47.500 [RELAY_A] 
+21:05:47.555 [KEY] I (4763123) NimBLE: GATT procedure initiated: notify; 
+21:05:47.555 [KEY] I (4763124) NimBLE: att_handle=18
+21:05:47.555 [KEY] 
+21:05:47.555 [KEY] I (4763128) KEY: HOP K resp nonce=dec87087 calc_notify=5890 us (challenge 665, 16 B) t=4762590492 us
+21:05:47.677 [RELAY_B] I (41936) NimBLE: GATT procedure initiated: notify; 
+21:05:47.677 [RELAY_B] I (41937) NimBLE: att_handle=18
+21:05:47.677 [RELAY_B] 
+21:05:47.677 [RELAY_B] I (41938) RELAY_B: response (16 B) notified to the vehicle
+21:05:47.677 [RELAY_B] I (41939) RELAY_B: HOP B tx_resp round=18 nonce=dec87087 turnaround=245937 us rssi=-34 dBm
+21:05:47.677 [RELAY_B] I (41946) RELAY_B: CSVB,18,dec87087,245937,-34,223865,0
+21:05:47.728 [RELAY_A] I (34713) RELAY_A: HOP A rx_resp round=18 nonce=dec87087 turnaround=223865 us rssi=-48 dBm
+21:05:47.728 [RELAY_A] I (34713) RELAY_A: CSVA,18,dec87087,223865,-48,0
+21:05:47.728 [RELAY_A] I (34718) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:48.446 [RELAY_B] I (42693) RELAY_B: HOP B rx_chal round=19 nonce=c41d9240 t=41989795 us
+21:05:48.446 [RELAY_B] I (42693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:48.497 [RELAY_A] I (35486) RELAY_A: HOP A tx_chal round=19 nonce=c41d9240 t=34783901 us
+21:05:48.498 [RELAY_A] I (35487) NimBLE: GATT procedure initiated: write; 
+21:05:48.498 [RELAY_A] I (35487) NimBLE: att_handle=16 len=16
+21:05:48.498 [RELAY_A] 
+21:05:48.556 [KEY] I (4764124) NimBLE: GATT procedure initiated: notify; 
+21:05:48.556 [KEY] I (4764125) NimBLE: att_handle=18
+21:05:48.556 [KEY] 
+21:05:48.556 [KEY] I (4764128) KEY: HOP K resp nonce=c41d9240 calc_notify=6065 us (challenge 666, 16 B) t=4763591138 us
+21:05:48.676 [RELAY_B] I (42936) NimBLE: GATT procedure initiated: notify; 
+21:05:48.676 [RELAY_B] I (42936) NimBLE: att_handle=18
+21:05:48.676 [RELAY_B] 
+21:05:48.676 [RELAY_B] I (42938) RELAY_B: response (16 B) notified to the vehicle
+21:05:48.676 [RELAY_B] I (42939) RELAY_B: HOP B tx_resp round=19 nonce=c41d9240 turnaround=245530 us rssi=-26 dBm
+21:05:48.676 [RELAY_B] I (42946) RELAY_B: CSVB,19,c41d9240,245530,-26,224080,0
+21:05:48.727 [RELAY_A] I (35713) RELAY_A: HOP A rx_resp round=19 nonce=c41d9240 turnaround=224080 us rssi=-32 dBm
+21:05:48.727 [RELAY_A] I (35713) RELAY_A: CSVA,19,c41d9240,224080,-32,0
+21:05:48.727 [RELAY_A] I (35717) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:49.446 [RELAY_B] I (43693) RELAY_B: HOP B rx_chal round=20 nonce=fd667b77 t=42989811 us
+21:05:49.446 [RELAY_B] I (43693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:49.498 [RELAY_A] I (36486) RELAY_A: HOP A tx_chal round=20 nonce=fd667b77 t=35783870 us
+21:05:49.498 [RELAY_A] I (36487) NimBLE: GATT procedure initiated: write; 
+21:05:49.498 [RELAY_A] I (36487) NimBLE: att_handle=16 len=16
+21:05:49.498 [RELAY_A] 
+21:05:49.554 [KEY] I (4765123) NimBLE: GATT procedure initiated: notify; 
+21:05:49.554 [KEY] I (4765124) NimBLE: att_handle=18
+21:05:49.554 [KEY] 
+21:05:49.554 [KEY] I (4765128) KEY: HOP K resp nonce=fd667b77 calc_notify=5910 us (challenge 667, 16 B) t=4764590544 us
+21:05:49.657 [RELAY_A] I (36713) RELAY_A: HOP A rx_resp round=20 nonce=fd667b77 turnaround=223873 us rssi=-28 dBm
+21:05:49.657 [RELAY_A] I (36713) RELAY_A: CSVA,20,fd667b77,223873,-28,0
+21:05:49.657 [RELAY_A] I (36725) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:49.760 [RELAY_B] I (43942) NimBLE: GATT procedure initiated: notify; 
+21:05:49.760 [RELAY_B] I (43943) NimBLE: att_handle=18
+21:05:49.760 [RELAY_B] 
+21:05:49.760 [RELAY_B] I (43945) RELAY_B: response (16 B) notified to the vehicle
+21:05:49.760 [RELAY_B] I (43950) RELAY_B: HOP B tx_resp round=20 nonce=fd667b77 turnaround=253338 us rssi=-25 dBm
+21:05:49.760 [RELAY_B] I (43952) RELAY_B: CSVB,20,fd667b77,253338,-25,223873,0
+21:05:50.418 [RELAY_B] I (44693) RELAY_B: HOP B rx_chal round=21 nonce=232054c1 t=43989847 us
+21:05:50.418 [RELAY_B] I (44693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:50.469 [RELAY_A] I (37486) RELAY_A: HOP A tx_chal round=21 nonce=232054c1 t=36784128 us
+21:05:50.469 [RELAY_A] I (37487) NimBLE: GATT procedure initiated: write; 
+21:05:50.469 [RELAY_A] I (37488) NimBLE: att_handle=16 len=16
+21:05:50.469 [RELAY_A] 
+21:05:50.554 [KEY] I (4766123) NimBLE: GATT procedure initiated: notify; 
+21:05:50.554 [KEY] I (4766124) NimBLE: att_handle=18
+21:05:50.554 [KEY] 
+21:05:50.554 [KEY] I (4766128) KEY: HOP K resp nonce=232054c1 calc_notify=5914 us (challenge 668, 16 B) t=4765590569 us
+21:05:50.677 [RELAY_B] I (44936) NimBLE: GATT procedure initiated: notify; 
+21:05:50.677 [RELAY_B] I (44937) NimBLE: att_handle=18
+21:05:50.677 [RELAY_B] 
+21:05:50.677 [RELAY_B] I (44938) RELAY_B: response (16 B) notified to the vehicle
+21:05:50.677 [RELAY_B] I (44940) RELAY_B: HOP B tx_resp round=21 nonce=232054c1 turnaround=246428 us rssi=-30 dBm
+21:05:50.677 [RELAY_B] I (44947) RELAY_B: CSVB,21,232054c1,246428,-30,223636,0
+21:05:50.728 [RELAY_A] I (37712) RELAY_A: HOP A rx_resp round=21 nonce=232054c1 turnaround=223636 us rssi=-26 dBm
+21:05:50.729 [RELAY_A] I (37713) RELAY_A: CSVA,21,232054c1,223636,-26,0
+21:05:50.729 [RELAY_A] I (37716) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:51.449 [RELAY_B] I (45693) RELAY_B: HOP B rx_chal round=22 nonce=17c5ee8d t=44989852 us
+21:05:51.449 [RELAY_B] I (45693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:51.500 [RELAY_A] I (38486) RELAY_A: HOP A tx_chal round=22 nonce=17c5ee8d t=37784005 us
+21:05:51.500 [RELAY_A] I (38487) NimBLE: GATT procedure initiated: write; 
+21:05:51.500 [RELAY_A] I (38487) NimBLE: att_handle=16 len=16
+21:05:51.500 [RELAY_A] 
+21:05:51.556 [KEY] I (4767124) NimBLE: GATT procedure initiated: notify; 
+21:05:51.556 [KEY] I (4767125) NimBLE: att_handle=18
+21:05:51.556 [KEY] 
+21:05:51.556 [KEY] I (4767128) KEY: HOP K resp nonce=17c5ee8d calc_notify=6074 us (challenge 669, 16 B) t=4766591213 us
+21:05:51.678 [RELAY_B] I (45937) NimBLE: GATT procedure initiated: notify; 
+21:05:51.678 [RELAY_B] I (45938) NimBLE: att_handle=18
+21:05:51.678 [RELAY_B] 
+21:05:51.678 [RELAY_B] I (45939) RELAY_B: response (16 B) notified to the vehicle
+21:05:51.678 [RELAY_B] I (45940) RELAY_B: HOP B tx_resp round=22 nonce=17c5ee8d turnaround=246853 us rssi=-30 dBm
+21:05:51.678 [RELAY_B] I (45947) RELAY_B: CSVB,22,17c5ee8d,246853,-30,224170,0
+21:05:51.729 [RELAY_A] I (38714) RELAY_A: HOP A rx_resp round=22 nonce=17c5ee8d turnaround=224170 us rssi=-51 dBm
+21:05:51.729 [RELAY_A] I (38714) RELAY_A: CSVA,22,17c5ee8d,224170,-51,0
+21:05:51.729 [RELAY_A] I (38720) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:52.447 [RELAY_B] I (46693) RELAY_B: HOP B rx_chal round=23 nonce=d6ff6616 t=45989904 us
+21:05:52.447 [RELAY_B] I (46693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:52.499 [RELAY_A] I (39486) RELAY_A: HOP A tx_chal round=23 nonce=d6ff6616 t=38783890 us
+21:05:52.499 [RELAY_A] I (39487) NimBLE: GATT procedure initiated: write; 
+21:05:52.499 [RELAY_A] I (39487) NimBLE: att_handle=16 len=16
+21:05:52.499 [RELAY_A] 
+21:05:52.554 [KEY] I (4768123) NimBLE: GATT procedure initiated: notify; 
+21:05:52.554 [KEY] I (4768124) NimBLE: att_handle=18
+21:05:52.554 [KEY] 
+21:05:52.554 [KEY] I (4768128) KEY: HOP K resp nonce=d6ff6616 calc_notify=5910 us (challenge 670, 16 B) t=4767590609 us
+21:05:52.680 [RELAY_B] I (46940) NimBLE: GATT procedure initiated: notify; 
+21:05:52.680 [RELAY_B] I (46941) NimBLE: att_handle=18
+21:05:52.680 [RELAY_B] 
+21:05:52.680 [RELAY_B] I (46944) RELAY_B: response (16 B) notified to the vehicle
+21:05:52.680 [RELAY_B] I (46948) RELAY_B: HOP B tx_resp round=23 nonce=d6ff6616 turnaround=251870 us rssi=-28 dBm
+21:05:52.680 [RELAY_B] I (46950) RELAY_B: CSVB,23,d6ff6616,251870,-28,223935,0
+21:05:52.731 [RELAY_A] I (39712) RELAY_A: HOP A rx_resp round=23 nonce=d6ff6616 turnaround=223935 us rssi=-35 dBm
+21:05:52.731 [RELAY_A] I (39713) RELAY_A: CSVA,23,d6ff6616,223935,-35,0
+21:05:52.731 [RELAY_A] I (39718) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:53.455 [KEY] I (4769023) NimBLE: GATT procedure initiated: notify; 
+21:05:53.455 [KEY] I (4769024) NimBLE: att_handle=18
+21:05:53.455 [KEY] 
+21:05:53.455 [KEY] I (4769028) KEY: HOP K resp nonce=9825bec2 calc_notify=5887 us (challenge 671, 16 B) t=4768490627 us
+21:05:53.534 [RELAY_B] I (47693) RELAY_B: HOP B rx_chal round=24 nonce=9825bec2 t=46989944 us
+21:05:53.534 [RELAY_B] I (47693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:53.534 [RELAY_B] I (47794) NimBLE: GATT procedure initiated: notify; 
+21:05:53.534 [RELAY_B] I (47794) NimBLE: att_handle=18
+21:05:53.534 [RELAY_B] 
+21:05:53.534 [RELAY_B] I (47797) RELAY_B: response (16 B) notified to the vehicle
+21:05:53.534 [RELAY_B] I (47800) RELAY_B: HOP B tx_resp round=24 nonce=9825bec2 turnaround=104372 us rssi=-26 dBm
+21:05:53.534 [RELAY_B] I (47804) RELAY_B: CSVB,24,9825bec2,104372,-26,73993,0
+21:05:53.586 [RELAY_A] I (40486) RELAY_A: HOP A tx_chal round=24 nonce=9825bec2 t=39783890 us
+21:05:53.586 [RELAY_A] I (40487) NimBLE: GATT procedure initiated: write; 
+21:05:53.586 [RELAY_A] I (40487) NimBLE: att_handle=16 len=16
+21:05:53.586 [RELAY_A] 
+21:05:53.586 [RELAY_A] I (40563) RELAY_A: HOP A rx_resp round=24 nonce=9825bec2 turnaround=73993 us rssi=-51 dBm
+21:05:53.586 [RELAY_A] I (40564) RELAY_A: CSVA,24,9825bec2,73993,-51,0
+21:05:53.586 [RELAY_A] I (40573) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:54.454 [KEY] I (4770023) NimBLE: GATT procedure initiated: notify; 
+21:05:54.454 [KEY] I (4770024) NimBLE: att_handle=18
+21:05:54.454 [KEY] 
+21:05:54.454 [KEY] I (4770028) KEY: HOP K resp nonce=f2e7aeab calc_notify=5884 us (challenge 672, 16 B) t=4769490645 us
+21:05:54.530 [RELAY_B] I (48693) RELAY_B: HOP B rx_chal round=25 nonce=f2e7aeab t=47989929 us
+21:05:54.530 [RELAY_B] I (48693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:54.530 [RELAY_B] I (48790) NimBLE: GATT procedure initiated: notify; 
+21:05:54.530 [RELAY_B] I (48790) NimBLE: att_handle=18
+21:05:54.530 [RELAY_B] 
+21:05:54.530 [RELAY_B] I (48792) RELAY_B: response (16 B) notified to the vehicle
+21:05:54.530 [RELAY_B] I (48795) RELAY_B: HOP B tx_resp round=25 nonce=f2e7aeab turnaround=99467 us rssi=-38 dBm
+21:05:54.530 [RELAY_B] I (48800) RELAY_B: CSVB,25,f2e7aeab,99467,-38,74210,0
+21:05:54.581 [RELAY_A] I (41486) RELAY_A: HOP A tx_chal round=25 nonce=f2e7aeab t=40784242 us
+21:05:54.581 [RELAY_A] I (41488) NimBLE: GATT procedure initiated: write; 
+21:05:54.581 [RELAY_A] I (41488) NimBLE: att_handle=16 len=16
+21:05:54.581 [RELAY_A] 
+21:05:54.581 [RELAY_A] I (41563) RELAY_A: HOP A rx_resp round=25 nonce=f2e7aeab turnaround=74210 us rssi=-35 dBm
+21:05:54.581 [RELAY_A] I (41564) RELAY_A: CSVA,25,f2e7aeab,74210,-35,0
+21:05:54.581 [RELAY_A] I (41567) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:55.456 [KEY] I (4771024) NimBLE: GATT procedure initiated: notify; 
+21:05:55.456 [KEY] I (4771025) NimBLE: att_handle=18
+21:05:55.456 [KEY] 
+21:05:55.456 [KEY] I (4771028) KEY: HOP K resp nonce=a58305ca calc_notify=6143 us (challenge 673, 16 B) t=4770491344 us
+21:05:55.532 [RELAY_B] I (49693) RELAY_B: HOP B rx_chal round=26 nonce=a58305ca t=48989947 us
+21:05:55.532 [RELAY_B] I (49693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:55.532 [RELAY_B] I (49791) NimBLE: GATT procedure initiated: notify; 
+21:05:55.532 [RELAY_B] I (49792) NimBLE: att_handle=18
+21:05:55.532 [RELAY_B] 
+21:05:55.532 [RELAY_B] I (49795) RELAY_B: response (16 B) notified to the vehicle
+21:05:55.532 [RELAY_B] I (49799) RELAY_B: HOP B tx_resp round=26 nonce=a58305ca turnaround=103006 us rssi=-29 dBm
+21:05:55.532 [RELAY_B] I (49801) RELAY_B: CSVB,26,a58305ca,103006,-29,74513,0
+21:05:55.583 [RELAY_A] I (42486) RELAY_A: HOP A tx_chal round=26 nonce=a58305ca t=41784031 us
+21:05:55.583 [RELAY_A] I (42487) NimBLE: GATT procedure initiated: write; 
+21:05:55.583 [RELAY_A] I (42487) NimBLE: att_handle=16 len=16
+21:05:55.583 [RELAY_A] 
+21:05:55.583 [RELAY_A] I (42563) RELAY_A: HOP A rx_resp round=26 nonce=a58305ca turnaround=74513 us rssi=-29 dBm
+21:05:55.583 [RELAY_A] I (42564) RELAY_A: CSVA,26,a58305ca,74513,-29,0
+21:05:55.583 [RELAY_A] I (42567) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:56.454 [KEY] I (4772023) NimBLE: GATT procedure initiated: notify; 
+21:05:56.454 [KEY] I (4772024) NimBLE: att_handle=18
+21:05:56.454 [KEY] 
+21:05:56.454 [KEY] I (4772028) KEY: HOP K resp nonce=51b66418 calc_notify=5898 us (challenge 674, 16 B) t=4771490696 us
+21:05:56.525 [RELAY_B] I (50693) RELAY_B: HOP B rx_chal round=27 nonce=51b66418 t=49990008 us
+21:05:56.525 [RELAY_B] I (50693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:56.525 [RELAY_B] I (50786) NimBLE: GATT procedure initiated: notify; 
+21:05:56.525 [RELAY_B] I (50787) NimBLE: att_handle=18
+21:05:56.525 [RELAY_B] 
+21:05:56.525 [RELAY_B] I (50788) RELAY_B: response (16 B) notified to the vehicle
+21:05:56.525 [RELAY_B] I (50789) RELAY_B: HOP B tx_resp round=27 nonce=51b66418 turnaround=95635 us rssi=-24 dBm
+21:05:56.525 [RELAY_B] I (50796) RELAY_B: CSVB,27,51b66418,95635,-24,73826,0
+21:05:56.577 [RELAY_A] I (43486) RELAY_A: HOP A tx_chal round=27 nonce=51b66418 t=42784110 us
+21:05:56.577 [RELAY_A] I (43487) NimBLE: GATT procedure initiated: write; 
+21:05:56.577 [RELAY_A] I (43488) NimBLE: att_handle=16 len=16
+21:05:56.577 [RELAY_A] 
+21:05:56.577 [RELAY_A] I (43563) RELAY_A: HOP A rx_resp round=27 nonce=51b66418 turnaround=73826 us rssi=-29 dBm
+21:05:56.577 [RELAY_A] I (43564) RELAY_A: CSVA,27,51b66418,73826,-29,0
+21:05:56.577 [RELAY_A] I (43567) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:57.455 [KEY] I (4773023) NimBLE: GATT procedure initiated: notify; 
+21:05:57.455 [KEY] I (4773024) NimBLE: att_handle=18
+21:05:57.455 [KEY] 
+21:05:57.455 [KEY] I (4773028) KEY: HOP K resp nonce=d9a2b0c6 calc_notify=5889 us (challenge 675, 16 B) t=4772490726 us
+21:05:57.526 [RELAY_B] I (51693) RELAY_B: HOP B rx_chal round=28 nonce=d9a2b0c6 t=50990645 us
+21:05:57.526 [RELAY_B] I (51695) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:57.526 [RELAY_B] I (51787) NimBLE: GATT procedure initiated: notify; 
+21:05:57.527 [RELAY_B] I (51787) NimBLE: att_handle=18
+21:05:57.527 [RELAY_B] 
+21:05:57.527 [RELAY_B] I (51789) RELAY_B: response (16 B) notified to the vehicle
+21:05:57.527 [RELAY_B] I (51790) RELAY_B: HOP B tx_resp round=28 nonce=d9a2b0c6 turnaround=95660 us rssi=-26 dBm
+21:05:57.527 [RELAY_B] I (51797) RELAY_B: CSVB,28,d9a2b0c6,95660,-26,72248,0
+21:05:57.578 [RELAY_A] I (44488) RELAY_A: HOP A tx_chal round=28 nonce=d9a2b0c6 t=43786115 us
+21:05:57.578 [RELAY_A] I (44489) NimBLE: GATT procedure initiated: write; 
+21:05:57.578 [RELAY_A] I (44490) NimBLE: att_handle=16 len=16
+21:05:57.578 [RELAY_A] 
+21:05:57.578 [RELAY_A] I (44564) RELAY_A: HOP A rx_resp round=28 nonce=d9a2b0c6 turnaround=72248 us rssi=-26 dBm
+21:05:57.578 [RELAY_A] I (44565) RELAY_A: CSVA,28,d9a2b0c6,72248,-26,0
+21:05:57.578 [RELAY_A] I (44568) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:58.455 [KEY] I (4774024) NimBLE: GATT procedure initiated: notify; 
+21:05:58.455 [KEY] I (4774025) NimBLE: att_handle=18
+21:05:58.455 [KEY] 
+21:05:58.455 [KEY] I (4774029) KEY: HOP K resp nonce=ef9a74d0 calc_notify=6656 us (challenge 676, 16 B) t=4773492037 us
+21:05:58.526 [RELAY_B] I (52693) RELAY_B: HOP B rx_chal round=29 nonce=ef9a74d0 t=51990029 us
+21:05:58.526 [RELAY_B] I (52693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:58.526 [RELAY_B] I (52786) NimBLE: GATT procedure initiated: notify; 
+21:05:58.526 [RELAY_B] I (52787) NimBLE: att_handle=18
+21:05:58.526 [RELAY_B] 
+21:05:58.526 [RELAY_B] I (52788) RELAY_B: response (16 B) notified to the vehicle
+21:05:58.526 [RELAY_B] I (52790) RELAY_B: HOP B tx_resp round=29 nonce=ef9a74d0 turnaround=95961 us rssi=-38 dBm
+21:05:58.526 [RELAY_B] I (52797) RELAY_B: CSVB,29,ef9a74d0,95961,-38,73785,0
+21:05:58.577 [RELAY_A] I (45486) RELAY_A: HOP A tx_chal round=29 nonce=ef9a74d0 t=44784184 us
+21:05:58.577 [RELAY_A] I (45487) NimBLE: GATT procedure initiated: write; 
+21:05:58.577 [RELAY_A] I (45488) NimBLE: att_handle=16 len=16
+21:05:58.577 [RELAY_A] 
+21:05:58.577 [RELAY_A] I (45564) RELAY_A: HOP A rx_resp round=29 nonce=ef9a74d0 turnaround=73785 us rssi=-49 dBm
+21:05:58.577 [RELAY_A] I (45565) RELAY_A: CSVA,29,ef9a74d0,73785,-49,0
+21:05:58.577 [RELAY_A] I (45568) RELAY_A: HMAC from key (16 B) -> tunnel
+21:05:59.456 [KEY] I (4775023) NimBLE: GATT procedure initiated: notify; 
+21:05:59.456 [KEY] I (4775024) NimBLE: att_handle=18
+21:05:59.456 [KEY] 
+21:05:59.456 [KEY] I (4775028) KEY: HOP K resp nonce=13b88f2d calc_notify=5907 us (challenge 677, 16 B) t=4774490760 us
+21:05:59.527 [RELAY_B] I (53693) RELAY_B: HOP B rx_chal round=30 nonce=13b88f2d t=52990029 us
+21:05:59.527 [RELAY_B] I (53693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:05:59.527 [RELAY_B] I (53787) NimBLE: GATT procedure initiated: notify; 
+21:05:59.527 [RELAY_B] I (53788) NimBLE: att_handle=18
+21:05:59.527 [RELAY_B] 
+21:05:59.527 [RELAY_B] I (53789) RELAY_B: response (16 B) notified to the vehicle
+21:05:59.527 [RELAY_B] I (53791) RELAY_B: HOP B tx_resp round=30 nonce=13b88f2d turnaround=97086 us rssi=-29 dBm
+21:05:59.527 [RELAY_B] I (53798) RELAY_B: CSVB,30,13b88f2d,97086,-29,72619,0
+21:05:59.579 [RELAY_A] I (46488) RELAY_A: HOP A tx_chal round=30 nonce=13b88f2d t=45785371 us
+21:05:59.579 [RELAY_A] I (46489) NimBLE: GATT procedure initiated: write; 
+21:05:59.579 [RELAY_A] I (46489) NimBLE: att_handle=16 len=16
+21:05:59.579 [RELAY_A] 
+21:05:59.579 [RELAY_A] I (46565) RELAY_A: HOP A rx_resp round=30 nonce=13b88f2d turnaround=72619 us rssi=-33 dBm
+21:05:59.579 [RELAY_A] I (46565) RELAY_A: CSVA,30,13b88f2d,72619,-33,0
+21:05:59.579 [RELAY_A] I (46568) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:00.454 [KEY] I (4776023) NimBLE: GATT procedure initiated: notify; 
+21:06:00.454 [KEY] I (4776024) NimBLE: att_handle=18
+21:06:00.454 [KEY] 
+21:06:00.454 [KEY] I (4776028) KEY: HOP K resp nonce=e72c1142 calc_notify=5937 us (challenge 678, 16 B) t=4775490787 us
+21:06:00.528 [RELAY_B] I (54693) RELAY_B: HOP B rx_chal round=31 nonce=e72c1142 t=53990061 us
+21:06:00.528 [RELAY_B] I (54693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:00.528 [RELAY_B] I (54789) NimBLE: GATT procedure initiated: notify; 
+21:06:00.528 [RELAY_B] I (54790) NimBLE: att_handle=18
+21:06:00.529 [RELAY_B] 
+21:06:00.529 [RELAY_B] I (54791) RELAY_B: response (16 B) notified to the vehicle
+21:06:00.529 [RELAY_B] I (54792) RELAY_B: HOP B tx_resp round=31 nonce=e72c1142 turnaround=98495 us rssi=-25 dBm
+21:06:00.529 [RELAY_B] I (54799) RELAY_B: CSVB,31,e72c1142,98495,-25,73804,0
+21:06:00.580 [RELAY_A] I (47486) RELAY_A: HOP A tx_chal round=31 nonce=e72c1142 t=46784227 us
+21:06:00.580 [RELAY_A] I (47488) NimBLE: GATT procedure initiated: write; 
+21:06:00.580 [RELAY_A] I (47488) NimBLE: att_handle=16 len=16
+21:06:00.580 [RELAY_A] 
+21:06:00.580 [RELAY_A] I (47563) RELAY_A: HOP A rx_resp round=31 nonce=e72c1142 turnaround=73804 us rssi=-30 dBm
+21:06:00.580 [RELAY_A] I (47565) RELAY_A: CSVA,31,e72c1142,73804,-30,0
+21:06:00.580 [RELAY_A] I (47571) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:01.456 [KEY] I (4777024) NimBLE: GATT procedure initiated: notify; 
+21:06:01.456 [KEY] I (4777025) NimBLE: att_handle=18
+21:06:01.456 [KEY] 
+21:06:01.456 [KEY] I (4777029) KEY: HOP K resp nonce=0c62a081 calc_notify=6225 us (challenge 679, 16 B) t=4776491475 us
+21:06:01.527 [RELAY_B] I (55693) RELAY_B: HOP B rx_chal round=32 nonce=0c62a081 t=54990436 us
+21:06:01.527 [RELAY_B] I (55694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:01.527 [RELAY_B] I (55787) NimBLE: GATT procedure initiated: notify; 
+21:06:01.527 [RELAY_B] I (55788) NimBLE: att_handle=18
+21:06:01.527 [RELAY_B] 
+21:06:01.527 [RELAY_B] I (55789) RELAY_B: response (16 B) notified to the vehicle
+21:06:01.527 [RELAY_B] I (55790) RELAY_B: HOP B tx_resp round=32 nonce=0c62a081 turnaround=96159 us rssi=-25 dBm
+21:06:01.527 [RELAY_B] I (55797) RELAY_B: CSVB,32,0c62a081,96159,-25,72252,0
+21:06:01.579 [RELAY_A] I (48488) RELAY_A: HOP A tx_chal round=32 nonce=0c62a081 t=47786169 us
+21:06:01.579 [RELAY_A] I (48489) NimBLE: GATT procedure initiated: write; 
+21:06:01.579 [RELAY_A] I (48490) NimBLE: att_handle=16 len=16
+21:06:01.579 [RELAY_A] 
+21:06:01.579 [RELAY_A] I (48564) RELAY_A: HOP A rx_resp round=32 nonce=0c62a081 turnaround=72252 us rssi=-27 dBm
+21:06:01.579 [RELAY_A] I (48565) RELAY_A: CSVA,32,0c62a081,72252,-27,0
+21:06:01.579 [RELAY_A] I (48569) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:02.455 [KEY] I (4778023) NimBLE: GATT procedure initiated: notify; 
+21:06:02.455 [KEY] I (4778024) NimBLE: att_handle=18
+21:06:02.455 [KEY] 
+21:06:02.455 [KEY] I (4778028) KEY: HOP K resp nonce=f2468ff2 calc_notify=5838 us (challenge 680, 16 B) t=4777490828 us
+21:06:02.524 [RELAY_B] I (56693) RELAY_B: HOP B rx_chal round=33 nonce=f2468ff2 t=55990126 us
+21:06:02.524 [RELAY_B] I (56694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:02.524 [RELAY_B] I (56785) NimBLE: GATT procedure initiated: notify; 
+21:06:02.524 [RELAY_B] I (56785) NimBLE: att_handle=18
+21:06:02.524 [RELAY_B] 
+21:06:02.524 [RELAY_B] I (56788) RELAY_B: response (16 B) notified to the vehicle
+21:06:02.524 [RELAY_B] I (56790) RELAY_B: HOP B tx_resp round=33 nonce=f2468ff2 turnaround=95642 us rssi=-26 dBm
+21:06:02.524 [RELAY_B] I (56795) RELAY_B: CSVB,33,f2468ff2,95642,-26,73746,0
+21:06:02.576 [RELAY_A] I (49487) RELAY_A: HOP A tx_chal round=33 nonce=f2468ff2 t=48784376 us
+21:06:02.576 [RELAY_A] I (49488) NimBLE: GATT procedure initiated: write; 
+21:06:02.576 [RELAY_A] I (49488) NimBLE: att_handle=16 len=16
+21:06:02.576 [RELAY_A] 
+21:06:02.576 [RELAY_A] I (49562) RELAY_A: HOP A rx_resp round=33 nonce=f2468ff2 turnaround=73746 us rssi=-51 dBm
+21:06:02.576 [RELAY_A] I (49563) RELAY_A: CSVA,33,f2468ff2,73746,-51,0
+21:06:02.576 [RELAY_A] I (49566) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:03.456 [KEY] I (4779023) NimBLE: GATT procedure initiated: notify; 
+21:06:03.456 [KEY] I (4779024) NimBLE: att_handle=18
+21:06:03.456 [KEY] 
+21:06:03.456 [KEY] I (4779028) KEY: HOP K resp nonce=ccb6770f calc_notify=5936 us (challenge 681, 16 B) t=4778490861 us
+21:06:03.526 [RELAY_B] I (57693) RELAY_B: HOP B rx_chal round=34 nonce=ccb6770f t=56990150 us
+21:06:03.526 [RELAY_B] I (57693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:03.526 [RELAY_B] I (57787) NimBLE: GATT procedure initiated: notify; 
+21:06:03.526 [RELAY_B] I (57787) NimBLE: att_handle=18
+21:06:03.526 [RELAY_B] 
+21:06:03.526 [RELAY_B] I (57789) RELAY_B: response (16 B) notified to the vehicle
+21:06:03.526 [RELAY_B] I (57790) RELAY_B: HOP B tx_resp round=34 nonce=ccb6770f turnaround=96100 us rssi=-25 dBm
+21:06:03.526 [RELAY_B] I (57797) RELAY_B: CSVB,34,ccb6770f,96100,-25,74543,0
+21:06:03.577 [RELAY_A] I (50486) RELAY_A: HOP A tx_chal round=34 nonce=ccb6770f t=49784119 us
+21:06:03.577 [RELAY_A] I (50487) NimBLE: GATT procedure initiated: write; 
+21:06:03.577 [RELAY_A] I (50488) NimBLE: att_handle=16 len=16
+21:06:03.577 [RELAY_A] 
+21:06:03.577 [RELAY_A] I (50564) RELAY_A: HOP A rx_resp round=34 nonce=ccb6770f turnaround=74543 us rssi=-46 dBm
+21:06:03.577 [RELAY_A] I (50565) RELAY_A: CSVA,34,ccb6770f,74543,-46,0
+21:06:03.577 [RELAY_A] I (50569) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:04.449 [RELAY_B] I (58693) RELAY_B: HOP B rx_chal round=35 nonce=7f21dc9a t=57990135 us
+21:06:04.449 [RELAY_B] I (58694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:04.501 [RELAY_A] I (51487) RELAY_A: HOP A tx_chal round=35 nonce=7f21dc9a t=50784494 us
+21:06:04.501 [RELAY_A] I (51488) NimBLE: GATT procedure initiated: write; 
+21:06:04.501 [RELAY_A] I (51488) NimBLE: att_handle=16 len=16
+21:06:04.501 [RELAY_A] 
+21:06:04.553 [KEY] I (4780073) NimBLE: GATT procedure initiated: notify; 
+21:06:04.553 [KEY] I (4780074) NimBLE: att_handle=18
+21:06:04.553 [KEY] 
+21:06:04.553 [KEY] I (4780078) KEY: HOP K resp nonce=7f21dc9a calc_notify=5944 us (challenge 682, 16 B) t=4779540864 us
+21:06:04.676 [RELAY_B] I (58935) NimBLE: GATT procedure initiated: notify; 
+21:06:04.676 [RELAY_B] I (58936) NimBLE: att_handle=18
+21:06:04.676 [RELAY_B] 
+21:06:04.676 [RELAY_B] I (58938) RELAY_B: response (16 B) notified to the vehicle
+21:06:04.676 [RELAY_B] I (58940) RELAY_B: HOP B tx_resp round=35 nonce=7f21dc9a turnaround=245672 us rssi=-26 dBm
+21:06:04.676 [RELAY_B] I (58945) RELAY_B: CSVB,35,7f21dc9a,245672,-26,223726,0
+21:06:04.727 [RELAY_A] I (51713) RELAY_A: HOP A rx_resp round=35 nonce=7f21dc9a turnaround=223726 us rssi=-26 dBm
+21:06:04.727 [RELAY_A] I (51713) RELAY_A: CSVA,35,7f21dc9a,223726,-26,0
+21:06:04.727 [RELAY_A] I (51716) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:05.447 [RELAY_B] I (59693) RELAY_B: HOP B rx_chal round=36 nonce=203279cd t=58990190 us
+21:06:05.447 [RELAY_B] I (59693) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:05.499 [RELAY_A] I (52487) RELAY_A: HOP A tx_chal round=36 nonce=203279cd t=51784271 us
+21:06:05.499 [RELAY_A] I (52488) NimBLE: GATT procedure initiated: write; 
+21:06:05.499 [RELAY_A] I (52488) NimBLE: att_handle=16 len=16
+21:06:05.499 [RELAY_A] 
+21:06:05.550 [KEY] I (4781073) NimBLE: GATT procedure initiated: notify; 
+21:06:05.550 [KEY] I (4781074) NimBLE: att_handle=18
+21:06:05.550 [KEY] 
+21:06:05.550 [KEY] I (4781078) KEY: HOP K resp nonce=203279cd calc_notify=5946 us (challenge 683, 16 B) t=4780540893 us
+21:06:05.629 [RELAY_B] I (59887) NimBLE: GATT procedure initiated: notify; 
+21:06:05.629 [RELAY_B] I (59888) NimBLE: att_handle=18
+21:06:05.629 [RELAY_B] 
+21:06:05.629 [RELAY_B] I (59890) RELAY_B: response (16 B) notified to the vehicle
+21:06:05.629 [RELAY_B] I (59891) RELAY_B: HOP B tx_resp round=36 nonce=203279cd turnaround=197118 us rssi=-26 dBm
+21:06:05.629 [RELAY_B] I (59898) RELAY_B: CSVB,36,203279cd,197118,-26,173874,0
+21:06:05.680 [RELAY_A] I (52663) RELAY_A: HOP A rx_resp round=36 nonce=203279cd turnaround=173874 us rssi=-36 dBm
+21:06:05.680 [RELAY_A] I (52664) RELAY_A: CSVA,36,203279cd,173874,-36,0
+21:06:05.680 [RELAY_A] I (52667) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:06.419 [RELAY_B] I (60693) RELAY_B: HOP B rx_chal round=37 nonce=f296fbc7 t=59990628 us
+21:06:06.419 [RELAY_B] I (60694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:06.471 [RELAY_A] I (53489) RELAY_A: HOP A tx_chal round=37 nonce=f296fbc7 t=52786421 us
+21:06:06.471 [RELAY_A] I (53490) NimBLE: GATT procedure initiated: write; 
+21:06:06.471 [RELAY_A] I (53490) NimBLE: att_handle=16 len=16
+21:06:06.471 [RELAY_A] 
+21:06:06.522 [KEY] I (4782073) NimBLE: GATT procedure initiated: notify; 
+21:06:06.522 [KEY] I (4782074) NimBLE: att_handle=18
+21:06:06.522 [KEY] 
+21:06:06.522 [KEY] I (4782078) KEY: HOP K resp nonce=f296fbc7 calc_notify=5967 us (challenge 684, 16 B) t=4781540924 us
+21:06:06.631 [RELAY_B] I (60891) NimBLE: GATT procedure initiated: notify; 
+21:06:06.631 [RELAY_B] I (60891) NimBLE: att_handle=18
+21:06:06.631 [RELAY_B] 
+21:06:06.631 [RELAY_B] I (60894) RELAY_B: response (16 B) notified to the vehicle
+21:06:06.631 [RELAY_B] I (60899) RELAY_B: HOP B tx_resp round=37 nonce=f296fbc7 turnaround=202229 us rssi=-29 dBm
+21:06:06.631 [RELAY_B] I (60901) RELAY_B: CSVB,37,f296fbc7,202229,-29,172231,0
+21:06:06.682 [RELAY_A] I (53664) RELAY_A: HOP A rx_resp round=37 nonce=f296fbc7 turnaround=172231 us rssi=-29 dBm
+21:06:06.682 [RELAY_A] I (53665) RELAY_A: CSVA,37,f296fbc7,172231,-29,0
+21:06:06.682 [RELAY_A] I (53668) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:07.418 [RELAY_B] I (61693) RELAY_B: HOP B rx_chal round=38 nonce=4138c6de t=60990210 us
+21:06:07.418 [RELAY_B] I (61694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:07.469 [RELAY_A] I (54488) RELAY_A: HOP A tx_chal round=38 nonce=4138c6de t=53786164 us
+21:06:07.469 [RELAY_A] I (54489) NimBLE: GATT procedure initiated: write; 
+21:06:07.469 [RELAY_A] I (54490) NimBLE: att_handle=16 len=16
+21:06:07.469 [RELAY_A] 
+21:06:07.521 [KEY] I (4783073) NimBLE: GATT procedure initiated: notify; 
+21:06:07.521 [KEY] I (4783074) NimBLE: att_handle=18
+21:06:07.521 [KEY] 
+21:06:07.521 [KEY] I (4783078) KEY: HOP K resp nonce=4138c6de calc_notify=5966 us (challenge 685, 16 B) t=4782540947 us
+21:06:07.627 [RELAY_B] I (61887) NimBLE: GATT procedure initiated: notify; 
+21:06:07.627 [RELAY_B] I (61888) NimBLE: att_handle=18
+21:06:07.628 [RELAY_B] 
+21:06:07.628 [RELAY_B] I (61889) RELAY_B: response (16 B) notified to the vehicle
+21:06:07.628 [RELAY_B] I (61890) RELAY_B: HOP B tx_resp round=38 nonce=4138c6de turnaround=196461 us rssi=-26 dBm
+21:06:07.628 [RELAY_B] I (61897) RELAY_B: CSVB,38,4138c6de,196461,-26,172048,0
+21:06:07.679 [RELAY_A] I (54663) RELAY_A: HOP A rx_resp round=38 nonce=4138c6de turnaround=172048 us rssi=-29 dBm
+21:06:07.679 [RELAY_A] I (54664) RELAY_A: CSVA,38,4138c6de,172048,-29,0
+21:06:07.679 [RELAY_A] I (54667) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:08.418 [RELAY_B] I (62693) RELAY_B: HOP B rx_chal round=39 nonce=b39beea4 t=61990222 us
+21:06:08.418 [RELAY_B] I (62694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:08.470 [RELAY_A] I (55491) RELAY_A: HOP A tx_chal round=39 nonce=b39beea4 t=54788996 us
+21:06:08.470 [RELAY_A] I (55492) NimBLE: GATT procedure initiated: write; 
+21:06:08.470 [RELAY_A] I (55492) NimBLE: att_handle=16 len=16
+21:06:08.470 [RELAY_A] 
+21:06:08.521 [KEY] I (4784073) NimBLE: GATT procedure initiated: notify; 
+21:06:08.521 [KEY] I (4784074) NimBLE: att_handle=18
+21:06:08.521 [KEY] 
+21:06:08.521 [KEY] I (4784078) KEY: HOP K resp nonce=b39beea4 calc_notify=5936 us (challenge 686, 16 B) t=4783540948 us
+21:06:08.627 [RELAY_B] I (62887) NimBLE: GATT procedure initiated: notify; 
+21:06:08.627 [RELAY_B] I (62888) NimBLE: att_handle=18
+21:06:08.627 [RELAY_B] 
+21:06:08.627 [RELAY_B] I (62889) RELAY_B: response (16 B) notified to the vehicle
+21:06:08.627 [RELAY_B] I (62890) RELAY_B: HOP B tx_resp round=39 nonce=b39beea4 turnaround=196249 us rssi=-25 dBm
+21:06:08.627 [RELAY_B] I (62897) RELAY_B: CSVB,39,b39beea4,196249,-25,169209,0
+21:06:08.678 [RELAY_A] I (55663) RELAY_A: HOP A rx_resp round=39 nonce=b39beea4 turnaround=169209 us rssi=-26 dBm
+21:06:08.678 [RELAY_A] I (55664) RELAY_A: CSVA,39,b39beea4,169209,-26,0
+21:06:08.678 [RELAY_A] I (55667) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:09.418 [RELAY_B] I (63693) RELAY_B: HOP B rx_chal round=40 nonce=871438ba t=62990230 us
+21:06:09.418 [RELAY_B] I (63694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:09.469 [RELAY_A] I (56487) RELAY_A: HOP A tx_chal round=40 nonce=871438ba t=55784685 us
+21:06:09.469 [RELAY_A] I (56488) NimBLE: GATT procedure initiated: write; 
+21:06:09.469 [RELAY_A] I (56488) NimBLE: att_handle=16 len=16
+21:06:09.469 [RELAY_A] 
+21:06:09.521 [KEY] I (4785073) NimBLE: GATT procedure initiated: notify; 
+21:06:09.521 [KEY] I (4785074) NimBLE: att_handle=18
+21:06:09.521 [KEY] 
+21:06:09.521 [KEY] I (4785078) KEY: HOP K resp nonce=871438ba calc_notify=5943 us (challenge 687, 16 B) t=4784540988 us
+21:06:09.625 [RELAY_B] I (63886) NimBLE: GATT procedure initiated: notify; 
+21:06:09.626 [RELAY_B] I (63886) NimBLE: att_handle=18
+21:06:09.626 [RELAY_B] 
+21:06:09.626 [RELAY_B] I (63888) RELAY_B: response (16 B) notified to the vehicle
+21:06:09.626 [RELAY_B] I (63891) RELAY_B: HOP B tx_resp round=40 nonce=871438ba turnaround=196219 us rssi=-37 dBm
+21:06:09.626 [RELAY_B] I (63896) RELAY_B: CSVB,40,871438ba,196219,-37,173545,0
+21:06:09.677 [RELAY_A] I (56663) RELAY_A: HOP A rx_resp round=40 nonce=871438ba turnaround=173545 us rssi=-48 dBm
+21:06:09.677 [RELAY_A] I (56663) RELAY_A: CSVA,40,871438ba,173545,-48,0
+21:06:09.677 [RELAY_A] I (56667) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:10.418 [RELAY_B] I (64693) RELAY_B: HOP B rx_chal round=41 nonce=2327c8d1 t=63990256 us
+21:06:10.418 [RELAY_B] I (64694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:10.469 [RELAY_A] I (57487) RELAY_A: HOP A tx_chal round=41 nonce=2327c8d1 t=56784652 us
+21:06:10.469 [RELAY_A] I (57488) NimBLE: GATT procedure initiated: write; 
+21:06:10.470 [RELAY_A] I (57488) NimBLE: att_handle=16 len=16
+21:06:10.470 [RELAY_A] 
+21:06:10.521 [KEY] I (4786073) NimBLE: GATT procedure initiated: notify; 
+21:06:10.521 [KEY] I (4786074) NimBLE: att_handle=18
+21:06:10.521 [KEY] 
+21:06:10.521 [KEY] I (4786078) KEY: HOP K resp nonce=2327c8d1 calc_notify=6105 us (challenge 688, 16 B) t=4785541164 us
+21:06:10.627 [RELAY_B] I (64887) NimBLE: GATT procedure initiated: notify; 
+21:06:10.627 [RELAY_B] I (64888) NimBLE: att_handle=18
+21:06:10.627 [RELAY_B] 
+21:06:10.627 [RELAY_B] I (64889) RELAY_B: response (16 B) notified to the vehicle
+21:06:10.627 [RELAY_B] I (64890) RELAY_B: HOP B tx_resp round=41 nonce=2327c8d1 turnaround=196283 us rssi=-29 dBm
+21:06:10.627 [RELAY_B] I (64897) RELAY_B: CSVB,41,2327c8d1,196283,-29,173622,0
+21:06:10.678 [RELAY_A] I (57663) RELAY_A: HOP A rx_resp round=41 nonce=2327c8d1 turnaround=173622 us rssi=-33 dBm
+21:06:10.679 [RELAY_A] I (57663) RELAY_A: CSVA,41,2327c8d1,173622,-33,0
+21:06:10.679 [RELAY_A] I (57669) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:11.418 [RELAY_B] I (65693) RELAY_B: HOP B rx_chal round=42 nonce=5c38ee5c t=64990291 us
+21:06:11.418 [RELAY_B] I (65694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:11.469 [RELAY_A] I (58487) RELAY_A: HOP A tx_chal round=42 nonce=5c38ee5c t=57784485 us
+21:06:11.469 [RELAY_A] I (58488) NimBLE: GATT procedure initiated: write; 
+21:06:11.469 [RELAY_A] I (58488) NimBLE: att_handle=16 len=16
+21:06:11.469 [RELAY_A] 
+21:06:11.520 [KEY] I (4787073) NimBLE: GATT procedure initiated: notify; 
+21:06:11.520 [KEY] I (4787074) NimBLE: att_handle=18
+21:06:11.520 [KEY] 
+21:06:11.520 [KEY] I (4787078) KEY: HOP K resp nonce=5c38ee5c calc_notify=5939 us (challenge 689, 16 B) t=4786541035 us
+21:06:11.627 [RELAY_B] I (65887) NimBLE: GATT procedure initiated: notify; 
+21:06:11.627 [RELAY_B] I (65888) NimBLE: att_handle=18
+21:06:11.627 [RELAY_B] 
+21:06:11.627 [RELAY_B] I (65889) RELAY_B: response (16 B) notified to the vehicle
+21:06:11.627 [RELAY_B] I (65891) RELAY_B: HOP B tx_resp round=42 nonce=5c38ee5c turnaround=196906 us rssi=-26 dBm
+21:06:11.627 [RELAY_B] I (65898) RELAY_B: CSVB,42,5c38ee5c,196906,-26,174188,0
+21:06:11.679 [RELAY_A] I (58664) RELAY_A: HOP A rx_resp round=42 nonce=5c38ee5c turnaround=174188 us rssi=-30 dBm
+21:06:11.679 [RELAY_A] I (58665) RELAY_A: CSVA,42,5c38ee5c,174188,-30,0
+21:06:11.679 [RELAY_A] I (58668) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:12.418 [RELAY_B] I (66693) RELAY_B: HOP B rx_chal round=43 nonce=49cf1d56 t=65990324 us
+21:06:12.418 [RELAY_B] I (66694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:12.469 [RELAY_A] I (59487) RELAY_A: HOP A tx_chal round=43 nonce=49cf1d56 t=58784546 us
+21:06:12.469 [RELAY_A] I (59488) NimBLE: GATT procedure initiated: write; 
+21:06:12.469 [RELAY_A] I (59488) NimBLE: att_handle=16 len=16
+21:06:12.469 [RELAY_A] 
+21:06:12.520 [KEY] I (4788074) NimBLE: GATT procedure initiated: notify; 
+21:06:12.520 [KEY] I (4788074) NimBLE: att_handle=18
+21:06:12.520 [KEY] 
+21:06:12.520 [KEY] I (4788078) KEY: HOP K resp nonce=49cf1d56 calc_notify=5949 us (challenge 690, 16 B) t=4787541046 us
+21:06:12.627 [RELAY_B] I (66887) NimBLE: GATT procedure initiated: notify; 
+21:06:12.627 [RELAY_B] I (66888) NimBLE: att_handle=18
+21:06:12.627 [RELAY_B] 
+21:06:12.627 [RELAY_B] I (66889) RELAY_B: response (16 B) notified to the vehicle
+21:06:12.627 [RELAY_B] I (66890) RELAY_B: HOP B tx_resp round=43 nonce=49cf1d56 turnaround=196442 us rssi=-26 dBm
+21:06:12.627 [RELAY_B] I (66898) RELAY_B: CSVB,43,49cf1d56,196442,-26,174011,0
+21:06:12.678 [RELAY_A] I (59663) RELAY_A: HOP A rx_resp round=43 nonce=49cf1d56 turnaround=174011 us rssi=-29 dBm
+21:06:12.678 [RELAY_A] I (59664) RELAY_A: CSVA,43,49cf1d56,174011,-29,0
+21:06:12.678 [RELAY_A] I (59667) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:13.418 [RELAY_B] I (67693) RELAY_B: HOP B rx_chal round=44 nonce=da37f67f t=66990349 us
+21:06:13.419 [RELAY_B] I (67694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:13.470 [RELAY_A] I (60487) RELAY_A: HOP A tx_chal round=44 nonce=da37f67f t=59784398 us
+21:06:13.470 [RELAY_A] I (60488) NimBLE: GATT procedure initiated: write; 
+21:06:13.470 [RELAY_A] I (60488) NimBLE: att_handle=16 len=16
+21:06:13.470 [RELAY_A] 
+21:06:13.521 [KEY] I (4789074) NimBLE: GATT procedure initiated: notify; 
+21:06:13.521 [KEY] I (4789074) NimBLE: att_handle=18
+21:06:13.521 [KEY] 
+21:06:13.521 [KEY] I (4789078) KEY: HOP K resp nonce=da37f67f calc_notify=5962 us (challenge 691, 16 B) t=4788541081 us
+21:06:13.629 [RELAY_B] I (67889) NimBLE: GATT procedure initiated: notify; 
+21:06:13.629 [RELAY_B] I (67890) NimBLE: att_handle=18
+21:06:13.629 [RELAY_B] 
+21:06:13.629 [RELAY_B] I (67891) RELAY_B: response (16 B) notified to the vehicle
+21:06:13.629 [RELAY_B] I (67894) RELAY_B: HOP B tx_resp round=44 nonce=da37f67f turnaround=198189 us rssi=-30 dBm
+21:06:13.629 [RELAY_B] I (67899) RELAY_B: CSVB,44,da37f67f,198189,-30,174088,0
+21:06:13.681 [RELAY_A] I (60665) RELAY_A: HOP A rx_resp round=44 nonce=da37f67f turnaround=174088 us rssi=-54 dBm
+21:06:13.681 [RELAY_A] I (60666) RELAY_A: CSVA,44,da37f67f,174088,-54,0
+21:06:13.681 [RELAY_A] I (60672) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:14.419 [RELAY_B] I (68693) RELAY_B: HOP B rx_chal round=45 nonce=b986c4ff t=67990373 us
+21:06:14.419 [RELAY_B] I (68694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:14.470 [RELAY_A] I (61487) RELAY_A: HOP A tx_chal round=45 nonce=b986c4ff t=60784598 us
+21:06:14.470 [RELAY_A] I (61488) NimBLE: GATT procedure initiated: write; 
+21:06:14.470 [RELAY_A] I (61488) NimBLE: att_handle=16 len=16
+21:06:14.470 [RELAY_A] 
+21:06:14.522 [KEY] I (4790074) NimBLE: GATT procedure initiated: notify; 
+21:06:14.522 [KEY] I (4790074) NimBLE: att_handle=18
+21:06:14.522 [KEY] 
+21:06:14.522 [KEY] I (4790078) KEY: HOP K resp nonce=b986c4ff calc_notify=5947 us (challenge 692, 16 B) t=4789541082 us
+21:06:14.626 [RELAY_B] I (68886) NimBLE: GATT procedure initiated: notify; 
+21:06:14.626 [RELAY_B] I (68886) NimBLE: att_handle=18
+21:06:14.626 [RELAY_B] 
+21:06:14.626 [RELAY_B] I (68888) RELAY_B: response (16 B) notified to the vehicle
+21:06:14.626 [RELAY_B] I (68890) RELAY_B: HOP B tx_resp round=45 nonce=b986c4ff turnaround=195639 us rssi=-26 dBm
+21:06:14.626 [RELAY_B] I (68896) RELAY_B: CSVB,45,b986c4ff,195639,-26,173739,0
+21:06:14.677 [RELAY_A] I (61663) RELAY_A: HOP A rx_resp round=45 nonce=b986c4ff turnaround=173739 us rssi=-46 dBm
+21:06:14.677 [RELAY_A] I (61663) RELAY_A: CSVA,45,b986c4ff,173739,-46,0
+21:06:14.677 [RELAY_A] I (61667) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:15.419 [RELAY_B] I (69693) RELAY_B: HOP B rx_chal round=46 nonce=18762fe1 t=68990389 us
+21:06:15.419 [RELAY_B] I (69694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:15.470 [RELAY_A] I (62494) RELAY_A: HOP A tx_chal round=46 nonce=18762fe1 t=61792234 us
+21:06:15.470 [RELAY_A] I (62495) NimBLE: GATT procedure initiated: write; 
+21:06:15.470 [RELAY_A] I (62496) NimBLE: att_handle=16 len=16
+21:06:15.470 [RELAY_A] 
+21:06:15.522 [KEY] I (4791074) NimBLE: GATT procedure initiated: notify; 
+21:06:15.522 [KEY] I (4791074) NimBLE: att_handle=18
+21:06:15.522 [KEY] 
+21:06:15.522 [KEY] I (4791078) KEY: HOP K resp nonce=18762fe1 calc_notify=5967 us (challenge 693, 16 B) t=4790541138 us
+21:06:15.628 [RELAY_B] I (69887) NimBLE: GATT procedure initiated: notify; 
+21:06:15.628 [RELAY_B] I (69888) NimBLE: att_handle=18
+21:06:15.628 [RELAY_B] 
+21:06:15.628 [RELAY_B] I (69889) RELAY_B: response (16 B) notified to the vehicle
+21:06:15.628 [RELAY_B] I (69891) RELAY_B: HOP B tx_resp round=46 nonce=18762fe1 turnaround=196931 us rssi=-25 dBm
+21:06:15.628 [RELAY_B] I (69898) RELAY_B: CSVB,46,18762fe1,196931,-25,166415,0
+21:06:15.679 [RELAY_A] I (62664) RELAY_A: HOP A rx_resp round=46 nonce=18762fe1 turnaround=166415 us rssi=-31 dBm
+21:06:15.679 [RELAY_A] I (62665) RELAY_A: CSVA,46,18762fe1,166415,-31,0
+21:06:15.679 [RELAY_A] I (62668) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:16.418 [RELAY_B] I (70693) RELAY_B: HOP B rx_chal round=47 nonce=41ad88b4 t=69990392 us
+21:06:16.418 [RELAY_B] I (70694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:16.470 [RELAY_A] I (63488) RELAY_A: HOP A tx_chal round=47 nonce=41ad88b4 t=62785471 us
+21:06:16.470 [RELAY_A] I (63489) NimBLE: GATT procedure initiated: write; 
+21:06:16.470 [RELAY_A] I (63489) NimBLE: att_handle=16 len=16
+21:06:16.470 [RELAY_A] 
+21:06:16.522 [KEY] I (4792074) NimBLE: GATT procedure initiated: notify; 
+21:06:16.522 [KEY] I (4792074) NimBLE: att_handle=18
+21:06:16.522 [KEY] 
+21:06:16.522 [KEY] I (4792078) KEY: HOP K resp nonce=41ad88b4 calc_notify=5951 us (challenge 694, 16 B) t=4791541133 us
+21:06:16.631 [RELAY_B] I (70890) NimBLE: GATT procedure initiated: notify; 
+21:06:16.631 [RELAY_B] I (70891) NimBLE: att_handle=18
+21:06:16.631 [RELAY_B] 
+21:06:16.631 [RELAY_B] I (70894) RELAY_B: response (16 B) notified to the vehicle
+21:06:16.631 [RELAY_B] I (70896) RELAY_B: HOP B tx_resp round=47 nonce=41ad88b4 turnaround=200883 us rssi=-26 dBm
+21:06:16.631 [RELAY_B] I (70901) RELAY_B: CSVB,47,41ad88b4,200883,-26,173075,0
+21:06:16.682 [RELAY_A] I (63664) RELAY_A: HOP A rx_resp round=47 nonce=41ad88b4 turnaround=173075 us rssi=-29 dBm
+21:06:16.682 [RELAY_A] I (63665) RELAY_A: CSVA,47,41ad88b4,173075,-29,0
+21:06:16.682 [RELAY_A] I (63673) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:17.418 [RELAY_B] I (71693) RELAY_B: HOP B rx_chal round=48 nonce=9c81c49a t=70990412 us
+21:06:17.418 [RELAY_B] I (71694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:17.470 [RELAY_A] I (64487) RELAY_A: HOP A tx_chal round=48 nonce=9c81c49a t=63784604 us
+21:06:17.470 [RELAY_A] I (64488) NimBLE: GATT procedure initiated: write; 
+21:06:17.470 [RELAY_A] I (64488) NimBLE: att_handle=16 len=16
+21:06:17.470 [RELAY_A] 
+21:06:17.521 [KEY] I (4793074) NimBLE: GATT procedure initiated: notify; 
+21:06:17.521 [KEY] I (4793074) NimBLE: att_handle=18
+21:06:17.521 [KEY] 
+21:06:17.521 [KEY] I (4793078) KEY: HOP K resp nonce=9c81c49a calc_notify=5956 us (challenge 695, 16 B) t=4792541170 us
+21:06:17.626 [RELAY_B] I (71886) NimBLE: GATT procedure initiated: notify; 
+21:06:17.626 [RELAY_B] I (71887) NimBLE: att_handle=18
+21:06:17.626 [RELAY_B] 
+21:06:17.626 [RELAY_B] I (71888) RELAY_B: response (16 B) notified to the vehicle
+21:06:17.626 [RELAY_B] I (71889) RELAY_B: HOP B tx_resp round=48 nonce=9c81c49a turnaround=195223 us rssi=-31 dBm
+21:06:17.626 [RELAY_B] I (71896) RELAY_B: CSVB,48,9c81c49a,195223,-31,173789,0
+21:06:17.678 [RELAY_A] I (64663) RELAY_A: HOP A rx_resp round=48 nonce=9c81c49a turnaround=173789 us rssi=-26 dBm
+21:06:17.678 [RELAY_A] I (64664) RELAY_A: CSVA,48,9c81c49a,173789,-26,0
+21:06:17.678 [RELAY_A] I (64667) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:18.419 [RELAY_B] I (72693) RELAY_B: HOP B rx_chal round=49 nonce=5eb36a39 t=71990431 us
+21:06:18.419 [RELAY_B] I (72694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:18.470 [RELAY_A] I (65487) RELAY_A: HOP A tx_chal round=49 nonce=5eb36a39 t=64784701 us
+21:06:18.470 [RELAY_A] I (65488) NimBLE: GATT procedure initiated: write; 
+21:06:18.470 [RELAY_A] I (65488) NimBLE: att_handle=16 len=16
+21:06:18.470 [RELAY_A] 
+21:06:18.521 [KEY] I (4794074) NimBLE: GATT procedure initiated: notify; 
+21:06:18.521 [KEY] I (4794074) NimBLE: att_handle=18
+21:06:18.521 [KEY] 
+21:06:18.521 [KEY] I (4794078) KEY: HOP K resp nonce=5eb36a39 calc_notify=5958 us (challenge 696, 16 B) t=4793541185 us
+21:06:18.630 [RELAY_B] I (72890) NimBLE: GATT procedure initiated: notify; 
+21:06:18.630 [RELAY_B] I (72890) NimBLE: att_handle=18
+21:06:18.630 [RELAY_B] 
+21:06:18.630 [RELAY_B] I (72892) RELAY_B: response (16 B) notified to the vehicle
+21:06:18.630 [RELAY_B] I (72895) RELAY_B: HOP B tx_resp round=49 nonce=5eb36a39 turnaround=198952 us rssi=-25 dBm
+21:06:18.630 [RELAY_B] I (72900) RELAY_B: CSVB,49,5eb36a39,198952,-25,173736,0
+21:06:18.681 [RELAY_A] I (65663) RELAY_A: HOP A rx_resp round=49 nonce=5eb36a39 turnaround=173736 us rssi=-51 dBm
+21:06:18.681 [RELAY_A] I (65664) RELAY_A: CSVA,49,5eb36a39,173736,-51,0
+21:06:18.681 [RELAY_A] I (65673) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:19.417 [RELAY_B] I (73693) RELAY_B: HOP B rx_chal round=50 nonce=0ac6a3df t=72990473 us
+21:06:19.417 [RELAY_B] I (73694) RELAY_B: vehicle challenge (16 B) -> tunnel
+21:06:19.469 [RELAY_A] I (66487) RELAY_A: HOP A tx_chal round=50 nonce=0ac6a3df t=65784730 us
+21:06:19.469 [RELAY_A] I (66488) NimBLE: GATT procedure initiated: write; 
+21:06:19.469 [RELAY_A] I (66488) NimBLE: att_handle=16 len=16
+21:06:19.469 [RELAY_A] 
+21:06:19.520 [KEY] I (4795074) NimBLE: GATT procedure initiated: notify; 
+21:06:19.521 [KEY] I (4795074) NimBLE: att_handle=18
+21:06:19.521 [KEY] 
+21:06:19.521 [KEY] I (4795078) KEY: HOP K resp nonce=0ac6a3df calc_notify=5985 us (challenge 697, 16 B) t=4794541332 us
+21:06:19.626 [RELAY_B] I (73886) NimBLE: GATT procedure initiated: notify; 
+21:06:19.626 [RELAY_B] I (73887) NimBLE: att_handle=18
+21:06:19.626 [RELAY_B] 
+21:06:19.626 [RELAY_B] I (73888) RELAY_B: response (16 B) notified to the vehicle
+21:06:19.626 [RELAY_B] I (73889) RELAY_B: HOP B tx_resp round=50 nonce=0ac6a3df turnaround=195043 us rssi=-26 dBm
+21:06:19.626 [RELAY_B] I (73896) RELAY_B: CSVB,50,0ac6a3df,195043,-26,173693,0
+21:06:19.677 [RELAY_A] I (66663) RELAY_A: HOP A rx_resp round=50 nonce=0ac6a3df turnaround=173693 us rssi=-33 dBm
+21:06:19.677 [RELAY_A] I (66664) RELAY_A: CSVA,50,0ac6a3df,173693,-33,0
+21:06:19.677 [RELAY_A] I (66669) RELAY_A: HMAC from key (16 B) -> tunnel
+21:06:21.954 [LOGGER] closed
