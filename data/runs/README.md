@@ -48,12 +48,15 @@ Notes:
 
 Layout on the table, in order: car, relay B, relay A, key. Car to relay B 12 cm, relay B to relay A
 about 2 m (estimated by eye), relay A to key 12 cm. `dist_m` is the car-key separation, estimated at
-2.24 m from those distances.
+2.24 m from those distances. The USB cables (2 to 3 m) set the limit: the boards already sit on both
+sides of the computer, so about 2 m between relay A and relay B is the largest separation this bench
+reaches.
 
 | Session | Condition | Relay tunnel | Label |
 |---|---|---|---|
 | 20261118-215829, -220051, -220426 | baseline (vehicle to key, direct) | none, relays silent | `baseline` |
 | 20261118-215933, -220155, -220529 | relayed | unicast, TX power default | `relay-unicast-ab200` |
+| 20261118-222135, -222302, -222527 | relayed | unicast, TXPOW 8 (2 dBm) on both relays | `relay-unicast-ab200-tx8` |
 
 ## Analysis
 

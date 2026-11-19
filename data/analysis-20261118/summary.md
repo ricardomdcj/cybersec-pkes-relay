@@ -14,6 +14,7 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds. D
 | unicast A-B 0.75 (car-key 0.99) | unicast, A-B 0.75 m | 0.99 | 3 | 150 | 150 | 0 | 0 | 150 | 100.0 % (97.5-100.0) |
 | baseline 2.24 | direct | 2.24 | 3 | 150 | 150 | 0 | 0 | 0 | 100.0 % (97.5-100.0) |
 | unicast A-B 2 (car-key 2.24) | unicast, A-B 2 m | 2.24 | 3 | 150 | 150 | 0 | 0 | 150 | 100.0 % (97.5-100.0) |
+| unicast A-B 2 TX 2 dBm (car-key 2.24) | unicast, A-B 2 m, TXPOW 8 | 2.24 | 3 | 150 | 150 | 0 | 0 | 150 | 100.0 % (97.5-100.0) |
 
 ## Vehicle RTT, answered rounds (ms)
 
@@ -27,6 +28,21 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds. D
 | unicast A-B 0.75 (car-key 0.99) | 150 | 112.4 | 327.6 | 376.6 (366.1-408.5) | 411.2 | 430.0 | 528.6 | 362.9 |
 | baseline 2.24 | 150 | 63.8 | 69.1 | 85.7 (84.4-86.6) | 88.4 | 90.6 | 139.9 | 82.3 |
 | unicast A-B 2 (car-key 2.24) | 150 | 158.2 | 311.1 | 364.5 (362.8-365.7) | 412.2 | 453.9 | 456.7 | 357.8 |
+| unicast A-B 2 TX 2 dBm (car-key 2.24) | 150 | 113.4 | 261.0 | 316.2 (314.4-374.2) | 377.6 | 408.2 | 468.4 | 323.3 |
+
+## Campaign spread: median RTT of OK rounds per campaign (ms)
+
+| Condition | campaign 1 | campaign 2 | campaign 3 |
+|---|---|---|---|
+| baseline 0.52 | 103.5 | 77.3 | 66.6 |
+| broadcast 0.52 | 369.8 | 391.5 | 357.9 |
+| unicast 0.52 | 385.0 | 314.4 | 389.0 |
+| unicast 2 dBm 0.52 | 367.2 | 312.6 | 431.9 |
+| baseline 0.99 | 81.7 | 66.4 | 94.4 |
+| unicast A-B 0.75 (car-key 0.99) | 365.6 | 408.2 | 376.6 |
+| baseline 2.24 | 88.9 | 67.2 | 85.9 |
+| unicast A-B 2 (car-key 2.24) | 452.5 | 362.0 | 366.2 |
+| unicast A-B 2 TX 2 dBm (car-key 2.24) | 314.1 | 359.4 | 376.0 |
 
 ## Round legs, median (IQR) in ms
 
@@ -40,6 +56,7 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds. D
 | unicast A-B 0.75 (car-key 0.99) | 144.5 (121.3-172.5) | 24.3 (23.5-26.4) | 215.0 (195.5-232.3) |
 | baseline 2.24 | - | - | - |
 | unicast A-B 2 (car-key 2.24) | 131.2 (96.3-192.9) | 24.4 (23.3-26.6) | 209.0 (193.0-235.0) |
+| unicast A-B 2 TX 2 dBm (car-key 2.24) | 128.4 (120.9-160.8) | 24.1 (23.3-26.1) | 187.9 (161.2-194.8) |
 
 ## Tunnel counters
 
@@ -53,6 +70,7 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds. D
 | unicast A-B 0.75 (car-key 0.99) | 0 | 0 |
 | baseline 2.24 | 0 | 0 |
 | unicast A-B 2 (car-key 2.24) | 0 | 0 |
+| unicast A-B 2 TX 2 dBm (car-key 2.24) | 0 | 0 |
 
 ## Comparisons (difference of medians, ms)
 
@@ -65,6 +83,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds. D
 | relayed unicast minus direct, car-key 2.24 m | 85.7 | 364.5 | 278.9 (277.0 to 280.4) |
 | unicast minus broadcast, car-key 0.52 m | 366.1 | 384.6 | 18.5 (-40.2 to 28.6) |
 | 2 dBm minus default power, car-key 0.52 m | 384.6 | 367.4 | -17.2 (-20.9 to 69.6) |
+| relayed unicast 2 dBm minus direct, car-key 2.24 m | 85.7 | 316.2 | 230.5 (228.7 to 288.5) |
+| 2 dBm minus default power, A-B 2 m | 364.5 | 316.2 | -48.4 (-50.3 to 9.6) |
 | direct baseline, 0.99 m minus 0.52 m | 76.9 | 82.0 | 5.1 (2.8 to 7.4) |
 | direct baseline, 2.24 m minus 0.99 m | 82.0 | 85.7 | 3.7 (1.6 to 5.6) |
 
@@ -77,3 +97,4 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds. D
 - 2 dBm sessions applied TXPOW 8 to both relays after the bring-up; the relay logs confirm it.
 - Car-key separations of 2.24 m are estimated from the layout (12 cm + about 2 m + 12 cm).
 - Rounds are not independent: the RTT moves in plateaus within a campaign. The bootstrap intervals assume independent rounds, so they are optimistic.
+- The spread between campaigns (campaign spread table) is larger than most differences between settings. Three campaigns per condition do not resolve differences below about 50 ms.

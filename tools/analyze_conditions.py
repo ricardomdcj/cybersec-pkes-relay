@@ -59,6 +59,10 @@ CONDITIONS = [
         ("20261118-215933_relay-unicast-ab200-session", "20261118-215951_relay-unicast-ab200"),
         ("20261118-220155_relay-unicast-ab200-session", "20261118-220325_relay-unicast-ab200"),
         ("20261118-220529_relay-unicast-ab200-session", "20261118-220700_relay-unicast-ab200")]),
+    dict(name="unicast A-B 2 TX 2 dBm (car-key 2.24)", dist=2.24, tunnel="unicast, A-B 2 m, TXPOW 8", campaigns=[
+        ("20261118-222135_relay-unicast-ab200-tx8-session", "20261118-222201_relay-unicast-ab200-tx8"),
+        ("20261118-222302_relay-unicast-ab200-tx8-session", "20261118-222426_relay-unicast-ab200-tx8"),
+        ("20261118-222527_relay-unicast-ab200-tx8-session", "20261118-222552_relay-unicast-ab200-tx8")]),
 ]
 
 COMPARISONS = [
@@ -69,28 +73,34 @@ COMPARISONS = [
     ("baseline 2.24", "unicast A-B 2 (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m"),
     ("broadcast 0.52", "unicast 0.52", "unicast minus broadcast, car-key 0.52 m"),
     ("unicast 0.52", "unicast 2 dBm 0.52", "2 dBm minus default power, car-key 0.52 m"),
+    ("baseline 2.24", "unicast A-B 2 TX 2 dBm (car-key 2.24)", "relayed unicast 2 dBm minus direct, car-key 2.24 m"),
+    ("unicast A-B 2 (car-key 2.24)", "unicast A-B 2 TX 2 dBm (car-key 2.24)", "2 dBm minus default power, A-B 2 m"),
     ("baseline 0.52", "baseline 0.99", "direct baseline, 0.99 m minus 0.52 m"),
     ("baseline 0.99", "baseline 2.24", "direct baseline, 2.24 m minus 0.99 m"),
 ]
 
 
-def load_condition(spec):
-    lines, manifests = [], []
-    for session, campaign in spec["campaigns"]:
-        folder = RUNS / session / campaign
-        for f in sorted(folder.glob("capture_*.log")):
-            lines += ar.read_text(f)
-        chain = RUNS / session / CHAIN
-        if chain.exists():
-            lines += ar.read_text(chain)
-        manifests.append(json.loads((folder / "manifest.json").read_text(encoding="utf-8")))
-    return lines, manifests
+def load_campaign(session, campaign):
+    folder = RUNS / session / campaign
+    lines = []
+    for f in sorted(folder.glob("capture_*.log")):
+        lines += ar.read_text(f)
+    chain = RUNS / session / CHAIN
+    if chain.exists():
+        lines += ar.read_text(chain)
+    return lines, json.loads((folder / "manifest.json").read_text(encoding="utf-8"))
 
 
 def build(spec):
-    lines, manifests = load_condition(spec)
-    veh, a_rows, b_rows, _ = ar.parse_rows(lines)
-    rounds = ar.join_rounds(veh, a_rows, b_rows)
+    rounds, manifests, medians = [], [], []
+    for session, campaign in spec["campaigns"]:
+        lines, manifest = load_campaign(session, campaign)
+        veh, a_rows, b_rows, _ = ar.parse_rows(lines)
+        part = ar.join_rounds(veh, a_rows, b_rows)
+        ok = [r["rtt"] for r in part if r["res"] == "OK"]
+        medians.append(statistics.median(ok) if ok else None)
+        rounds += part
+        manifests.append(manifest)
     for r in rounds:
         r["condition"] = spec["name"]
         r["dist"] = f"{spec['dist']:.2f}"
@@ -99,6 +109,7 @@ def build(spec):
     report.update(
         tunnel=spec["tunnel"],
         campaigns=len(spec["campaigns"]),
+        campaign_medians=medians,
         csvb=sum(r["turn_b_us"] is not None for r in rounds),
         tx_failures=sum((r["txfailures_a"] or 0) + (r["txfailures_b"] or 0) for r in rounds),
     )
@@ -128,6 +139,11 @@ def summary_markdown(conds):
         md.append(f"| {c['name']} | {d['n']} | {ar.fmt_ms(d['min'])} | {ar.fmt_ms(d['q1'])} | "
                   f"{ar.fmt_ms(d['med'])} ({ar.fmt_ms(ci[0])}-{ar.fmt_ms(ci[1])}) | {ar.fmt_ms(d['q3'])} | "
                   f"{ar.fmt_ms(d['p90'])} | {ar.fmt_ms(d['max'])} | {ar.fmt_ms(d['mean'])} |")
+    md += ["", "## Campaign spread: median RTT of OK rounds per campaign (ms)", "",
+           "| Condition | campaign 1 | campaign 2 | campaign 3 |", "|---|---|---|---|"]
+    for c in conds:
+        cells = ["-" if m is None else ar.fmt_ms(m) for m in c["campaign_medians"]]
+        md.append(f"| {c['name']} | " + " | ".join(cells) + " |")
     md += ["", "## Round legs, median (IQR) in ms", "",
            "| Condition | vehicle<->B | tunnel | A<->key |", "|---|---|---|---|"]
     for c in conds:
@@ -159,7 +175,9 @@ def summary_markdown(conds):
            "- 2 dBm sessions applied TXPOW 8 to both relays after the bring-up; the relay logs confirm it.",
            "- Car-key separations of 2.24 m are estimated from the layout (12 cm + about 2 m + 12 cm).",
            "- Rounds are not independent: the RTT moves in plateaus within a campaign. The bootstrap "
-           "intervals assume independent rounds, so they are optimistic."]
+           "intervals assume independent rounds, so they are optimistic.",
+           "- The spread between campaigns (campaign spread table) is larger than most differences between "
+           "settings. Three campaigns per condition do not resolve differences below about 50 ms."]
     return "\n".join(md) + "\n"
 
 
