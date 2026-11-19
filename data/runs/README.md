@@ -44,6 +44,17 @@ Notes:
   has relay lines (`CSVA`/`CSVB`) for all rounds that were answered.
 - Sessions that were aborted or that did not go through the relays are not included here.
 
+## Physical separation at about 2 m
+
+Layout on the table, in order: car, relay B, relay A, key. Car to relay B 12 cm, relay B to relay A
+about 2 m (estimated by eye), relay A to key 12 cm. `dist_m` is the car-key separation, estimated at
+2.24 m from those distances.
+
+| Session | Condition | Relay tunnel | Label |
+|---|---|---|---|
+| 20261118-215829, -220051, -220426 | baseline (vehicle to key, direct) | none, relays silent | `baseline` |
+| 20261118-215933, -220155, -220529 | relayed | unicast, TX power default | `relay-unicast-ab200` |
+
 ## Analysis
 
 `tools/analyze_runs.py` and `tools/plot_runs.py` read the campaign folders (see `TESTING.md`,
