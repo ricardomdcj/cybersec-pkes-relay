@@ -21,10 +21,10 @@ REPO = pathlib.Path(__file__).resolve().parent.parent
 C = 299792458.0
 FREQ_HZ = 2.412e9                      # Wi-Fi channel 1, the channel the relays use
 BASELINES = {"baseline 0.52": 0.52, "baseline 0.99": 0.99, "baseline 2.24": 2.24}
-ESPNOW_TX_DBM = {"ESP-NOW tunnel, TX 20 dBm (default)": 20.0, "ESP-NOW tunnel, TX 2 dBm (lowest used)": 2.0}
-BLE_TX_DBM = 0.0                       # assumed: typical BLE setting
-SENS_ESPNOW_DBM = -98.0                # assumed: 802.11b 1 Mbps, datasheet-typical
-SENS_BLE_DBM = -96.0                   # assumed: BLE 1M PHY, datasheet-typical
+ESPNOW_TX_DBM = {"ESP-NOW tunnel, TX 19.5 dBm (default, typical)": 19.5, "ESP-NOW tunnel, TX 2 dBm (lowest used)": 2.0}
+BLE_TX_DBM = 0.0                       # ESP32 datasheet v5.3, Table 5-8: RF transmit power, typical 0 dBm
+SENS_ESPNOW_DBM = -98.0                # ESP32 datasheet v5.3, Table 5-6: 802.11b 1 Mbps sensitivity, typical
+SENS_BLE_DBM = -89.0                   # ESP32 datasheet v5.3, Table 5-7: basic data rate (GFSK, = BLE 1M), typical
 FADE_MARGIN_DB = 10.0                  # assumed
 ANTENNA_GAIN_DBI = 0.0                 # assumed, per end
 EXPONENTS = [("2 (open, line of sight)", 2.0), ("3 (indoor, obstructed)", 3.0), ("4 (dense indoor)", 4.0)]
@@ -91,11 +91,12 @@ def main(argv=None):
         lines.append(f"| {name} | {p:.1f} | {s:.0f} | " + " | ".join(cells) + " |")
     lines += ["", "## Assumptions", "",
               f"- Sensitivity: {SENS_ESPNOW_DBM:.0f} dBm (ESP-NOW, 802.11b 1 Mbps) and {SENS_BLE_DBM:.0f} dBm "
-              "(BLE 1M PHY). Datasheet-typical; verify against the ESP32 and nRF datasheets before publishing.",
+              "(BLE 1M PHY). Typical values from the ESP32 Series Datasheet v5.3 (Tables 5-6 and 5-7); the bench "
+              "boards were not characterised.",
               f"- Fade margin {FADE_MARGIN_DB:.0f} dB; antenna gain {ANTENNA_GAIN_DBI:.0f} dBi at each end "
               "(the CYD PCB antennas were not characterised).",
               f"- BLE TX {BLE_TX_DBM:.0f} dBm, a typical setting; not measured on this bench.",
-              "- TX 20 dBm is the default ESP-NOW maximum; TX 2 dBm is the lowest value the bench used (TXPOW 8).",
+              "- TX 19.5 dBm is the typical ESP-NOW power (Table 5-6, 11b mode); TX 2 dBm is the lowest value the bench used (TXPOW 8).",
               "- The car-key distances 0.99 and 2.24 m are estimates from the layout."]
     out = pathlib.Path(args.out)
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")

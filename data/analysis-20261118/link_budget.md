@@ -20,14 +20,14 @@ orientation and near-field effects). The bench cannot calibrate n, so the ranges
 
 | Link | TX (dBm) | Sensitivity (dBm) | n = 2 (open, line of sight) | n = 3 (indoor, obstructed) | n = 4 (dense indoor) |
 |---|---|---|---|---|---|
-| ESP-NOW tunnel, TX 20 dBm (default) | 20.0 | -98 | 2.5 km | 183 m | 50 m |
+| ESP-NOW tunnel, TX 19.5 dBm (default, typical) | 19.5 | -98 | 2.3 km | 177 m | 48 m |
 | ESP-NOW tunnel, TX 2 dBm (lowest used) | 2.0 | -98 | 313 m | 46 m | 18 m |
-| BLE legs (car to relay B, relay A to key) | 0.0 | -96 | 197 m | 34 m | 14 m |
+| BLE legs (car to relay B, relay A to key) | 0.0 | -89 | 88 m | 20 m | 9 m |
 
 ## Assumptions
 
-- Sensitivity: -98 dBm (ESP-NOW, 802.11b 1 Mbps) and -96 dBm (BLE 1M PHY). Datasheet-typical; verify against the ESP32 and nRF datasheets before publishing.
+- Sensitivity: -98 dBm (ESP-NOW, 802.11b 1 Mbps) and -89 dBm (BLE 1M PHY). Typical values from the ESP32 Series Datasheet v5.3 (Tables 5-6 and 5-7); the bench boards were not characterised.
 - Fade margin 10 dB; antenna gain 0 dBi at each end (the CYD PCB antennas were not characterised).
 - BLE TX 0 dBm, a typical setting; not measured on this bench.
-- TX 20 dBm is the default ESP-NOW maximum; TX 2 dBm is the lowest value the bench used (TXPOW 8).
+- TX 19.5 dBm is the typical ESP-NOW power (Table 5-6, 11b mode); TX 2 dBm is the lowest value the bench used (TXPOW 8).
 - The car-key distances 0.99 and 2.24 m are estimates from the layout.
