@@ -106,6 +106,14 @@ static uint8_t  last_nonce[NONCE_LEN];
 static int64_t  t_tx_us;
 static esp_timer_handle_t round_timer, timeout_timer;
 
+/* Nonces of the challenges that timed out (M-22). A response that arrives after its deadline answers
+ * one of these, not the round in flight: it is recognised by its nonce and discarded. Only the last
+ * LATE_SLOTS timeouts are kept. Guarded by round_mux. */
+#define LATE_SLOTS 4
+static uint8_t late_nonce[LATE_SLOTS][NONCE_LEN];
+static bool    late_valid[LATE_SLOTS];
+static int     late_next;
+
 /* Counters and statistics (RTT in microseconds, answered rounds only). */
 static int      round_i, ok_count, fail_count, timeout_count, answered_count;
 static int64_t  rtt_min, rtt_max, rtt_sum;
@@ -413,6 +421,9 @@ static void timeout_cb(void *arg)
     if (!round_open) { xSemaphoreGive(round_mux); return; }   /* the notify already closed it */
     round_open = false;
     memcpy(nonce, last_nonce, NONCE_LEN);
+    memcpy(late_nonce[late_next], last_nonce, NONCE_LEN);     /* M-22: its answer may still arrive */
+    late_valid[late_next] = true;
+    late_next = (late_next + 1) % LATE_SLOTS;
     xSemaphoreGive(round_mux);
     finish_round(RES_TIMEOUT, -1, nonce, NULL, 0);
 }
@@ -551,6 +562,14 @@ static void send_challenge(void)
 
 static void round_timer_cb(void *arg) { send_challenge(); }
 
+/* True if the notified value is the HMAC of the given nonce. */
+static bool response_matches(const uint8_t *got, uint16_t got_len, const uint8_t *nonce)
+{
+    uint8_t expected[32];
+    pkes_hmac_response(PSK, sizeof PSK, nonce, NONCE_LEN, expected);
+    return got_len == RESPONSE_LEN && memcmp(got, expected, RESPONSE_LEN) == 0;
+}
+
 static void handle_notify(struct ble_gap_event *event)
 {
     if (event->notify_rx.attr_handle != h_response) return;
@@ -569,15 +588,27 @@ static void handle_notify(struct ble_gap_event *event)
         ESP_LOGW(TAG, "response past the deadline (round already marked TIMEOUT); discarded");
         return;
     }
+    /* M-22: a value that answers an earlier, timed-out challenge is not this round's answer. It is
+     * discarded and the round stays open, so the answer to this round can still arrive in time. */
+    memcpy(nonce, last_nonce, NONCE_LEN);
+    bool ok = response_matches(got, got_len, nonce);
+    if (!ok) {
+        for (int i = 0; i < LATE_SLOTS; i++) {
+            if (late_valid[i] && response_matches(got, got_len, late_nonce[i])) {
+                uint8_t lnonce[NONCE_LEN];
+                memcpy(lnonce, late_nonce[i], NONCE_LEN);
+                late_valid[i] = false;
+                xSemaphoreGive(round_mux);
+                ESP_LOGW(TAG, "late response to the timed-out challenge %02x%02x%02x%02x discarded; round in flight kept",
+                         lnonce[0], lnonce[1], lnonce[2], lnonce[3]);
+                return;
+            }
+        }
+    }
     round_open = false;
     rtt = t_rx - t_tx_us;
-    memcpy(nonce, last_nonce, NONCE_LEN);
     xSemaphoreGive(round_mux);
     esp_timer_stop(timeout_timer);
-
-    uint8_t expected[32];
-    pkes_hmac_response(PSK, sizeof PSK, nonce, NONCE_LEN, expected);
-    bool ok = (got_len == RESPONSE_LEN) && (memcmp(got, expected, RESPONSE_LEN) == 0);
 
     finish_round(ok ? RES_OK : RES_FAIL, rtt, nonce, got, got_len);
 }
