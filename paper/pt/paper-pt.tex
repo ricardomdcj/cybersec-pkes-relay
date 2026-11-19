@@ -133,16 +133,16 @@ A Fig.~\ref{fig:architecture} mostra as quatro placas. O emulador de chave execu
   >=Latex
 ]
 \node[box] (key) {Emulador de chave\\(CYD, firmware da chave,\\\emph{periférico})};
-\node[atk, right=of key] (relA) {Relay A\\(CYD, \emph{central})\\registro};
-\node[atk, right=28mm of relA] (relB) {Relay B\\(CYD, \emph{periférico})\\registro};
-\node[box, right=of relB] (veh) {Verificador (veículo)\\(CYD, \emph{central})\\decisão, $t_0$, $t_1$};
-\draw[<->] (key) -- (relA) node[midway, above=1mm, lbl]{BLE\\GATT};
-\draw[<->] (relA) -- (relB) node[midway, above=1mm, lbl]{ESP-NOW\\(distância variada)};
-\draw[<->] (relB) -- (veh) node[midway, above=1mm, lbl]{BLE\\GATT};
+\node[atk, right=of key] (relA) {Relay A\\(CYD, \emph{central})\\relógio, registro CSVA};
+\node[atk, right=28mm of relA] (relB) {Relay B\\(CYD, \emph{periférico})\\relógio, registro CSVB};
+\node[box, right=of relB] (veh) {Verificador (veículo)\\(CYD, \emph{central})\\decisão, $t_0$, $t_1$ no seu relógio};
+\draw[<->] (key) -- (relA) node[midway, above=1mm, lbl]{BLE, RF 2,4\,GHz\\GATT};
+\draw[<->] (relA) -- (relB) node[midway, above=1mm, lbl]{ESP-NOW, RF 2,4\,GHz\\(distância variada)};
+\draw[<->] (relB) -- (veh) node[midway, above=1mm, lbl]{BLE, RF 2,4\,GHz\\GATT};
 \node[boundary, fit=(relA)(relB), label={[font=\scriptsize]above:não confiável: relays e túnel sob controle do atacante}] (boundaryNode) {};
 \draw[<->, dotted] (key.south) to[out=-60,in=-120,looseness=0.6] node[pos=0.5, below=1mm, lbl]{linha de base: conexão direta, sem relay} (veh.south);
 \end{tikzpicture}
-\caption{Arquitetura da bancada. Quatro módulos ESP32-2432S028R (CYD): o emulador de chave, o Relay~A junto a ele, o Relay~B junto ao verificador e o próprio verificador. Os dois relays e o túnel ESP-NOW entre eles formam a região não confiável (tracejada). Todo enlace é bidirecional: o desafio vai do verificador para a chave e a resposta volta pelo mesmo caminho. A decisão de autenticação e os carimbos de tempo $t_0$ e $t_1$ ficam no verificador. Na linha de base, a chave se conecta diretamente ao verificador (pontilhado).}
+\caption{Arquitetura da bancada. Quatro módulos ESP32-2432S028R (CYD): o emulador de chave, o Relay~A junto a ele, o Relay~B junto ao verificador e o próprio verificador. Os dois relays e o túnel ESP-NOW entre eles formam a região não confiável (tracejada). Todo enlace é bidirecional: o desafio vai do verificador para a chave e a resposta volta pelo mesmo caminho. A decisão de autenticação e os carimbos de tempo $t_0$ e $t_1$ ficam no verificador. Na linha de base, a chave se conecta diretamente ao verificador (pontilhado). Relógios: o esp\_timer de cada placa (resolução de 1\,$\mu$s); o verificador grava $t_0$ na escrita do desafio e $t_1$ na notificação, e os relays registram o tempo de resposta (CSVA, CSVB). Os três enlaces contínuos são saltos de RF a 2,4\,GHz; a fronteira tracejada é a região do atacante.}
 \label{fig:architecture}
 \end{figure*}
 

@@ -68,14 +68,21 @@ then set `RELAY_LINK_SELFTEST 0` in `relays/main/relay_config.h`.
 
 ## Milestone 4 — Mitigation analysis (paper discussion)
 
-- [ ] Characterize empirically how a timing or latency bound would separate baseline from
+- [x] Characterize empirically how a timing or latency bound would separate baseline from
       relayed rounds (i.e., what cutoff rejects the relay without rejecting the honest key).
-- [ ] Write up the distance-bounding and ranging mitigations against the measured data.
+      Done: the 160 ms bound on the replication set (0 of 500 honest rounds rejected, 2.6 % of relayed
+      accepted) and the latency sweep at 0.99 m (50 % point 1650 to 1675 ms; prediction 1641 ms).
+      Limitation, stated in the Marco 4 doc: 10 campaigns (500 rounds) per condition, below the course's
+      30-repetition floor at campaign level; to improve in the final paper.
+- [x] Write up the distance-bounding and ranging mitigations against the measured data
+      (paper discussion and Marco 4 document, sections 4 and 5).
+- [x] Item 5 of the Marco 4 review: architecture diagram marks the clocks (esp_timer), the capture
+      points (CSVA, CSVB), the verifier's decision and the RF hops.
 
 ## Housekeeping
 
-- [ ] ESP-NOW addressing: the tunnel currently uses broadcast unless `RELAY_PEER_MAC` is set.
-      Set both peer MACs (read from the boot logs) to get MAC-level ACKs and real loss counts.
+- [x] ESP-NOW addressing: the tunnel uses unicast with `RELAY_PEER_MAC` (MAC-level ACKs); the
+      unicast campaigns have no timeouts. Broadcast remains only in the 0.52 m comparison.
 - [ ] Keep the protocol definitions in lockstep: `components/pkes_contract/ble_contract.h` is the
       source of truth; `relays/main/link.h` defines the tunnel frames; `phoneaskey/` must match
       the contract only if it is revived.
