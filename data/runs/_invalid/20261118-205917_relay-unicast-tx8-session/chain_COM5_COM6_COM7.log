@@ -1,0 +1,492 @@
+20:59:22.433 [LOGGER] COM5 logged as RELAY_A (DTR/RTS idle)
+20:59:22.452 [LOGGER] COM6 logged as KEY (DTR/RTS idle)
+20:59:22.471 [LOGGER] COM7 logged as RELAY_B (DTR/RTS idle)
+20:59:22.675 [LOGGER] reset pulse on COM5
+20:59:22.878 [LOGGER] reset pulse on COM7
+20:59:22.934 [RELAY_A] ets Jul 29 2019 12:21:46
+20:59:22.934 [RELAY_A] 
+20:59:22.934 [RELAY_A] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+20:59:22.934 [RELAY_A] configsip: 0, SPIWP:0xee
+20:59:22.934 [RELAY_A] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+20:59:22.934 [RELAY_A] mode:DIO, clock div:2
+20:59:22.934 [RELAY_A] load:0x3fff0040,len:6272
+20:59:22.934 [RELAY_A] load:0x40078000,len:15824
+20:59:22.934 [RELAY_A] load:0x40080400,len:3988
+20:59:22.934 [RELAY_A] entry 0x40080644
+20:59:22.934 [RELAY_A] I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+20:59:22.934 [RELAY_A] I (27) boot: compile time Nov 18 2026 19:31:31
+20:59:22.934 [RELAY_A] I (28) boot: Multicore bootloader
+20:59:22.934 [RELAY_A] I (29) boot: chip revision: v3.1
+20:59:22.934 [RELAY_A] I (31) boot.esp32: SPI Speed      : 40MHz
+20:59:22.934 [RELAY_A] I (35) boot.esp32: SPI Mode       : DIO
+20:59:22.934 [RELAY_A] I (39) boot.esp32: SPI Flash Size : 4MB
+20:59:22.934 [RELAY_A] I (42) boot: Enabling RNG early entropy source...
+20:59:22.934 [RELAY_A] I (47) boot: Partition Table:
+20:59:22.934 [RELAY_A] I (49) boot: ## Label            Usage          Type ST Offset   Length
+20:59:22.934 [RELAY_A] I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+20:59:22.934 [RELAY_A] I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+20:59:22.934 [RELAY_A] I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+20:59:22.934 [RELAY_A] I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+20:59:22.934 [RELAY_A] I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+20:59:22.934 [RELAY_A] I (88) boot: End of partition table
+20:59:22.934 [RELAY_A] I (92) esp_image: segment 0: paddr=001d0020 vaddr=3f400020 size=3f3bch (259004) map
+20:59:22.934 [RELAY_A] I (191) esp_image: segment 1: paddr=0020f3e4 vaddr=3ffbdb60 size=00c34h (  3124) load
+20:59:22.934 [RELAY_A] I (193) esp_image: segment 2: paddr=00210020 vaddr=400d0020 size=e92a0h (955040) map
+20:59:23.041 [RELAY_B] ets Jul 29 2019 12:21:46
+20:59:23.041 [RELAY_B] 
+20:59:23.041 [RELAY_B] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+20:59:23.041 [RELAY_B] configsip: 0, SPIWP:0xee
+20:59:23.041 [RELAY_B] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+20:59:23.041 [RELAY_B] mode:DIO, clock div:2
+20:59:23.041 [RELAY_B] load:0x3fff0040,len:6272
+20:59:23.041 [RELAY_B] load:0x40078000,len:15824
+20:59:23.041 [RELAY_B] load:0x40080400,len:3988
+20:59:23.041 [RELAY_B] entry 0x40080644
+20:59:23.041 [RELAY_B] I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+20:59:23.041 [RELAY_B] I (27) boot: compile time Nov 18 2026 19:35:16
+20:59:23.041 [RELAY_B] I (27) boot: Multicore bootloader
+20:59:23.041 [RELAY_B] I (29) boot: chip revision: v3.1
+20:59:23.041 [RELAY_B] I (31) boot.esp32: SPI Speed      : 40MHz
+20:59:23.041 [RELAY_B] I (35) boot.esp32: SPI Mode       : DIO
+20:59:23.041 [RELAY_B] I (39) boot.esp32: SPI Flash Size : 4MB
+20:59:23.041 [RELAY_B] I (42) boot: Enabling RNG early entropy source...
+20:59:23.041 [RELAY_B] I (47) boot: Partition Table:
+20:59:23.041 [RELAY_B] I (49) boot: ## Label            Usage          Type ST Offset   Length
+20:59:23.041 [RELAY_B] I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+20:59:23.041 [RELAY_B] I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+20:59:23.041 [RELAY_B] I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+20:59:23.041 [RELAY_B] I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+20:59:23.041 [RELAY_B] I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+20:59:23.041 [RELAY_B] I (88) boot: End of partition table
+20:59:23.041 [RELAY_B] I (92) esp_image: segment 0: paddr=001d0020 vaddr=3f400020 size=3f28ch (258700) map
+20:59:23.195 [RELAY_B] I (191) esp_image: segment 1: paddr=0020f2b4 vaddr=3ffbdb60 size=00d64h (  3428) load
+20:59:23.195 [RELAY_B] I (193) esp_image: segment 2: paddr=00210020 vaddr=400d0020 size=e974ch (956236) map
+20:59:23.466 [RELAY_A] I (535) esp_image: segment 3: paddr=002f92c8 vaddr=3ffbe794 size=056b4h ( 22196) load
+20:59:23.466 [RELAY_A] I (544) esp_image: segment 4: paddr=002fe984 vaddr=40080000 size=1a09ch (106652) load
+20:59:23.466 [RELAY_A] I (588) esp_image: segment 5: paddr=00318a28 vaddr=50000000 size=00028h (    40) load
+20:59:23.466 [RELAY_A] I (602) boot: Loaded app from partition at offset 0x1d0000
+20:59:23.466 [RELAY_A] I (602) boot: Disabling RNG early entropy source...
+20:59:23.466 [RELAY_A] I (613) cpu_start: Multicore app
+20:59:23.466 [RELAY_A] I (621) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+20:59:23.466 [RELAY_A] I (621) cpu_start: Pro cpu start user code
+20:59:23.466 [RELAY_A] I (621) cpu_start: cpu freq: 240000000 Hz
+20:59:23.466 [RELAY_A] I (623) app_init: Application information:
+20:59:23.466 [RELAY_A] I (627) app_init: Project name:     relays
+20:59:23.466 [RELAY_A] I (631) app_init: App version:      1cf7f0c-dirty
+20:59:23.466 [RELAY_A] I (635) app_init: Compile time:     Nov 18 2026 20:14:32
+20:59:23.466 [RELAY_A] I (640) app_init: ELF file SHA256:  f178143d0...
+20:59:23.466 [RELAY_A] I (645) app_init: ESP-IDF:          v6.1
+20:59:23.466 [RELAY_A] I (648) efuse_init: Min chip rev:     v0.0
+20:59:23.466 [RELAY_A] I (652) efuse_init: Max chip rev:     v3.99 
+20:59:23.466 [RELAY_A] I (656) efuse_init: Chip rev:         v3.1
+20:59:23.466 [RELAY_A] I (660) heap_init: Initializing. RAM available for dynamic allocation:
+20:59:23.466 [RELAY_A] I (666) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+20:59:23.466 [RELAY_A] I (671) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+20:59:23.466 [RELAY_A] I (676) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+20:59:23.466 [RELAY_A] I (682) heap_init: At 3FFD65D0 len 00009A30 (38 KiB): DRAM
+20:59:23.466 [RELAY_A] I (687) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+20:59:23.466 [RELAY_A] I (692) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+20:59:23.466 [RELAY_A] I (698) heap_init: At 4009A09C len 00005F64 (23 KiB): IRAM
+20:59:23.466 [RELAY_A] I (705) spi_flash: detected chip: gd
+20:59:23.466 [RELAY_A] I (706) spi_flash: flash io: dio
+20:59:23.466 [RELAY_A] I (711) coexist: coex firmware version: a830d28
+20:59:23.466 [RELAY_A] I (714) main_task: Started on CPU0
+20:59:23.466 [RELAY_A] I (716) main_task: Calling app_main()
+20:59:23.466 [RELAY_A] I (729) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+20:59:23.668 [RELAY_B] I (536) esp_image: segment 3: paddr=002f9774 vaddr=3ffbe8c4 size=055e4h ( 21988) load
+20:59:23.668 [RELAY_B] I (545) esp_image: segment 4: paddr=002fed60 vaddr=40080000 size=1a09ch (106652) load
+20:59:23.668 [RELAY_B] I (588) esp_image: segment 5: paddr=00318e04 vaddr=50000000 size=00028h (    40) load
+20:59:23.668 [RELAY_B] I (602) boot: Loaded app from partition at offset 0x1d0000
+20:59:23.668 [RELAY_B] I (602) boot: Disabling RNG early entropy source...
+20:59:23.668 [RELAY_B] I (613) cpu_start: Multicore app
+20:59:23.668 [RELAY_B] I (621) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+20:59:23.668 [RELAY_B] I (622) cpu_start: Pro cpu start user code
+20:59:23.668 [RELAY_B] I (622) cpu_start: cpu freq: 240000000 Hz
+20:59:23.668 [RELAY_B] I (623) app_init: Application information:
+20:59:23.668 [RELAY_B] I (627) app_init: Project name:     relays
+20:59:23.668 [RELAY_B] I (631) app_init: App version:      1cf7f0c
+20:59:23.668 [RELAY_B] I (635) app_init: Compile time:     Nov 18 2026 19:33:55
+20:59:23.668 [RELAY_B] I (640) app_init: ELF file SHA256:  525f9e47f...
+20:59:23.668 [RELAY_B] I (644) app_init: ESP-IDF:          v6.1
+20:59:23.668 [RELAY_B] I (648) efuse_init: Min chip rev:     v0.0
+20:59:23.668 [RELAY_B] I (652) efuse_init: Max chip rev:     v3.99 
+20:59:23.668 [RELAY_B] I (656) efuse_init: Chip rev:         v3.1
+20:59:23.668 [RELAY_B] I (660) heap_init: Initializing. RAM available for dynamic allocation:
+20:59:23.668 [RELAY_B] I (666) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+20:59:23.668 [RELAY_B] I (671) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+20:59:23.668 [RELAY_B] I (676) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+20:59:23.668 [RELAY_B] I (681) heap_init: At 3FFD6650 len 000099B0 (38 KiB): DRAM
+20:59:23.668 [RELAY_B] I (686) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+20:59:23.668 [RELAY_B] I (692) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+20:59:23.668 [RELAY_B] I (697) heap_init: At 4009A09C len 00005F64 (23 KiB): IRAM
+20:59:23.668 [RELAY_B] I (704) spi_flash: detected chip: generic
+20:59:23.668 [RELAY_B] I (706) spi_flash: flash io: dio
+20:59:23.668 [RELAY_B] I (711) coexist: coex firmware version: a830d28
+20:59:23.668 [RELAY_B] I (715) main_task: Started on CPU0
+20:59:23.668 [RELAY_B] I (717) main_task: Calling app_main()
+20:59:23.668 [RELAY_B] I (730) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+20:59:23.721 [RELAY_A] I (863) cyd_display: ST7789 + LVGL ready
+20:59:23.823 [RELAY_B] I (864) cyd_display: ST7789 + LVGL ready
+20:59:23.965 [RELAY_A] I (1094) RUN_META: role=relay-a fw=1cf7f0c+mod build=2026-11-18 20:14
+20:59:23.965 [RELAY_A] I (1152) wifi:wifi driver task: 3ffdfdf4, prio:23, stack:6656, core=0
+20:59:23.965 [RELAY_A] I (1159) wifi:wifi firmware version: e12a754
+20:59:23.965 [RELAY_A] I (1159) wifi:wifi certification version: v7.0
+20:59:23.965 [RELAY_A] I (1159) wifi:config NVS flash: enabled
+20:59:23.965 [RELAY_A] I (1161) wifi:config nano formatting: disabled
+20:59:23.965 [RELAY_A] I (1166) wifi:Init data frame dynamic rx buffer num: 32
+20:59:23.965 [RELAY_A] I (1171) wifi:Init static rx mgmt buffer num: 5
+20:59:23.965 [RELAY_A] I (1174) wifi:Init management short buffer num: 32
+20:59:23.965 [RELAY_A] I (1179) wifi:Init dynamic tx buffer num: 32
+20:59:23.965 [RELAY_A] I (1183) wifi:Init static rx buffer size: 1600
+20:59:23.965 [RELAY_A] I (1187) wifi:Init static rx buffer num: 10
+20:59:23.965 [RELAY_A] I (1191) wifi:Init dynamic rx buffer num: 32
+20:59:23.965 [RELAY_A] I (1197) wifi_init: rx ba win: 6
+20:59:23.965 [RELAY_A] I (1198) wifi_init: accept mbox: 6
+20:59:23.965 [RELAY_A] I (1201) wifi_init: tcpip mbox: 32
+20:59:23.965 [RELAY_A] I (1204) wifi_init: udp mbox: 6
+20:59:23.965 [RELAY_A] I (1207) wifi_init: tcp mbox: 6
+20:59:23.965 [RELAY_A] I (1210) wifi_init: tcp tx win: 5760
+20:59:23.965 [RELAY_A] I (1213) wifi_init: tcp rx win: 5760
+20:59:23.965 [RELAY_A] I (1217) wifi_init: tcp mss: 1440
+20:59:23.965 [RELAY_A] I (1220) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+20:59:24.175 [RELAY_B] I (1102) RUN_META: role=relay-b fw=1cf7f0c build=2026-11-18 19:32
+20:59:24.175 [RELAY_B] I (1160) wifi:wifi driver task: 3ffdfd80, prio:23, stack:6656, core=0
+20:59:24.175 [RELAY_B] I (1166) wifi:wifi firmware version: e12a754
+20:59:24.175 [RELAY_B] I (1167) wifi:wifi certification version: v7.0
+20:59:24.175 [RELAY_B] I (1167) wifi:config NVS flash: enabled
+20:59:24.175 [RELAY_B] I (1169) wifi:config nano formatting: disabled
+20:59:24.175 [RELAY_B] I (1173) wifi:Init data frame dynamic rx buffer num: 32
+20:59:24.175 [RELAY_B] I (1178) wifi:Init static rx mgmt buffer num: 5
+20:59:24.175 [RELAY_B] I (1182) wifi:Init management short buffer num: 32
+20:59:24.175 [RELAY_B] I (1187) wifi:Init dynamic tx buffer num: 32
+20:59:24.175 [RELAY_B] I (1191) wifi:Init static rx buffer size: 1600
+20:59:24.175 [RELAY_B] I (1195) wifi:Init static rx buffer num: 10
+20:59:24.175 [RELAY_B] I (1199) wifi:Init dynamic rx buffer num: 32
+20:59:24.175 [RELAY_B] I (1205) wifi_init: rx ba win: 6
+20:59:24.175 [RELAY_B] I (1206) wifi_init: accept mbox: 6
+20:59:24.175 [RELAY_B] I (1209) wifi_init: tcpip mbox: 32
+20:59:24.175 [RELAY_B] I (1212) wifi_init: udp mbox: 6
+20:59:24.175 [RELAY_B] I (1215) wifi_init: tcp mbox: 6
+20:59:24.175 [RELAY_B] I (1218) wifi_init: tcp tx win: 5760
+20:59:24.175 [RELAY_B] I (1221) wifi_init: tcp rx win: 5760
+20:59:24.175 [RELAY_B] I (1225) wifi_init: tcp mss: 1440
+20:59:24.175 [RELAY_B] I (1228) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+20:59:24.292 [RELAY_A] I (1301) wifi:mode : sta (b8:bb:11:83:a9:80)
+20:59:24.292 [RELAY_A] I (1302) wifi:enable tsf
+20:59:24.292 [RELAY_A] I (1307) wifi:Set ps type: 0, coexist: 0
+20:59:24.292 [RELAY_A] 
+20:59:24.292 [RELAY_A] I (1309) LINK: power save WiFi = NONE (rc=0)
+20:59:24.292 [RELAY_A] I (1309) LINK: this board MAC: b8:bb:11:83:a9:80
+20:59:24.292 [RELAY_A] I (1311) ESPNOW: espnow [version: 2.0] init
+20:59:24.292 [RELAY_A] I (1313) LINK: ESP-NOW ready (channel 1), unicast to 48:af:f3:70:1d:58
+20:59:24.292 [RELAY_A] I (1321) BTDM_INIT: BT controller compile version [4a0f94d]
+20:59:24.292 [RELAY_A] I (1325) BTDM_INIT: Using main XTAL as clock source
+20:59:24.292 [RELAY_A] I (1330) BTDM_INIT: Bluetooth MAC: b8:bb:11:83:a9:82
+20:59:24.292 [RELAY_A] I (1337) wifi:Coexist!!! Wi-Fi station would only keep waked when available
+20:59:24.292 [RELAY_A] 
+20:59:24.292 [RELAY_A] I (1504) RELAY_A: Relay A started (BLE central: connects to the key and tunnels)
+20:59:24.292 [RELAY_A] I (1505) main_task: Returned from app_main()
+20:59:24.292 [RELAY_A] I (1541) NimBLE: GAP procedure initiated: discovery; 
+20:59:24.292 [RELAY_A] I (1541) NimBLE: own_addr_type=0 filter_policy=0 passive=0 limited=0 filter_duplicates=1 
+20:59:24.292 [RELAY_A] I (1542) NimBLE: duration=forever
+20:59:24.292 [RELAY_A] I (1545) NimBLE: 
+20:59:24.292 [RELAY_A] 
+20:59:24.292 [RELAY_A] I (1553) RELAY_A: scanning for the key service...
+20:59:24.395 [RELAY_B] I (1310) wifi:mode : sta (48:af:f3:70:1d:58)
+20:59:24.395 [RELAY_B] I (1310) wifi:enable tsf
+20:59:24.395 [RELAY_B] I (1315) wifi:Set ps type: 0, coexist: 0
+20:59:24.395 [RELAY_B] 
+20:59:24.395 [RELAY_B] I (1316) LINK: power save WiFi = NONE (rc=0)
+20:59:24.395 [RELAY_B] I (1316) LINK: this board MAC: 48:af:f3:70:1d:58
+20:59:24.395 [RELAY_B] I (1319) ESPNOW: espnow [version: 2.0] init
+20:59:24.395 [RELAY_B] I (1322) LINK: ESP-NOW ready (channel 1), unicast to b8:bb:11:83:a9:80
+20:59:24.395 [RELAY_B] I (1329) BTDM_INIT: BT controller compile version [4a0f94d]
+20:59:24.395 [RELAY_B] I (1334) BTDM_INIT: Using main XTAL as clock source
+20:59:24.395 [RELAY_B] I (1338) BTDM_INIT: Bluetooth MAC: 48:af:f3:70:1d:5a
+20:59:24.395 [RELAY_B] I (1346) wifi:Coexist!!! Wi-Fi station would only keep waked when available
+20:59:24.395 [RELAY_B] 
+20:59:24.549 [RELAY_B] I (1520) RELAY_B: Relay B started (BLE peripheral: key clone)
+20:59:24.549 [RELAY_B] I (1525) main_task: Returned from app_main()
+20:59:24.549 [RELAY_B] I (1561) NimBLE: GAP procedure initiated: advertise; 
+20:59:24.549 [RELAY_B] I (1562) NimBLE: disc_mode=2
+20:59:24.549 [RELAY_B] I (1562) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+20:59:24.549 [RELAY_B] I (1567) NimBLE: 
+20:59:24.549 [RELAY_B] 
+20:59:24.549 [RELAY_B] I (1574) RELAY_B: advertising the key clone; waiting for the vehicle
+20:59:24.611 [RELAY_A] I (1851) RELAY_A: key found, connecting...
+20:59:24.611 [RELAY_A] I (1854) NimBLE: GAP procedure initiated: connect; 
+20:59:24.611 [RELAY_A] I (1855) NimBLE: peer_addr_type=0 peer_addr=
+20:59:24.611 [RELAY_A] I (1855) NimBLE: 48:af:f3:70:1d:5a
+20:59:24.611 [RELAY_A] I (1857) NimBLE:  scan_itvl=16 scan_window=16 itvl_min=24 itvl_max=40 latency=0 supervision_timeout=256 min_ce_len=0 max_ce_len=0 own_addr_type=0
+20:59:24.611 [RELAY_A] I (1869) NimBLE: 
+20:59:24.611 [RELAY_A] 
+20:59:24.893 [RELAY_B] I (1857) RELAY_B: vehicle connected (handle 0)
+20:59:24.893 [RELAY_B] I (1860) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+20:59:24.893 [RELAY_B] 
+20:59:24.893 [RELAY_B] I (1860) RELAY_B: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+20:59:24.893 [RELAY_B] I (1959) RELAY_B: MTU handle=0 mtu=256
+20:59:24.944 [RELAY_A] I (2110) RELAY_A: connected to key (handle 0); discovering service
+20:59:24.944 [RELAY_A] I (2113) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+20:59:24.944 [RELAY_A] 
+20:59:24.944 [RELAY_A] I (2114) RELAY_A: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=central phy_tx=? phy_rx=?
+20:59:24.944 [RELAY_A] I (2124) NimBLE: GATT procedure initiated: exchange mtu
+20:59:24.944 [RELAY_A] 
+20:59:24.944 [RELAY_A] I (2134) NimBLE: GATT procedure initiated: discover service by uuid; uuid=
+20:59:24.944 [RELAY_A] I (2136) NimBLE: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10
+20:59:24.944 [RELAY_A] I (2140) NimBLE: 
+20:59:24.944 [RELAY_A] 
+20:59:24.944 [RELAY_A] I (2212) RELAY_A: MTU handle=0 mtu=256
+20:59:25.060 [KEY] I (4380606) KEY: vehicle disabled notify on RESPONSE
+20:59:25.060 [KEY] W (4380607) KEY: vehicle disconnected (reason=520, disconnects=22); re-advertising
+20:59:25.060 [KEY] I (4380615) NimBLE: GAP procedure initiated: advertise; 
+20:59:25.060 [KEY] I (4380615) NimBLE: disc_mode=2
+20:59:25.060 [KEY] I (4380615) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+20:59:25.060 [KEY] I (4380624) NimBLE: 
+20:59:25.060 [KEY] 
+20:59:25.060 [KEY] I (4380633) KEY: advertising the key; waiting for the vehicle
+20:59:25.207 [RELAY_A] I (2458) RELAY_A: service at 14..19
+20:59:25.207 [RELAY_A] I (2459) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+20:59:25.207 [RELAY_A] I (2459) NimBLE: start_handle=14 end_handle=19 uuid=
+20:59:25.207 [RELAY_A] I (2462) NimBLE: 8f2a0002-1b2c-4e6a-9f3d-2a7c1e5b0a10
+20:59:25.207 [RELAY_A] I (2467) NimBLE: 
+20:59:25.207 [RELAY_A] 
+20:59:25.671 [RELAY_A] I (2858) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+20:59:25.671 [RELAY_A] I (2859) NimBLE: start_handle=14 end_handle=19 uuid=
+20:59:25.671 [RELAY_A] I (2859) NimBLE: 8f2a0003-1b2c-4e6a-9f3d-2a7c1e5b0a10
+20:59:25.671 [RELAY_A] I (2864) NimBLE: 
+20:59:25.671 [RELAY_A] 
+20:59:25.998 [RELAY_A] I (3258) NimBLE: GATT procedure initiated: discover all descriptors; 
+20:59:25.998 [RELAY_A] I (3259) NimBLE: chr_val_handle=18 end_handle=19
+20:59:25.998 [RELAY_A] 
+20:59:26.195 [RELAY_A] I (3459) NimBLE: GATT procedure initiated: write; 
+20:59:26.195 [RELAY_A] I (3460) NimBLE: att_handle=19 len=2
+20:59:26.195 [RELAY_A] 
+20:59:26.298 [RELAY_B] I (3356) RELAY_B: vehicle enabled notify on RESPONSE
+20:59:26.394 [RELAY_A] I (3658) RELAY_A: subscribed to key notify; ready to forward tunnel challenges
+20:59:30.353 [LOGGER] sent 'TXPOW 8' to COM5
+20:59:30.353 [LOGGER] sent 'TXPOW 8' to COM7
+20:59:30.516 [RELAY_B] I (7576) LINK: TX power -> 8 (0.25dBm) = 2.00 dBm (rc=0)
+20:59:30.516 [RELAY_B] W (7577) BENCH: TXPOW set=8 (0.25dBm)
+20:59:30.567 [RELAY_A] I (7779) LINK: TX power -> 8 (0.25dBm) = 2.00 dBm (rc=0)
+20:59:30.567 [RELAY_A] W (7780) BENCH: TXPOW set=8 (0.25dBm)
+20:59:32.333 [KEY] I (4387893) KEY: vehicle connected (handle 0)
+20:59:32.333 [KEY] I (4387897) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+20:59:32.333 [KEY] 
+20:59:32.333 [KEY] I (4387897) KEY: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+20:59:32.488 [KEY] I (4387994) KEY: MTU handle=0 mtu=256
+20:59:33.263 [KEY] I (4388842) KEY: vehicle enabled notify on RESPONSE
+20:59:37.736 [KEY] I (4393246) KEY: vehicle disabled notify on RESPONSE
+20:59:37.736 [KEY] W (4393247) KEY: vehicle disconnected (reason=520, disconnects=23); re-advertising
+20:59:37.736 [KEY] I (4393255) NimBLE: GAP procedure initiated: advertise; 
+20:59:37.736 [KEY] I (4393255) NimBLE: disc_mode=2
+20:59:37.736 [KEY] I (4393256) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+20:59:37.736 [KEY] I (4393264) NimBLE: 
+20:59:37.736 [KEY] 
+20:59:37.736 [KEY] I (4393272) KEY: advertising the key; waiting for the vehicle
+20:59:37.942 [KEY] I (4393419) KEY: vehicle connected (handle 0)
+20:59:37.942 [KEY] I (4393423) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+20:59:37.942 [KEY] 
+20:59:37.942 [KEY] I (4393423) KEY: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+20:59:37.942 [KEY] I (4393521) KEY: MTU handle=0 mtu=256
+20:59:38.868 [KEY] I (4394367) KEY: vehicle enabled notify on RESPONSE
+20:59:39.653 [KEY] I (4395218) NimBLE: GATT procedure initiated: notify; 
+20:59:39.653 [KEY] I (4395219) NimBLE: att_handle=18
+20:59:39.653 [KEY] 
+20:59:39.653 [KEY] I (4395223) KEY: HOP K resp nonce=453e999c calc_notify=5859 us (challenge 548, 16 B) t=4394685424 us
+20:59:40.602 [KEY] I (4396168) NimBLE: GATT procedure initiated: notify; 
+20:59:40.602 [KEY] I (4396168) NimBLE: att_handle=18
+20:59:40.602 [KEY] 
+20:59:40.602 [KEY] I (4396173) KEY: HOP K resp nonce=195b95bf calc_notify=5928 us (challenge 549, 16 B) t=4395635441 us
+20:59:41.682 [KEY] I (4397168) NimBLE: GATT procedure initiated: notify; 
+20:59:41.682 [KEY] I (4397168) NimBLE: att_handle=18
+20:59:41.682 [KEY] 
+20:59:41.682 [KEY] I (4397173) KEY: HOP K resp nonce=dc65561c calc_notify=5945 us (challenge 550, 16 B) t=4396635456 us
+20:59:42.606 [KEY] I (4398168) NimBLE: GATT procedure initiated: notify; 
+20:59:42.606 [KEY] I (4398168) NimBLE: att_handle=18
+20:59:42.606 [KEY] 
+20:59:42.606 [KEY] I (4398173) KEY: HOP K resp nonce=6098b6a9 calc_notify=5936 us (challenge 551, 16 B) t=4397635486 us
+20:59:43.682 [KEY] I (4399168) NimBLE: GATT procedure initiated: notify; 
+20:59:43.682 [KEY] I (4399169) NimBLE: att_handle=18
+20:59:43.682 [KEY] 
+20:59:43.682 [KEY] I (4399173) KEY: HOP K resp nonce=7bb38627 calc_notify=5936 us (challenge 552, 16 B) t=4398635496 us
+20:59:44.607 [KEY] I (4400168) NimBLE: GATT procedure initiated: notify; 
+20:59:44.607 [KEY] I (4400168) NimBLE: att_handle=18
+20:59:44.607 [KEY] 
+20:59:44.607 [KEY] I (4400173) KEY: HOP K resp nonce=7208c73c calc_notify=5939 us (challenge 553, 16 B) t=4399635524 us
+20:59:45.687 [KEY] I (4401168) NimBLE: GATT procedure initiated: notify; 
+20:59:45.687 [KEY] I (4401169) NimBLE: att_handle=18
+20:59:45.687 [KEY] 
+20:59:45.687 [KEY] I (4401173) KEY: HOP K resp nonce=18b55265 calc_notify=5934 us (challenge 554, 16 B) t=4400635545 us
+20:59:46.613 [KEY] I (4402168) NimBLE: GATT procedure initiated: notify; 
+20:59:46.613 [KEY] I (4402169) NimBLE: att_handle=18
+20:59:46.613 [KEY] 
+20:59:46.613 [KEY] I (4402173) KEY: HOP K resp nonce=630ec0f8 calc_notify=5936 us (challenge 555, 16 B) t=4401635578 us
+20:59:47.602 [KEY] I (4403168) NimBLE: GATT procedure initiated: notify; 
+20:59:47.602 [KEY] I (4403169) NimBLE: att_handle=18
+20:59:47.602 [KEY] 
+20:59:47.602 [KEY] I (4403173) KEY: HOP K resp nonce=729917cd calc_notify=5933 us (challenge 556, 16 B) t=4402635587 us
+20:59:48.684 [KEY] I (4404168) NimBLE: GATT procedure initiated: notify; 
+20:59:48.684 [KEY] I (4404169) NimBLE: att_handle=18
+20:59:48.684 [KEY] 
+20:59:48.684 [KEY] I (4404173) KEY: HOP K resp nonce=3f6a6110 calc_notify=5950 us (challenge 557, 16 B) t=4403635620 us
+20:59:49.610 [KEY] I (4405168) NimBLE: GATT procedure initiated: notify; 
+20:59:49.610 [KEY] I (4405169) NimBLE: att_handle=18
+20:59:49.610 [KEY] 
+20:59:49.610 [KEY] I (4405173) KEY: HOP K resp nonce=61d5c9d1 calc_notify=5955 us (challenge 558, 16 B) t=4404635637 us
+20:59:50.602 [KEY] I (4406168) NimBLE: GATT procedure initiated: notify; 
+20:59:50.602 [KEY] I (4406169) NimBLE: att_handle=18
+20:59:50.602 [KEY] 
+20:59:50.602 [KEY] I (4406173) KEY: HOP K resp nonce=7343ed75 calc_notify=5967 us (challenge 559, 16 B) t=4405635671 us
+20:59:51.683 [KEY] I (4407168) NimBLE: GATT procedure initiated: notify; 
+20:59:51.683 [KEY] I (4407169) NimBLE: att_handle=18
+20:59:51.683 [KEY] 
+20:59:51.683 [KEY] I (4407173) KEY: HOP K resp nonce=3876b2f4 calc_notify=5973 us (challenge 560, 16 B) t=4406635693 us
+20:59:52.607 [KEY] I (4408168) NimBLE: GATT procedure initiated: notify; 
+20:59:52.607 [KEY] I (4408169) NimBLE: att_handle=18
+20:59:52.607 [KEY] 
+20:59:52.607 [KEY] I (4408173) KEY: HOP K resp nonce=0593e5f5 calc_notify=5962 us (challenge 561, 16 B) t=4407635718 us
+20:59:53.686 [KEY] I (4409168) NimBLE: GATT procedure initiated: notify; 
+20:59:53.686 [KEY] I (4409169) NimBLE: att_handle=18
+20:59:53.686 [KEY] 
+20:59:53.686 [KEY] I (4409173) KEY: HOP K resp nonce=019096f1 calc_notify=5965 us (challenge 562, 16 B) t=4408635730 us
+20:59:54.613 [KEY] I (4410168) NimBLE: GATT procedure initiated: notify; 
+20:59:54.613 [KEY] I (4410169) NimBLE: att_handle=18
+20:59:54.613 [KEY] 
+20:59:54.613 [KEY] I (4410173) KEY: HOP K resp nonce=2decdb5e calc_notify=5974 us (challenge 563, 16 B) t=4409635766 us
+20:59:55.602 [KEY] I (4411168) NimBLE: GATT procedure initiated: notify; 
+20:59:55.602 [KEY] I (4411169) NimBLE: att_handle=18
+20:59:55.602 [KEY] 
+20:59:55.602 [KEY] I (4411173) KEY: HOP K resp nonce=8e9d0d3f calc_notify=5975 us (challenge 564, 16 B) t=4410635777 us
+20:59:56.681 [KEY] I (4412168) NimBLE: GATT procedure initiated: notify; 
+20:59:56.681 [KEY] I (4412169) NimBLE: att_handle=18
+20:59:56.681 [KEY] 
+20:59:56.681 [KEY] I (4412172) KEY: HOP K resp nonce=54d1d966 calc_notify=5500 us (challenge 565, 16 B) t=4411635344 us
+20:59:57.606 [KEY] I (4413168) NimBLE: GATT procedure initiated: notify; 
+20:59:57.606 [KEY] I (4413169) NimBLE: att_handle=18
+20:59:57.606 [KEY] 
+20:59:57.606 [KEY] I (4413173) KEY: HOP K resp nonce=d155336c calc_notify=5958 us (challenge 566, 16 B) t=4412635820 us
+20:59:58.688 [KEY] I (4414168) NimBLE: GATT procedure initiated: notify; 
+20:59:58.688 [KEY] I (4414169) NimBLE: att_handle=18
+20:59:58.688 [KEY] 
+20:59:58.688 [KEY] I (4414173) KEY: HOP K resp nonce=d5f4a628 calc_notify=5968 us (challenge 567, 16 B) t=4413635853 us
+20:59:59.612 [KEY] I (4415168) NimBLE: GATT procedure initiated: notify; 
+20:59:59.612 [KEY] I (4415169) NimBLE: att_handle=18
+20:59:59.612 [KEY] 
+20:59:59.612 [KEY] I (4415173) KEY: HOP K resp nonce=3ae67faf calc_notify=5957 us (challenge 568, 16 B) t=4414635864 us
+21:00:00.602 [KEY] I (4416168) NimBLE: GATT procedure initiated: notify; 
+21:00:00.602 [KEY] I (4416169) NimBLE: att_handle=18
+21:00:00.602 [KEY] 
+21:00:00.602 [KEY] I (4416173) KEY: HOP K resp nonce=e38aadd0 calc_notify=5521 us (challenge 569, 16 B) t=4415635440 us
+21:00:01.682 [KEY] I (4417168) NimBLE: GATT procedure initiated: notify; 
+21:00:01.682 [KEY] I (4417169) NimBLE: att_handle=18
+21:00:01.682 [KEY] 
+21:00:01.682 [KEY] I (4417173) KEY: HOP K resp nonce=5b8715af calc_notify=5961 us (challenge 570, 16 B) t=4416635908 us
+21:00:02.606 [KEY] I (4418168) NimBLE: GATT procedure initiated: notify; 
+21:00:02.606 [KEY] I (4418169) NimBLE: att_handle=18
+21:00:02.606 [KEY] 
+21:00:02.606 [KEY] I (4418173) KEY: HOP K resp nonce=39142cfa calc_notify=5954 us (challenge 571, 16 B) t=4417635931 us
+21:00:03.684 [KEY] I (4419168) NimBLE: GATT procedure initiated: notify; 
+21:00:03.684 [KEY] I (4419169) NimBLE: att_handle=18
+21:00:03.684 [KEY] 
+21:00:03.684 [KEY] I (4419173) KEY: HOP K resp nonce=1cc2c32e calc_notify=5958 us (challenge 572, 16 B) t=4418635949 us
+21:00:04.609 [KEY] I (4420168) NimBLE: GATT procedure initiated: notify; 
+21:00:04.609 [KEY] I (4420169) NimBLE: att_handle=18
+21:00:04.609 [KEY] 
+21:00:04.609 [KEY] I (4420173) KEY: HOP K resp nonce=24a1067d calc_notify=5962 us (challenge 573, 16 B) t=4419635985 us
+21:00:05.689 [KEY] I (4421168) NimBLE: GATT procedure initiated: notify; 
+21:00:05.689 [KEY] I (4421169) NimBLE: att_handle=18
+21:00:05.689 [KEY] 
+21:00:05.689 [KEY] I (4421173) KEY: HOP K resp nonce=9239cbff calc_notify=5953 us (challenge 574, 16 B) t=4420635991 us
+21:00:06.617 [KEY] I (4422168) NimBLE: GATT procedure initiated: notify; 
+21:00:06.617 [KEY] I (4422169) NimBLE: att_handle=18
+21:00:06.617 [KEY] 
+21:00:06.617 [KEY] I (4422173) KEY: HOP K resp nonce=7457bc35 calc_notify=5962 us (challenge 575, 16 B) t=4421636025 us
+21:00:07.602 [KEY] I (4423168) NimBLE: GATT procedure initiated: notify; 
+21:00:07.602 [KEY] I (4423169) NimBLE: att_handle=18
+21:00:07.602 [KEY] 
+21:00:07.602 [KEY] I (4423173) KEY: HOP K resp nonce=9b883239 calc_notify=5961 us (challenge 576, 16 B) t=4422636041 us
+21:00:08.684 [KEY] I (4424169) NimBLE: GATT procedure initiated: notify; 
+21:00:08.684 [KEY] I (4424169) NimBLE: att_handle=18
+21:00:08.684 [KEY] 
+21:00:08.684 [KEY] I (4424173) KEY: HOP K resp nonce=bc9b8ffb calc_notify=5949 us (challenge 577, 16 B) t=4423636070 us
+21:00:09.611 [KEY] I (4425169) NimBLE: GATT procedure initiated: notify; 
+21:00:09.611 [KEY] I (4425169) NimBLE: att_handle=18
+21:00:09.611 [KEY] 
+21:00:09.611 [KEY] I (4425173) KEY: HOP K resp nonce=5cee0d50 calc_notify=6131 us (challenge 578, 16 B) t=4424636246 us
+21:00:10.602 [KEY] I (4426169) NimBLE: GATT procedure initiated: notify; 
+21:00:10.602 [KEY] I (4426169) NimBLE: att_handle=18
+21:00:10.602 [KEY] 
+21:00:10.602 [KEY] I (4426173) KEY: HOP K resp nonce=760d2907 calc_notify=5971 us (challenge 579, 16 B) t=4425636114 us
+21:00:11.682 [KEY] I (4427169) NimBLE: GATT procedure initiated: notify; 
+21:00:11.682 [KEY] I (4427169) NimBLE: att_handle=18
+21:00:11.682 [KEY] 
+21:00:11.682 [KEY] I (4427173) KEY: HOP K resp nonce=b132387f calc_notify=5966 us (challenge 580, 16 B) t=4426636136 us
+21:00:12.606 [KEY] I (4428169) NimBLE: GATT procedure initiated: notify; 
+21:00:12.606 [KEY] I (4428169) NimBLE: att_handle=18
+21:00:12.606 [KEY] 
+21:00:12.606 [KEY] I (4428173) KEY: HOP K resp nonce=5357157c calc_notify=6142 us (challenge 581, 16 B) t=4427636332 us
+21:00:13.684 [KEY] I (4429169) NimBLE: GATT procedure initiated: notify; 
+21:00:13.684 [KEY] I (4429169) NimBLE: att_handle=18
+21:00:13.684 [KEY] 
+21:00:13.684 [KEY] I (4429173) KEY: HOP K resp nonce=6797e80a calc_notify=5962 us (challenge 582, 16 B) t=4428636177 us
+21:00:14.610 [KEY] I (4430169) NimBLE: GATT procedure initiated: notify; 
+21:00:14.610 [KEY] I (4430169) NimBLE: att_handle=18
+21:00:14.610 [KEY] 
+21:00:14.610 [KEY] I (4430173) KEY: HOP K resp nonce=04a4ea10 calc_notify=5977 us (challenge 583, 16 B) t=4429636214 us
+21:00:15.603 [KEY] I (4431169) NimBLE: GATT procedure initiated: notify; 
+21:00:15.603 [KEY] I (4431169) NimBLE: att_handle=18
+21:00:15.603 [KEY] 
+21:00:15.603 [KEY] I (4431173) KEY: HOP K resp nonce=5bf954d2 calc_notify=6130 us (challenge 584, 16 B) t=4430636384 us
+21:00:16.685 [KEY] I (4432169) NimBLE: GATT procedure initiated: notify; 
+21:00:16.685 [KEY] I (4432169) NimBLE: att_handle=18
+21:00:16.685 [KEY] 
+21:00:16.685 [KEY] I (4432173) KEY: HOP K resp nonce=7b04d613 calc_notify=5970 us (challenge 585, 16 B) t=4431636249 us
+21:00:17.609 [KEY] I (4433169) NimBLE: GATT procedure initiated: notify; 
+21:00:17.609 [KEY] I (4433169) NimBLE: att_handle=18
+21:00:17.609 [KEY] 
+21:00:17.609 [KEY] I (4433173) KEY: HOP K resp nonce=67c21420 calc_notify=5932 us (challenge 586, 16 B) t=4432636219 us
+21:00:18.688 [KEY] I (4434169) NimBLE: GATT procedure initiated: notify; 
+21:00:18.688 [KEY] I (4434169) NimBLE: att_handle=18
+21:00:18.688 [KEY] 
+21:00:18.688 [KEY] I (4434173) KEY: HOP K resp nonce=4799b344 calc_notify=6052 us (challenge 587, 16 B) t=4433636378 us
+21:00:19.613 [KEY] I (4435169) NimBLE: GATT procedure initiated: notify; 
+21:00:19.613 [KEY] I (4435169) NimBLE: att_handle=18
+21:00:19.613 [KEY] 
+21:00:19.613 [KEY] I (4435173) KEY: HOP K resp nonce=990c16ec calc_notify=5942 us (challenge 588, 16 B) t=4434636272 us
+21:00:20.602 [KEY] I (4436169) NimBLE: GATT procedure initiated: notify; 
+21:00:20.602 [KEY] I (4436169) NimBLE: att_handle=18
+21:00:20.602 [KEY] 
+21:00:20.602 [KEY] I (4436173) KEY: HOP K resp nonce=58323277 calc_notify=5922 us (challenge 589, 16 B) t=4435636299 us
+21:00:21.682 [KEY] I (4437169) NimBLE: GATT procedure initiated: notify; 
+21:00:21.682 [KEY] I (4437169) NimBLE: att_handle=18
+21:00:21.682 [KEY] 
+21:00:21.682 [KEY] I (4437174) KEY: HOP K resp nonce=442f89a5 calc_notify=6123 us (challenge 590, 16 B) t=4436636514 us
+21:00:22.607 [KEY] I (4438169) NimBLE: GATT procedure initiated: notify; 
+21:00:22.607 [KEY] I (4438169) NimBLE: att_handle=18
+21:00:22.607 [KEY] 
+21:00:22.607 [KEY] I (4438173) KEY: HOP K resp nonce=8b70551c calc_notify=5911 us (challenge 591, 16 B) t=4437636336 us
+21:00:23.690 [KEY] I (4439169) NimBLE: GATT procedure initiated: notify; 
+21:00:23.690 [KEY] I (4439169) NimBLE: att_handle=18
+21:00:23.690 [KEY] 
+21:00:23.690 [KEY] I (4439173) KEY: HOP K resp nonce=06a101ff calc_notify=5928 us (challenge 592, 16 B) t=4438636361 us
+21:00:24.616 [KEY] I (4440169) NimBLE: GATT procedure initiated: notify; 
+21:00:24.616 [KEY] I (4440169) NimBLE: att_handle=18
+21:00:24.616 [KEY] 
+21:00:24.616 [KEY] I (4440174) KEY: HOP K resp nonce=82102e5b calc_notify=6027 us (challenge 593, 16 B) t=4439636496 us
+21:00:25.602 [KEY] I (4441169) NimBLE: GATT procedure initiated: notify; 
+21:00:25.602 [KEY] I (4441169) NimBLE: att_handle=18
+21:00:25.602 [KEY] 
+21:00:25.602 [KEY] I (4441173) KEY: HOP K resp nonce=afae2ced calc_notify=5930 us (challenge 594, 16 B) t=4440636407 us
+21:00:26.680 [KEY] I (4442169) NimBLE: GATT procedure initiated: notify; 
+21:00:26.680 [KEY] I (4442169) NimBLE: att_handle=18
+21:00:26.680 [KEY] 
+21:00:26.680 [KEY] I (4442174) KEY: HOP K resp nonce=3772d944 calc_notify=5930 us (challenge 595, 16 B) t=4441636436 us
+21:00:27.606 [KEY] I (4443169) NimBLE: GATT procedure initiated: notify; 
+21:00:27.606 [KEY] I (4443169) NimBLE: att_handle=18
+21:00:27.606 [KEY] 
+21:00:27.606 [KEY] I (4443174) KEY: HOP K resp nonce=c707c557 calc_notify=6058 us (challenge 596, 16 B) t=4442636576 us
+21:00:28.685 [KEY] I (4444169) NimBLE: GATT procedure initiated: notify; 
+21:00:28.685 [KEY] I (4444169) NimBLE: att_handle=18
+21:00:28.685 [KEY] 
+21:00:28.685 [KEY] I (4444174) KEY: HOP K resp nonce=37167005 calc_notify=5925 us (challenge 597, 16 B) t=4443636484 us
+21:00:30.754 [LOGGER] closed

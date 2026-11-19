@@ -58,6 +58,14 @@ reaches.
 | 20261118-215933, -220155, -220529 | relayed | unicast, TX power default | `relay-unicast-ab200` |
 | 20261118-222135, -222302, -222527 | relayed | unicast, TXPOW 8 (2 dBm) on both relays | `relay-unicast-ab200-tx8` |
 
+## Run history
+
+`INDEX.csv` has one row per campaign and one row per aborted session. The columns give the session,
+the status (`valid`, `invalid` or `aborted`), the reason, the condition, the car-key distance, the relay
+mode and TX power, the outcome counts, the firmware commit from the manifest, and the folder. Invalid
+and aborted runs stay under `_invalid/` with their logs, so no bench data is dropped. Regenerate the
+index with `python -I tools/run_index.py` after adding a run.
+
 ## Analysis
 
 `tools/analyze_runs.py` and `tools/plot_runs.py` read the campaign folders (see `TESTING.md`,

@@ -1,0 +1,389 @@
+20:51:11.750 [LOGGER] COM5 logged as RELAY_A (DTR/RTS idle)
+20:51:11.769 [LOGGER] COM6 logged as KEY (DTR/RTS idle)
+20:51:11.788 [LOGGER] COM7 logged as RELAY_B (DTR/RTS idle)
+20:51:11.992 [LOGGER] reset pulse on COM5
+20:51:12.155 [RELAY_A] ets Jul 29 2019 12:21:46
+20:51:12.155 [RELAY_A] 
+20:51:12.155 [RELAY_A] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+20:51:12.155 [RELAY_A] configsip: 0, SPIWP:0xee
+20:51:12.155 [RELAY_A] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+20:51:12.155 [RELAY_A] mode:DIO, clock div:2
+20:51:12.155 [RELAY_A] load:0x3fff0040,len:6272
+20:51:12.155 [RELAY_A] load:0x40078000,len:15824
+20:51:12.155 [RELAY_A] load:0x40080400,len:3988
+20:51:12.155 [RELAY_A] entry 0x40080644
+20:51:12.155 [RELAY_A] I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+20:51:12.155 [RELAY_A] I (27) boot: compile time Nov 18 2026 19:31:31
+20:51:12.155 [RELAY_A] I (28) boot: Multicore bootloader
+20:51:12.155 [RELAY_A] I (29) boot: chip revision: v3.1
+20:51:12.155 [RELAY_A] I (31) boot.esp32: SPI Speed      : 40MHz
+20:51:12.155 [RELAY_A] I (35) boot.esp32: SPI Mode       : DIO
+20:51:12.155 [RELAY_A] I (39) boot.esp32: SPI Flash Size : 4MB
+20:51:12.155 [RELAY_A] I (42) boot: Enabling RNG early entropy source...
+20:51:12.155 [RELAY_A] I (47) boot: Partition Table:
+20:51:12.155 [RELAY_A] I (49) boot: ## Label            Usage          Type ST Offset   Length
+20:51:12.155 [RELAY_A] I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+20:51:12.155 [RELAY_A] I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+20:51:12.155 [RELAY_A] I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+20:51:12.155 [RELAY_A] I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+20:51:12.155 [RELAY_A] I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+20:51:12.155 [RELAY_A] I (88) boot: End of partition table
+20:51:12.155 [RELAY_A] I (92) esp_image: segment 0: paddr=001d0020 vaddr=3f400020 size=3f3bch (259004) map
+20:51:12.309 [RELAY_A] I (191) esp_image: segment 1: paddr=0020f3e4 vaddr=3ffbdb60 size=00c34h (  3124) load
+20:51:12.309 [RELAY_A] I (193) esp_image: segment 2: paddr=00210020 vaddr=400d0020 size=e92a0h (955040) map
+20:51:12.412 [RELAY_B] I (1693864) RELAY_B: vehicle disabled notify on RESPONSE
+20:51:12.412 [RELAY_B] W (1693864) RELAY_B: vehicle disconnected (reason=520, disconnects=3); re-advertising
+20:51:12.412 [RELAY_B] I (1693873) NimBLE: GAP procedure initiated: advertise; 
+20:51:12.412 [RELAY_B] I (1693874) NimBLE: disc_mode=2
+20:51:12.412 [RELAY_B] I (1693874) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+20:51:12.412 [RELAY_B] I (1693883) NimBLE: 
+20:51:12.412 [RELAY_B] 
+20:51:12.412 [RELAY_B] I (1693889) RELAY_B: advertising the key clone; waiting for the vehicle
+20:51:12.783 [RELAY_A] I (535) esp_image: segment 3: paddr=002f92c8 vaddr=3ffbe794 size=056b4h ( 22196) load
+20:51:12.783 [RELAY_A] I (544) esp_image: segment 4: paddr=002fe984 vaddr=40080000 size=1a09ch (106652) load
+20:51:12.783 [RELAY_A] I (588) esp_image: segment 5: paddr=00318a28 vaddr=50000000 size=00028h (    40) load
+20:51:12.783 [RELAY_A] I (602) boot: Loaded app from partition at offset 0x1d0000
+20:51:12.783 [RELAY_A] I (602) boot: Disabling RNG early entropy source...
+20:51:12.783 [RELAY_A] I (613) cpu_start: Multicore app
+20:51:12.783 [RELAY_A] I (621) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+20:51:12.783 [RELAY_A] I (621) cpu_start: Pro cpu start user code
+20:51:12.783 [RELAY_A] I (621) cpu_start: cpu freq: 240000000 Hz
+20:51:12.783 [RELAY_A] I (623) app_init: Application information:
+20:51:12.783 [RELAY_A] I (627) app_init: Project name:     relays
+20:51:12.783 [RELAY_A] I (631) app_init: App version:      1cf7f0c-dirty
+20:51:12.783 [RELAY_A] I (635) app_init: Compile time:     Nov 18 2026 20:14:32
+20:51:12.783 [RELAY_A] I (640) app_init: ELF file SHA256:  f178143d0...
+20:51:12.783 [RELAY_A] I (645) app_init: ESP-IDF:          v6.1
+20:51:12.783 [RELAY_A] I (648) efuse_init: Min chip rev:     v0.0
+20:51:12.784 [RELAY_A] I (652) efuse_init: Max chip rev:     v3.99 
+20:51:12.784 [RELAY_A] I (656) efuse_init: Chip rev:         v3.1
+20:51:12.784 [RELAY_A] I (660) heap_init: Initializing. RAM available for dynamic allocation:
+20:51:12.784 [RELAY_A] I (666) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+20:51:12.784 [RELAY_A] I (671) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+20:51:12.784 [RELAY_A] I (676) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+20:51:12.784 [RELAY_A] I (682) heap_init: At 3FFD65D0 len 00009A30 (38 KiB): DRAM
+20:51:12.784 [RELAY_A] I (687) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+20:51:12.784 [RELAY_A] I (692) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+20:51:12.784 [RELAY_A] I (698) heap_init: At 4009A09C len 00005F64 (23 KiB): IRAM
+20:51:12.784 [RELAY_A] I (705) spi_flash: detected chip: gd
+20:51:12.784 [RELAY_A] I (706) spi_flash: flash io: dio
+20:51:12.784 [RELAY_A] I (711) coexist: coex firmware version: a830d28
+20:51:12.784 [RELAY_A] I (714) main_task: Started on CPU0
+20:51:12.784 [RELAY_A] I (716) main_task: Calling app_main()
+20:51:12.784 [RELAY_A] I (729) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+20:51:12.938 [RELAY_A] I (863) cyd_display: ST7789 + LVGL ready
+20:51:13.147 [RELAY_A] I (1094) RUN_META: role=relay-a fw=1cf7f0c+mod build=2026-11-18 20:14
+20:51:13.448 [RELAY_A] I (1152) wifi:wifi driver task: 3ffdfd70, prio:23, stack:6656, core=0
+20:51:13.449 [RELAY_A] I (1159) wifi:wifi firmware version: e12a754
+20:51:13.449 [RELAY_A] I (1159) wifi:wifi certification version: v7.0
+20:51:13.449 [RELAY_A] I (1159) wifi:config NVS flash: enabled
+20:51:13.449 [RELAY_A] I (1161) wifi:config nano formatting: disabled
+20:51:13.449 [RELAY_A] I (1166) wifi:Init data frame dynamic rx buffer num: 32
+20:51:13.449 [RELAY_A] I (1171) wifi:Init static rx mgmt buffer num: 5
+20:51:13.449 [RELAY_A] I (1174) wifi:Init management short buffer num: 32
+20:51:13.449 [RELAY_A] I (1179) wifi:Init dynamic tx buffer num: 32
+20:51:13.449 [RELAY_A] I (1183) wifi:Init static rx buffer size: 1600
+20:51:13.449 [RELAY_A] I (1187) wifi:Init static rx buffer num: 10
+20:51:13.449 [RELAY_A] I (1191) wifi:Init dynamic rx buffer num: 32
+20:51:13.449 [RELAY_A] I (1197) wifi_init: rx ba win: 6
+20:51:13.449 [RELAY_A] I (1198) wifi_init: accept mbox: 6
+20:51:13.449 [RELAY_A] I (1201) wifi_init: tcpip mbox: 32
+20:51:13.449 [RELAY_A] I (1204) wifi_init: udp mbox: 6
+20:51:13.449 [RELAY_A] I (1207) wifi_init: tcp mbox: 6
+20:51:13.449 [RELAY_A] I (1210) wifi_init: tcp tx win: 5760
+20:51:13.449 [RELAY_A] I (1213) wifi_init: tcp rx win: 5760
+20:51:13.449 [RELAY_A] I (1217) wifi_init: tcp mss: 1440
+20:51:13.449 [RELAY_A] I (1220) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+20:51:13.449 [RELAY_A] I (1298) phy_init: Saving new calibration data due to checksum failure or outdated calibration data, mode(0)
+20:51:13.449 [RELAY_A] I (1354) wifi:mode : sta (b8:bb:11:83:a9:80)
+20:51:13.449 [RELAY_A] I (1355) wifi:enable tsf
+20:51:13.449 [RELAY_A] I (1359) wifi:Set ps type: 0, coexist: 0
+20:51:13.449 [RELAY_A] 
+20:51:13.449 [RELAY_A] I (1360) LINK: power save WiFi = NONE (rc=0)
+20:51:13.449 [RELAY_A] I (1360) LINK: this board MAC: b8:bb:11:83:a9:80
+20:51:13.449 [RELAY_A] I (1363) ESPNOW: espnow [version: 2.0] init
+20:51:13.449 [RELAY_A] I (1366) LINK: ESP-NOW ready (channel 1), unicast to 48:af:f3:70:1d:58
+20:51:13.449 [RELAY_A] I (1379) BTDM_INIT: BT controller compile version [4a0f94d]
+20:51:13.449 [RELAY_A] I (1380) BTDM_INIT: Using main XTAL as clock source
+20:51:13.449 [RELAY_A] I (1383) BTDM_INIT: Bluetooth MAC: b8:bb:11:83:a9:82
+20:51:13.449 [RELAY_A] I (1391) wifi:Coexist!!! Wi-Fi station would only keep waked when available
+20:51:13.449 [RELAY_A] 
+20:51:13.660 [RELAY_A] I (1557) RELAY_A: Relay A started (BLE central: connects to the key and tunnels)
+20:51:13.660 [RELAY_A] I (1560) main_task: Returned from app_main()
+20:51:13.660 [RELAY_A] I (1591) NimBLE: GAP procedure initiated: discovery; 
+20:51:13.660 [RELAY_A] I (1592) NimBLE: own_addr_type=0 filter_policy=0 passive=0 limited=0 filter_duplicates=1 
+20:51:13.660 [RELAY_A] I (1593) NimBLE: duration=forever
+20:51:13.660 [RELAY_A] I (1596) NimBLE: 
+20:51:13.660 [RELAY_A] 
+20:51:13.660 [RELAY_A] I (1603) RELAY_A: scanning for the key service...
+20:51:13.814 [RELAY_A] I (1668) RELAY_A: key found, connecting...
+20:51:13.814 [RELAY_A] I (1671) NimBLE: GAP procedure initiated: connect; 
+20:51:13.814 [RELAY_A] I (1671) NimBLE: peer_addr_type=0 peer_addr=
+20:51:13.814 [RELAY_A] I (1671) NimBLE: 48:af:f3:70:1d:5a
+20:51:13.814 [RELAY_A] I (1673) NimBLE:  scan_itvl=16 scan_window=16 itvl_min=24 itvl_max=40 latency=0 supervision_timeout=256 min_ce_len=0 max_ce_len=0 own_addr_type=0
+20:51:13.814 [RELAY_A] I (1685) NimBLE: 
+20:51:13.814 [RELAY_A] 
+20:51:14.070 [RELAY_B] I (1695557) RELAY_B: vehicle connected (handle 0)
+20:51:14.070 [RELAY_B] I (1695560) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+20:51:14.070 [RELAY_B] 
+20:51:14.070 [RELAY_B] I (1695560) RELAY_B: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+20:51:14.122 [RELAY_A] I (2013) RELAY_A: connected to key (handle 0); discovering service
+20:51:14.122 [RELAY_A] I (2016) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+20:51:14.122 [RELAY_A] 
+20:51:14.122 [RELAY_A] I (2017) RELAY_A: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=central phy_tx=? phy_rx=?
+20:51:14.122 [RELAY_A] I (2027) NimBLE: GATT procedure initiated: exchange mtu
+20:51:14.122 [RELAY_A] 
+20:51:14.122 [RELAY_A] I (2036) NimBLE: GATT procedure initiated: discover service by uuid; uuid=
+20:51:14.122 [RELAY_A] I (2039) NimBLE: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10
+20:51:14.122 [RELAY_A] I (2043) NimBLE: 
+20:51:14.122 [RELAY_A] 
+20:51:14.224 [RELAY_B] I (1695709) RELAY_B: MTU handle=0 mtu=256
+20:51:14.275 [RELAY_A] I (2163) RELAY_A: MTU handle=0 mtu=256
+20:51:14.412 [KEY] I (3889955) KEY: vehicle disabled notify on RESPONSE
+20:51:14.412 [KEY] W (3889956) KEY: vehicle disconnected (reason=520, disconnects=14); re-advertising
+20:51:14.412 [KEY] I (3889964) NimBLE: GAP procedure initiated: advertise; 
+20:51:14.412 [KEY] I (3889965) NimBLE: disc_mode=2
+20:51:14.412 [KEY] I (3889965) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+20:51:14.412 [KEY] I (3889974) NimBLE: 
+20:51:14.412 [KEY] 
+20:51:14.412 [KEY] I (3889982) KEY: advertising the key; waiting for the vehicle
+20:51:14.578 [RELAY_A] I (2511) RELAY_A: service at 14..19
+20:51:14.578 [RELAY_A] I (2511) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+20:51:14.578 [RELAY_A] I (2511) NimBLE: start_handle=14 end_handle=19 uuid=
+20:51:14.578 [RELAY_A] I (2515) NimBLE: 8f2a0002-1b2c-4e6a-9f3d-2a7c1e5b0a10
+20:51:14.578 [RELAY_A] I (2519) NimBLE: 
+20:51:14.578 [RELAY_A] 
+20:51:15.040 [RELAY_A] I (2910) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+20:51:15.040 [RELAY_A] I (2911) NimBLE: start_handle=14 end_handle=19 uuid=
+20:51:15.040 [RELAY_A] I (2912) NimBLE: 8f2a0003-1b2c-4e6a-9f3d-2a7c1e5b0a10
+20:51:15.040 [RELAY_A] I (2916) NimBLE: 
+20:51:15.040 [RELAY_A] 
+20:51:15.368 [RELAY_A] I (3310) NimBLE: GATT procedure initiated: discover all descriptors; 
+20:51:15.368 [RELAY_A] I (3311) NimBLE: chr_val_handle=18 end_handle=19
+20:51:15.368 [RELAY_A] 
+20:51:15.565 [RELAY_A] I (3511) NimBLE: GATT procedure initiated: write; 
+20:51:15.565 [RELAY_A] I (3512) NimBLE: att_handle=19 len=2
+20:51:15.565 [RELAY_A] 
+20:51:15.668 [RELAY_B] I (1697206) RELAY_B: vehicle enabled notify on RESPONSE
+20:51:15.763 [RELAY_A] I (3710) RELAY_A: subscribed to key notify; ready to forward tunnel challenges
+20:51:18.481 [KEY] I (3894037) KEY: vehicle connected (handle 0)
+20:51:18.481 [KEY] I (3894041) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+20:51:18.481 [KEY] 
+20:51:18.481 [KEY] I (3894042) KEY: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+20:51:18.636 [KEY] I (3894190) KEY: MTU handle=0 mtu=256
+20:51:19.410 [KEY] I (3894985) KEY: vehicle enabled notify on RESPONSE
+20:51:23.435 [KEY] I (3898979) KEY: vehicle disabled notify on RESPONSE
+20:51:23.435 [KEY] W (3898979) KEY: vehicle disconnected (reason=520, disconnects=15); re-advertising
+20:51:23.435 [KEY] I (3898989) NimBLE: GAP procedure initiated: advertise; 
+20:51:23.435 [KEY] I (3898989) NimBLE: disc_mode=2
+20:51:23.435 [KEY] I (3898989) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+20:51:23.435 [KEY] I (3898997) NimBLE: 
+20:51:23.435 [KEY] 
+20:51:23.435 [KEY] I (3899005) KEY: advertising the key; waiting for the vehicle
+20:51:23.606 [KEY] I (3899160) KEY: vehicle connected (handle 0)
+20:51:23.606 [KEY] I (3899165) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+20:51:23.606 [KEY] 
+20:51:23.606 [KEY] I (3899165) KEY: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+20:51:23.760 [KEY] I (3899261) KEY: MTU handle=0 mtu=256
+20:51:24.530 [KEY] I (3900058) KEY: vehicle enabled notify on RESPONSE
+20:51:25.608 [KEY] I (3901109) NimBLE: GATT procedure initiated: notify; 
+20:51:25.608 [KEY] I (3901109) NimBLE: att_handle=18
+20:51:25.608 [KEY] 
+20:51:25.608 [KEY] I (3901113) KEY: HOP K resp nonce=9d0af4cd calc_notify=5969 us (challenge 348, 16 B) t=3900576238 us
+20:51:26.547 [KEY] I (3902110) NimBLE: GATT procedure initiated: notify; 
+20:51:26.547 [KEY] I (3902111) NimBLE: att_handle=18
+20:51:26.547 [KEY] 
+20:51:26.547 [KEY] I (3902115) KEY: HOP K resp nonce=c56f2170 calc_notify=6872 us (challenge 349, 16 B) t=3901577671 us
+20:51:27.625 [KEY] I (3903109) NimBLE: GATT procedure initiated: notify; 
+20:51:27.625 [KEY] I (3903109) NimBLE: att_handle=18
+20:51:27.625 [KEY] 
+20:51:27.625 [KEY] I (3903113) KEY: HOP K resp nonce=0220ff0b calc_notify=5921 us (challenge 350, 16 B) t=3902576275 us
+20:51:28.551 [KEY] I (3904109) NimBLE: GATT procedure initiated: notify; 
+20:51:28.551 [KEY] I (3904109) NimBLE: att_handle=18
+20:51:28.551 [KEY] 
+20:51:28.551 [KEY] I (3904113) KEY: HOP K resp nonce=07d3ad38 calc_notify=5935 us (challenge 351, 16 B) t=3903576308 us
+20:51:29.633 [KEY] I (3905110) NimBLE: GATT procedure initiated: notify; 
+20:51:29.633 [KEY] I (3905111) NimBLE: att_handle=18
+20:51:29.633 [KEY] 
+20:51:29.633 [KEY] I (3905115) KEY: HOP K resp nonce=21819415 calc_notify=6774 us (challenge 352, 16 B) t=3904577618 us
+20:51:30.558 [KEY] I (3906109) NimBLE: GATT procedure initiated: notify; 
+20:51:30.558 [KEY] I (3906109) NimBLE: att_handle=18
+20:51:30.558 [KEY] 
+20:51:30.558 [KEY] I (3906113) KEY: HOP K resp nonce=9aa0e237 calc_notify=5916 us (challenge 353, 16 B) t=3905576348 us
+20:51:31.545 [KEY] I (3907109) NimBLE: GATT procedure initiated: notify; 
+20:51:31.545 [KEY] I (3907109) NimBLE: att_handle=18
+20:51:31.545 [KEY] 
+20:51:31.545 [KEY] I (3907113) KEY: HOP K resp nonce=aea4ced9 calc_notify=5923 us (challenge 354, 16 B) t=3906576368 us
+20:51:32.628 [KEY] I (3908110) NimBLE: GATT procedure initiated: notify; 
+20:51:32.628 [KEY] I (3908111) NimBLE: att_handle=18
+20:51:32.628 [KEY] 
+20:51:32.628 [KEY] I (3908115) KEY: HOP K resp nonce=126cf4e8 calc_notify=6794 us (challenge 355, 16 B) t=3907577694 us
+20:51:33.553 [KEY] I (3909109) NimBLE: GATT procedure initiated: notify; 
+20:51:33.553 [KEY] I (3909109) NimBLE: att_handle=18
+20:51:33.553 [KEY] 
+20:51:33.553 [KEY] I (3909113) KEY: HOP K resp nonce=d44908f6 calc_notify=5924 us (challenge 356, 16 B) t=3908576407 us
+20:51:34.632 [KEY] I (3910109) NimBLE: GATT procedure initiated: notify; 
+20:51:34.632 [KEY] I (3910109) NimBLE: att_handle=18
+20:51:34.632 [KEY] 
+20:51:34.632 [KEY] I (3910114) KEY: HOP K resp nonce=8ee04acb calc_notify=5918 us (challenge 357, 16 B) t=3909576444 us
+20:51:35.556 [KEY] I (3911110) NimBLE: GATT procedure initiated: notify; 
+20:51:35.556 [KEY] I (3911111) NimBLE: att_handle=18
+20:51:35.556 [KEY] 
+20:51:35.556 [KEY] I (3911115) KEY: HOP K resp nonce=49c9f021 calc_notify=6812 us (challenge 358, 16 B) t=3910577750 us
+20:51:36.546 [KEY] I (3912109) NimBLE: GATT procedure initiated: notify; 
+20:51:36.546 [KEY] I (3912109) NimBLE: att_handle=18
+20:51:36.546 [KEY] 
+20:51:36.546 [KEY] I (3912114) KEY: HOP K resp nonce=951f4c4b calc_notify=5927 us (challenge 359, 16 B) t=3911576498 us
+20:51:37.626 [KEY] I (3913109) NimBLE: GATT procedure initiated: notify; 
+20:51:37.626 [KEY] I (3913110) NimBLE: att_handle=18
+20:51:37.626 [KEY] 
+20:51:37.626 [KEY] I (3913114) KEY: HOP K resp nonce=48e95ad6 calc_notify=5917 us (challenge 360, 16 B) t=3912576500 us
+20:51:38.549 [KEY] I (3914110) NimBLE: GATT procedure initiated: notify; 
+20:51:38.550 [KEY] I (3914111) NimBLE: att_handle=18
+20:51:38.550 [KEY] 
+20:51:38.550 [KEY] I (3914114) KEY: HOP K resp nonce=1834600c calc_notify=6182 us (challenge 361, 16 B) t=3913577157 us
+20:51:39.628 [KEY] I (3915109) NimBLE: GATT procedure initiated: notify; 
+20:51:39.628 [KEY] I (3915110) NimBLE: att_handle=18
+20:51:39.628 [KEY] 
+20:51:39.628 [KEY] I (3915114) KEY: HOP K resp nonce=6f81746b calc_notify=5926 us (challenge 362, 16 B) t=3914576548 us
+20:51:40.553 [KEY] I (3916109) NimBLE: GATT procedure initiated: notify; 
+20:51:40.553 [KEY] I (3916110) NimBLE: att_handle=18
+20:51:40.553 [KEY] 
+20:51:40.553 [KEY] I (3916114) KEY: HOP K resp nonce=8dc0fa56 calc_notify=5887 us (challenge 363, 16 B) t=3915576558 us
+20:51:41.635 [KEY] I (3917110) NimBLE: GATT procedure initiated: notify; 
+20:51:41.635 [KEY] I (3917111) NimBLE: att_handle=18
+20:51:41.635 [KEY] 
+20:51:41.635 [KEY] I (3917114) KEY: HOP K resp nonce=ea9ac0de calc_notify=6157 us (challenge 364, 16 B) t=3916577222 us
+20:51:42.596 [KEY] I (3918159) NimBLE: GATT procedure initiated: notify; 
+20:51:42.596 [KEY] I (3918160) NimBLE: att_handle=18
+20:51:42.596 [KEY] 
+20:51:42.596 [KEY] I (3918164) KEY: HOP K resp nonce=7b59a682 calc_notify=5872 us (challenge 365, 16 B) t=3917626628 us
+20:51:43.547 [KEY] I (3919109) NimBLE: GATT procedure initiated: notify; 
+20:51:43.547 [KEY] I (3919110) NimBLE: att_handle=18
+20:51:43.547 [KEY] 
+20:51:43.547 [KEY] I (3919114) KEY: HOP K resp nonce=49a7edf2 calc_notify=5925 us (challenge 366, 16 B) t=3918576637 us
+20:51:44.623 [KEY] I (3920110) NimBLE: GATT procedure initiated: notify; 
+20:51:44.623 [KEY] I (3920111) NimBLE: att_handle=18
+20:51:44.623 [KEY] 
+20:51:44.623 [KEY] I (3920115) KEY: HOP K resp nonce=152bbb06 calc_notify=6759 us (challenge 367, 16 B) t=3919577965 us
+20:51:45.547 [KEY] I (3921109) NimBLE: GATT procedure initiated: notify; 
+20:51:45.547 [KEY] I (3921110) NimBLE: att_handle=18
+20:51:45.547 [KEY] 
+20:51:45.547 [KEY] I (3921114) KEY: HOP K resp nonce=b0279000 calc_notify=5915 us (challenge 368, 16 B) t=3920576687 us
+20:51:46.626 [KEY] I (3922109) NimBLE: GATT procedure initiated: notify; 
+20:51:46.626 [KEY] I (3922110) NimBLE: att_handle=18
+20:51:46.626 [KEY] 
+20:51:46.626 [KEY] I (3922114) KEY: HOP K resp nonce=4062974b calc_notify=5916 us (challenge 369, 16 B) t=3921576717 us
+20:51:47.550 [KEY] I (3923110) NimBLE: GATT procedure initiated: notify; 
+20:51:47.550 [KEY] I (3923111) NimBLE: att_handle=18
+20:51:47.550 [KEY] 
+20:51:47.550 [KEY] I (3923115) KEY: HOP K resp nonce=7cc230de calc_notify=6663 us (challenge 370, 16 B) t=3922578014 us
+20:51:48.629 [KEY] I (3924109) NimBLE: GATT procedure initiated: notify; 
+20:51:48.629 [KEY] I (3924110) NimBLE: att_handle=18
+20:51:48.629 [KEY] 
+20:51:48.629 [KEY] I (3924114) KEY: HOP K resp nonce=e4773e01 calc_notify=5907 us (challenge 371, 16 B) t=3923576752 us
+20:51:49.556 [KEY] I (3925109) NimBLE: GATT procedure initiated: notify; 
+20:51:49.556 [KEY] I (3925110) NimBLE: att_handle=18
+20:51:49.556 [KEY] 
+20:51:49.556 [KEY] I (3925114) KEY: HOP K resp nonce=f585c023 calc_notify=5952 us (challenge 372, 16 B) t=3924576777 us
+20:51:50.548 [KEY] I (3926110) NimBLE: GATT procedure initiated: notify; 
+20:51:50.548 [KEY] I (3926111) NimBLE: att_handle=18
+20:51:50.548 [KEY] 
+20:51:50.548 [KEY] I (3926115) KEY: HOP K resp nonce=fc1ea14e calc_notify=6742 us (challenge 373, 16 B) t=3925578090 us
+20:51:51.628 [KEY] I (3927109) NimBLE: GATT procedure initiated: notify; 
+20:51:51.628 [KEY] I (3927110) NimBLE: att_handle=18
+20:51:51.628 [KEY] 
+20:51:51.628 [KEY] I (3927114) KEY: HOP K resp nonce=210377ec calc_notify=5953 us (challenge 374, 16 B) t=3926576818 us
+20:51:52.554 [KEY] I (3928109) NimBLE: GATT procedure initiated: notify; 
+20:51:52.554 [KEY] I (3928110) NimBLE: att_handle=18
+20:51:52.554 [KEY] 
+20:51:52.554 [KEY] I (3928114) KEY: HOP K resp nonce=21043b65 calc_notify=5950 us (challenge 375, 16 B) t=3927576850 us
+20:51:53.548 [KEY] I (3929110) NimBLE: GATT procedure initiated: notify; 
+20:51:53.548 [KEY] I (3929111) NimBLE: att_handle=18
+20:51:53.548 [KEY] 
+20:51:53.548 [KEY] I (3929115) KEY: HOP K resp nonce=150841ea calc_notify=6128 us (challenge 376, 16 B) t=3928577532 us
+20:51:54.628 [KEY] I (3930109) NimBLE: GATT procedure initiated: notify; 
+20:51:54.628 [KEY] I (3930110) NimBLE: att_handle=18
+20:51:54.628 [KEY] 
+20:51:54.628 [KEY] I (3930114) KEY: HOP K resp nonce=d85f9684 calc_notify=5935 us (challenge 377, 16 B) t=3929576879 us
+20:51:55.552 [KEY] I (3931109) NimBLE: GATT procedure initiated: notify; 
+20:51:55.552 [KEY] I (3931110) NimBLE: att_handle=18
+20:51:55.552 [KEY] 
+20:51:55.552 [KEY] I (3931114) KEY: HOP K resp nonce=8c98cc79 calc_notify=5949 us (challenge 378, 16 B) t=3930576904 us
+20:51:56.635 [KEY] I (3932110) NimBLE: GATT procedure initiated: notify; 
+20:51:56.635 [KEY] I (3932111) NimBLE: att_handle=18
+20:51:56.635 [KEY] 
+20:51:56.635 [KEY] I (3932115) KEY: HOP K resp nonce=3c8f112c calc_notify=6723 us (challenge 379, 16 B) t=3931578224 us
+20:51:57.558 [KEY] I (3933109) NimBLE: GATT procedure initiated: notify; 
+20:51:57.558 [KEY] I (3933110) NimBLE: att_handle=18
+20:51:57.558 [KEY] 
+20:51:57.558 [KEY] I (3933114) KEY: HOP K resp nonce=fc55ba0e calc_notify=5938 us (challenge 380, 16 B) t=3932576945 us
+20:51:58.547 [KEY] I (3934109) NimBLE: GATT procedure initiated: notify; 
+20:51:58.547 [KEY] I (3934110) NimBLE: att_handle=18
+20:51:58.547 [KEY] 
+20:51:58.547 [KEY] I (3934114) KEY: HOP K resp nonce=c5c342f5 calc_notify=5952 us (challenge 381, 16 B) t=3933576976 us
+20:51:59.627 [KEY] I (3935111) NimBLE: GATT procedure initiated: notify; 
+20:51:59.627 [KEY] I (3935111) NimBLE: att_handle=18
+20:51:59.627 [KEY] 
+20:51:59.627 [KEY] I (3935115) KEY: HOP K resp nonce=a763459b calc_notify=6720 us (challenge 382, 16 B) t=3934578262 us
+20:52:00.551 [KEY] I (3936109) NimBLE: GATT procedure initiated: notify; 
+20:52:00.551 [KEY] I (3936110) NimBLE: att_handle=18
+20:52:00.551 [KEY] 
+20:52:00.551 [KEY] I (3936114) KEY: HOP K resp nonce=39342f38 calc_notify=5942 us (challenge 383, 16 B) t=3935577025 us
+20:52:01.631 [KEY] I (3937109) NimBLE: GATT procedure initiated: notify; 
+20:52:01.631 [KEY] I (3937110) NimBLE: att_handle=18
+20:52:01.631 [KEY] 
+20:52:01.631 [KEY] I (3937114) KEY: HOP K resp nonce=f62b7963 calc_notify=5970 us (challenge 384, 16 B) t=3936577042 us
+20:52:02.556 [KEY] I (3938111) NimBLE: GATT procedure initiated: notify; 
+20:52:02.556 [KEY] I (3938111) NimBLE: att_handle=18
+20:52:02.556 [KEY] 
+20:52:02.556 [KEY] I (3938115) KEY: HOP K resp nonce=d524c1b5 calc_notify=6708 us (challenge 385, 16 B) t=3937578315 us
+20:52:03.547 [KEY] I (3939110) NimBLE: GATT procedure initiated: notify; 
+20:52:03.547 [KEY] I (3939110) NimBLE: att_handle=18
+20:52:03.547 [KEY] 
+20:52:03.547 [KEY] I (3939114) KEY: HOP K resp nonce=7e8f62ee calc_notify=5964 us (challenge 386, 16 B) t=3938577091 us
+20:52:04.626 [KEY] I (3940110) NimBLE: GATT procedure initiated: notify; 
+20:52:04.626 [KEY] I (3940110) NimBLE: att_handle=18
+20:52:04.626 [KEY] 
+20:52:04.626 [KEY] I (3940114) KEY: HOP K resp nonce=143528b1 calc_notify=5947 us (challenge 387, 16 B) t=3939577106 us
+20:52:05.555 [KEY] I (3941111) NimBLE: GATT procedure initiated: notify; 
+20:52:05.555 [KEY] I (3941111) NimBLE: att_handle=18
+20:52:05.555 [KEY] 
+20:52:05.555 [KEY] I (3941115) KEY: HOP K resp nonce=c58f209b calc_notify=6206 us (challenge 388, 16 B) t=3940577817 us
+20:52:06.547 [KEY] I (3942110) NimBLE: GATT procedure initiated: notify; 
+20:52:06.547 [KEY] I (3942110) NimBLE: att_handle=18
+20:52:06.547 [KEY] 
+20:52:06.547 [KEY] I (3942114) KEY: HOP K resp nonce=248a9dab calc_notify=5943 us (challenge 389, 16 B) t=3941577151 us
+20:52:07.628 [KEY] I (3943110) NimBLE: GATT procedure initiated: notify; 
+20:52:07.628 [KEY] I (3943110) NimBLE: att_handle=18
+20:52:07.628 [KEY] 
+20:52:07.628 [KEY] I (3943114) KEY: HOP K resp nonce=d9fb889c calc_notify=5955 us (challenge 390, 16 B) t=3942577173 us
+20:52:08.552 [KEY] I (3944111) NimBLE: GATT procedure initiated: notify; 
+20:52:08.552 [KEY] I (3944111) NimBLE: att_handle=18
+20:52:08.552 [KEY] 
+20:52:08.552 [KEY] I (3944115) KEY: HOP K resp nonce=fb885f7d calc_notify=6182 us (challenge 391, 16 B) t=3943577879 us
+20:52:09.632 [KEY] I (3945110) NimBLE: GATT procedure initiated: notify; 
+20:52:09.632 [KEY] I (3945110) NimBLE: att_handle=18
+20:52:09.632 [KEY] 
+20:52:09.632 [KEY] I (3945114) KEY: HOP K resp nonce=b687f0bb calc_notify=5868 us (challenge 392, 16 B) t=3944577220 us
+20:52:10.558 [KEY] I (3946110) NimBLE: GATT procedure initiated: notify; 
+20:52:10.558 [KEY] I (3946110) NimBLE: att_handle=18
+20:52:10.558 [KEY] 
+20:52:10.558 [KEY] I (3946114) KEY: HOP K resp nonce=4b081367 calc_notify=5844 us (challenge 393, 16 B) t=3945577230 us
+20:52:11.548 [KEY] I (3947111) NimBLE: GATT procedure initiated: notify; 
+20:52:11.548 [KEY] I (3947111) NimBLE: att_handle=18
+20:52:11.548 [KEY] 
+20:52:11.548 [KEY] I (3947116) KEY: HOP K resp nonce=59e7e5c7 calc_notify=6781 us (challenge 394, 16 B) t=3946578520 us
+20:52:12.627 [KEY] I (3948110) NimBLE: GATT procedure initiated: notify; 
+20:52:12.627 [KEY] I (3948110) NimBLE: att_handle=18
+20:52:12.627 [KEY] 
+20:52:12.627 [KEY] I (3948114) KEY: HOP K resp nonce=77281a7e calc_notify=5938 us (challenge 395, 16 B) t=3947577367 us
+20:52:13.552 [KEY] I (3949110) NimBLE: GATT procedure initiated: notify; 
+20:52:13.552 [KEY] I (3949110) NimBLE: att_handle=18
+20:52:13.552 [KEY] 
+20:52:13.553 [KEY] I (3949114) KEY: HOP K resp nonce=dd217b72 calc_notify=5967 us (challenge 396, 16 B) t=3948577386 us
+20:52:14.632 [KEY] I (3950110) NimBLE: GATT procedure initiated: notify; 
+20:52:14.632 [KEY] I (3950111) NimBLE: att_handle=18
+20:52:14.632 [KEY] 
+20:52:14.632 [KEY] I (3950115) KEY: HOP K resp nonce=efc64c9d calc_notify=6053 us (challenge 397, 16 B) t=3949578011 us
+20:52:16.699 [LOGGER] closed
