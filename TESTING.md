@@ -335,7 +335,8 @@ timeout. The vehicle must run M-22 or later: a response that arrives after its r
 discarded instead of closing the round in flight.
 
 - The sweep runs from the repo root, one relayed campaign per delay, labelled `relay-dNNNN`:
-  `powershell -NoProfile -ExecutionPolicy Bypass -File tools\campaign\run_sweep.ps1 -Delays 500,1000 -Dist 0.99`.
+  `& .\tools\campaign\run_sweep.ps1 -Delays 500,1000 -Dist 0.99` from a PowerShell prompt (`powershell -File`
+  passes a comma list as one string and fails).
   Without `-Delays` it runs the default list in the script, which starts at 0.
 - `run_relay.ps1 -DelayMs <ms>` sends `COM7 DELAY <ms>` and waits for the relay's `DELAY set=<ms> ms` line.
   It is sent on every relayed campaign (default 0), so no campaign inherits the delay of the one before.

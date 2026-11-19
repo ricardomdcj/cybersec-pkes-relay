@@ -6,8 +6,8 @@
 #
 # Usage (from the repo root, with the four boards connected, the M-22 vehicle firmware and the
 # DELAY relay firmware flashed):
-#   powershell -NoProfile -ExecutionPolicy Bypass -File tools\campaign\run_sweep.ps1
-#   ... -Delays 1650,1700 -Dist 0.99
+#   & .\tools\campaign\run_sweep.ps1 -Delays 1650,1700 -Dist 0.99
+#   (run it from a PowerShell prompt: `powershell -File` passes a comma list as one string and fails)
 #
 # Each run is retried up to five times. Before each attempt the deskrab status-line bridge is
 # stopped: it holds the COM ports and respawns while the session is active, which makes the passive
