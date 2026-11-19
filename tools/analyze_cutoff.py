@@ -10,7 +10,11 @@ The unit is the campaign. The script reports:
   4. a leave-one-campaign-out check: the bound is set from the other honest campaigns only, then tested
      on the held-out honest campaign and on all relayed rounds;
   5. and 6. the same operating curve and leave-one-campaign-out check on the M-19 campaigns only, which
-     start each campaign at a random offset of the round grid.
+     start each campaign at a random offset of the round grid;
+  7. the held-out check of the bound T = 150 ms, which was fixed in data/analysis-20261118/
+     heldout-150ms-plan.md before the held-out campaigns were recorded: honest rounds rejected and
+     relayed rounds accepted, on the held-out campaigns only;
+  8. the operating curve on all campaigns recorded with the M-19 firmware at 2.24 m (in-sample and held-out).
 
 Writes data/analysis-20261118/cutoff.md. Within one campaign the sends stay on one phase, because 1000 ms
 is a multiple of the 50 ms connection interval. The connection anchor is not logged, so the phase in
@@ -37,6 +41,8 @@ ALPHAS = [0.01, 0.05]
 PERIOD_US = 50000
 OFFSET_RE = re.compile(r"grid start offset (\d+) us")
 M19 = "M-19"
+HELDOUT = "held-out"
+T_FIXED = 150.0  # fixed in heldout-150ms-plan.md before the held-out campaigns were recorded
 
 
 def load_campaigns():
@@ -120,6 +126,51 @@ def loco_lines(honest, relayed, heading):
     return md
 
 
+def heldout_lines(honest, relayed):
+    """Section 7: T was fixed before these campaigns were recorded, so this is the only out-of-sample test."""
+    h_vals = [value_ms(r) for c in honest for r in c["rounds"]]
+    r_vals = [value_ms(r) for c in relayed for r in c["rounds"]]
+    bad_h = sum(1 for v in h_vals if v > T_FIXED)
+    acc_r = sum(1 for v in r_vals if v <= T_FIXED)
+    lo, hi = ar.wilson(acc_r, len(r_vals))
+    t_max = max(v for v in h_vals if math.isfinite(v))
+    verdict = "Met." if bad_h == 0 else "Not met: the bound fails as a false-reject limit out of sample."
+    md = ["## 7. Held-out check of the 150 ms bound", "",
+          f"T = {T_FIXED:.0f} ms was fixed in `heldout-150ms-plan.md` before these campaigns were recorded. "
+          f"Held-out: {len(honest)} direct and {len(relayed)} relayed campaigns, {len(h_vals)} honest and "
+          f"{len(r_vals)} relayed rounds.", "",
+          f"Criterion 1, honest false rejects: {bad_h} of {len(h_vals)} honest rounds above T or unanswered "
+          f"({bad_h / len(h_vals) * 100:.1f} %), expected 0. {verdict}", "",
+          f"Criterion 2, relayed accepts: {acc_r} of {len(r_vals)} relayed rounds at or below T "
+          f"({acc_r / len(r_vals) * 100:.1f} %), 95 % Wilson interval {lo * 100:.1f} to {hi * 100:.1f} %. "
+          "Reported as found; the plan sets no pass threshold for it.", "",
+          f"The largest held-out honest RTT is {t_max:.1f} ms.", "",
+          "| Direct campaign | Rounds above T or unanswered | Max answered RTT (ms) |", "|---|---|---|"]
+    for c in honest:
+        vals = [value_ms(r) for r in c["rounds"]]
+        ok = [v for v in vals if math.isfinite(v)]
+        top = f"{max(ok):.1f}" if ok else "-"
+        md.append(f"| {c['campaign']} | {sum(1 for v in vals if v > T_FIXED)} | {top} |")
+    md += ["", "| Relayed campaign | Answered rounds | Min (ms) | Median (ms) | Max (ms) | Rounds at or below T |",
+           "|---|---|---|---|---|---|"]
+    for c in relayed:
+        vals = sorted(v for v in (value_ms(r) for r in c["rounds"]) if math.isfinite(v))
+        if not vals:
+            md.append(f"| {c['campaign']} | 0 | - | - | - | 0 |")
+            continue
+        md.append(f"| {c['campaign']} | {len(vals)} | {vals[0]:.1f} | {statistics.median(vals):.1f} | "
+                  f"{vals[-1]:.1f} | {sum(1 for v in vals if v <= T_FIXED)} |")
+    t2 = min(g for g in GRID_MS if g > t_max)
+    frr2 = sum(1 for v in h_vals if v > t2)
+    acc2 = sum(1 for v in r_vals if v <= t2)
+    md += ["", f"Separate row, not a replacement: the next grid value above the held-out maximum is T = {t2} ms, "
+           f"chosen after the held-out maximum was seen. Held-out: {frr2} of {len(h_vals)} honest rounds rejected "
+           f"({frr2 / len(h_vals) * 100:.1f} %), {acc2} of {len(r_vals)} relayed rounds accepted "
+           f"({acc2 / len(r_vals) * 100:.1f} %)."]
+    md += [""] + operating_lines(honest, relayed, "7b. Operating curve on the held-out campaigns")
+    return md
+
+
 def main(argv=None):
     camps = load_campaigns()
     honest = [c for c in camps if c["honest"]]
@@ -127,10 +178,17 @@ def main(argv=None):
     m19 = [c for c in camps if M19 in c["name"]]
     m19_honest = [c for c in m19 if c["honest"]]
     m19_relayed = [c for c in m19 if not c["honest"]]
+    held = [c for c in camps if HELDOUT in c["name"]]
+    held_honest = [c for c in held if c["honest"]]
+    held_relayed = [c for c in held if not c["honest"]]
+    fw = [c for c in camps if M19 in c["name"] or HELDOUT in c["name"]]
+    fw_honest = [c for c in fw if c["honest"]]
+    fw_relayed = [c for c in fw if not c["honest"]]
 
     md = ["# Cutoff analysis (mitigation, Milestone 4)", "",
-          "The unit is the campaign. Sections 3 and 4 pool every campaign; sections 5 and 6 use the M-19 "
-          "campaigns only, whose round grid starts at a random offset.", "",
+          "The unit is the campaign. Sections 3, 4 and 8 pool every campaign, the held-out ones included; sections "
+          "5 and 6 use the M-19 in-sample campaigns only, whose round grid starts at a random offset; section 7 is "
+          "the held-out test of the bound.", "",
           "## 1. Phase of the round sends on the 50 ms grid", "",
           "R is the resultant length of the send phases within a campaign: 1 means every send falls on the same "
           "phase. The phase is on the vehicle's clock, because the connection anchor is not logged. The start "
@@ -150,13 +208,17 @@ def main(argv=None):
         md.append(f"| {name} | {len(vals)} | {min(vals):.1f} | {statistics.median(vals):.1f} | {q99:.1f} | "
                   f"{max(vals):.1f} |")
 
-    md += [""] + operating_lines(honest, relayed, "3. Operating curve of a bound (pooled, in-sample)")
+    md += [""] + operating_lines(honest, relayed, "3. Operating curve of a bound (pooled over all campaigns, held-out ones included)")
     md += [""] + loco_lines(honest, relayed, "4. Leave-one-campaign-out check (pooled)")
     md += [""] + operating_lines(m19_honest, m19_relayed, "5. Operating curve, M-19 campaigns only (in-sample)")
     md += [""] + loco_lines(m19_honest, m19_relayed, "6. Leave-one-campaign-out check, M-19 campaigns only")
+    md += [""] + heldout_lines(held_honest, held_relayed)
+    md += [""] + operating_lines(fw_honest, fw_relayed,
+                                 "8. Operating curve, all M-19 firmware campaigns at 2.24 m (in-sample and held-out pooled)")
 
     md += ["", "## Notes", "",
-           "- Sections 3 and 4 mix the 2026-11-18 campaigns with the M-19 campaigns. The firmware before M-19 sent "
+           "- Sections 3 and 4 pool every campaign: the 2026-11-18 campaigns, the M-19 in-sample campaigns and the "
+           "held-out campaigns. The firmware before M-19 sent "
            "round 1 at START, so the phase of those campaigns followed from the connection timing. Sections 5 and "
            "6 use the M-19 campaigns only, whose offsets are drawn at random.",
            "- Within one campaign the sends stay on one phase, so every campaign's RTT is shifted by its own phase "
@@ -164,6 +226,8 @@ def main(argv=None):
            "- The bound is set from honest data only. Relayed data never set it.",
            "- The M-19 sections are at one distance (car-key 2.24 m, A-B 2 m). The 0.52 m and 0.99 m campaigns "
            "are in sections 1 to 4 only.",
+           "- Section 7 is the only test of T on campaigns recorded after T was fixed. Sections 3 to 6 and 8 are "
+           "in-sample or pooled.",
            "- A bound is valid for this stack and these distances. It is not a general defence (LIMITATIONS.md, "
            "limit 2)."]
     OUT.write_text("\n".join(md) + "\n", encoding="utf-8")

@@ -29,6 +29,7 @@ REASONS = {
     "20261118-195355_relay-session": "aborted: reset pulse failed, COM5 busy",
     "20261118-205713_relay-unicast-session": "aborted: stability check counted an old disconnect",
     "20261118-213041_baseline-session": "aborted: COM8 busy when the capture opened (bridge probing)",
+    "20261119-000348_relay-ho-ab200-session": "aborted: passive logger could not open the three ports, before the campaign",
     "20261118-205109_relay-unicast-session": "invalid: vehicle connected directly to the key, no relay lines",
     "20261118-205332_relay-unicast-tx8-session": "invalid: vehicle connected directly to the key, no relay lines",
     "20261118-205917_relay-unicast-tx8-session": "invalid: vehicle connected directly to the key, no relay lines",

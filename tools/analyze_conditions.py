@@ -81,6 +81,28 @@ CONDITIONS = [
         ("20261118-231507_relay-m19-ab200-session", "20261118-231526_relay-m19-ab200"),
         ("20261118-231727_relay-m19-ab200-session", "20261118-231858_relay-m19-ab200"),
         ("20261118-232058_relay-m19-ab200-session", "20261118-232116_relay-m19-ab200")]),
+    dict(name="baseline 2.24 held-out", dist=2.24, tunnel="direct", campaigns=[
+        ("20261119-000248_baseline-ho-session", "20261119-000252_baseline-ho"),
+        ("20261119-000405_baseline-ho-session", "20261119-000408_baseline-ho"),
+        ("20261119-000732_baseline-ho-session", "20261119-000736_baseline-ho"),
+        ("20261119-001100_baseline-ho-session", "20261119-001104_baseline-ho"),
+        ("20261119-001316_baseline-ho-session", "20261119-001320_baseline-ho"),
+        ("20261119-001644_baseline-ho-session", "20261119-001648_baseline-ho"),
+        ("20261119-002011_baseline-ho-session", "20261119-002015_baseline-ho"),
+        ("20261119-002340_baseline-ho-session", "20261119-002344_baseline-ho"),
+        ("20261119-002707_baseline-ho-session", "20261119-002711_baseline-ho"),
+        ("20261119-002924_baseline-ho-session", "20261119-002928_baseline-ho")]),
+    dict(name="unicast A-B 2 held-out (car-key 2.24)", dist=2.24, tunnel="unicast, A-B 2 m", campaigns=[
+        ("20261119-000505_relay-ho-ab200-session", "20261119-000635_relay-ho-ab200"),
+        ("20261119-000833_relay-ho-ab200-session", "20261119-001003_relay-ho-ab200"),
+        ("20261119-001201_relay-ho-ab200-session", "20261119-001219_relay-ho-ab200"),
+        ("20261119-001417_relay-ho-ab200-session", "20261119-001547_relay-ho-ab200"),
+        ("20261119-001744_relay-ho-ab200-session", "20261119-001914_relay-ho-ab200"),
+        ("20261119-002112_relay-ho-ab200-session", "20261119-002243_relay-ho-ab200"),
+        ("20261119-002440_relay-ho-ab200-session", "20261119-002610_relay-ho-ab200"),
+        ("20261119-002808_relay-ho-ab200-session", "20261119-002826_relay-ho-ab200"),
+        ("20261119-003025_relay-ho-ab200-session", "20261119-003043_relay-ho-ab200"),
+        ("20261119-003207_relay-ho-ab200-session", "20261119-003225_relay-ho-ab200")]),
 ]
 
 COMPARISONS = [
@@ -96,6 +118,7 @@ COMPARISONS = [
     ("baseline 0.52", "baseline 0.99", "direct baseline, 0.99 m minus 0.52 m"),
     ("baseline 0.99", "baseline 2.24", "direct baseline, 2.24 m minus 0.99 m"),
     ("baseline 2.24 M-19", "unicast A-B 2 M-19 (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, M-19 firmware"),
+    ("baseline 2.24 held-out", "unicast A-B 2 held-out (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, held-out campaigns"),
 ]
 
 
@@ -138,7 +161,7 @@ def build(spec):
 def summary_markdown(conds):
     by = {c["name"]: c for c in conds}
     md = ["# Campaign summary, 2026-11-18", "",
-          "Each condition pools the campaigns of one setup: three campaigns of 50 rounds, or eight for the M-19 setups (random start offset of the round grid). Distance is the "
+          "Each condition pools the campaigns of one setup: three campaigns of 50 rounds, eight for the M-19 setups, and ten for the held-out setups (random start offset of the round grid). Distance is the "
           "car-key separation. For relayed conditions, CSVB rounds equal the OK rounds (every answered round "
           "went through the relays).", ""]
     md += ["## Outcomes", "",
@@ -199,7 +222,7 @@ def summary_markdown(conds):
            "- Rounds are not independent: the RTT moves in plateaus within a campaign. The bootstrap "
            "intervals assume independent rounds, so they are optimistic.",
            "- The spread between campaigns (campaign spread table) is larger than most differences between "
-           "settings. Three campaigns per condition do not resolve differences below about 50 ms; the M-19 setups have eight."]
+           "settings. Three campaigns per condition do not resolve differences below about 50 ms; the M-19 setups have eight and the held-out setups ten."]
     return "\n".join(md) + "\n"
 
 
