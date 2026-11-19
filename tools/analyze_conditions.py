@@ -103,6 +103,28 @@ CONDITIONS = [
         ("20261119-002808_relay-ho-ab200-session", "20261119-002826_relay-ho-ab200"),
         ("20261119-003025_relay-ho-ab200-session", "20261119-003043_relay-ho-ab200"),
         ("20261119-003207_relay-ho-ab200-session", "20261119-003225_relay-ho-ab200")]),
+    dict(name="baseline 2.24 replication", dist=2.24, tunnel="direct", campaigns=[
+        ("20261119-003839_baseline-rep-session", "20261119-003843_baseline-rep"),
+        ("20261119-004102_baseline-rep-session", "20261119-004105_baseline-rep"),
+        ("20261119-004431_baseline-rep-session", "20261119-004435_baseline-rep"),
+        ("20261119-004647_baseline-rep-session", "20261119-004651_baseline-rep"),
+        ("20261119-004902_baseline-rep-session", "20261119-004906_baseline-rep"),
+        ("20261119-005118_baseline-rep-session", "20261119-005121_baseline-rep"),
+        ("20261119-005445_baseline-rep-session", "20261119-005449_baseline-rep"),
+        ("20261119-005700_baseline-rep-session", "20261119-005704_baseline-rep"),
+        ("20261119-005915_baseline-rep-session", "20261119-005919_baseline-rep"),
+        ("20261119-010131_baseline-rep-session", "20261119-010134_baseline-rep")]),
+    dict(name="unicast A-B 2 replication (car-key 2.24)", dist=2.24, tunnel="unicast, A-B 2 m", campaigns=[
+        ("20261119-003939_relay-rep-ab200-session", "20261119-004004_relay-rep-ab200"),
+        ("20261119-004202_relay-rep-ab200-session", "20261119-004334_relay-rep-ab200"),
+        ("20261119-004532_relay-rep-ab200-session", "20261119-004549_relay-rep-ab200"),
+        ("20261119-004747_relay-rep-ab200-session", "20261119-004805_relay-rep-ab200"),
+        ("20261119-005002_relay-rep-ab200-session", "20261119-005020_relay-rep-ab200"),
+        ("20261119-005218_relay-rep-ab200-session", "20261119-005348_relay-rep-ab200"),
+        ("20261119-005545_relay-rep-ab200-session", "20261119-005603_relay-rep-ab200"),
+        ("20261119-005801_relay-rep-ab200-session", "20261119-005819_relay-rep-ab200"),
+        ("20261119-010016_relay-rep-ab200-session", "20261119-010034_relay-rep-ab200"),
+        ("20261119-010230_relay-rep-ab200-session", "20261119-010401_relay-rep-ab200")]),
 ]
 
 COMPARISONS = [
@@ -119,6 +141,7 @@ COMPARISONS = [
     ("baseline 0.99", "baseline 2.24", "direct baseline, 2.24 m minus 0.99 m"),
     ("baseline 2.24 M-19", "unicast A-B 2 M-19 (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, M-19 firmware"),
     ("baseline 2.24 held-out", "unicast A-B 2 held-out (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, held-out campaigns"),
+    ("baseline 2.24 replication", "unicast A-B 2 replication (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, replication campaigns"),
 ]
 
 
@@ -161,7 +184,7 @@ def build(spec):
 def summary_markdown(conds):
     by = {c["name"]: c for c in conds}
     md = ["# Campaign summary, 2026-11-18", "",
-          "Each condition pools the campaigns of one setup: three campaigns of 50 rounds, eight for the M-19 setups, and ten for the held-out setups (random start offset of the round grid). Distance is the "
+          "Each condition pools the campaigns of one setup: three campaigns of 50 rounds, eight for the M-19 setups, and ten for the held-out and replication setups (random start offset of the round grid). Distance is the "
           "car-key separation. For relayed conditions, CSVB rounds equal the OK rounds (every answered round "
           "went through the relays).", ""]
     md += ["## Outcomes", "",
@@ -222,7 +245,7 @@ def summary_markdown(conds):
            "- Rounds are not independent: the RTT moves in plateaus within a campaign. The bootstrap "
            "intervals assume independent rounds, so they are optimistic.",
            "- The spread between campaigns (campaign spread table) is larger than most differences between "
-           "settings. Three campaigns per condition do not resolve differences below about 50 ms; the M-19 setups have eight and the held-out setups ten."]
+           "settings. Three campaigns per condition do not resolve differences below about 50 ms; the M-19 setups have eight and the held-out and replication setups ten."]
     return "\n".join(md) + "\n"
 
 

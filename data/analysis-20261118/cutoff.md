@@ -71,6 +71,26 @@ R is the resultant length of the send phases within a campaign: 1 means every se
 | unicast A-B 2 held-out (car-key 2.24) | 20261119-002826_relay-ho-ab200 | 396.3 | 0.955 | 35.1 |
 | unicast A-B 2 held-out (car-key 2.24) | 20261119-003043_relay-ho-ab200 | 99.3 | 0.957 | 48.3 |
 | unicast A-B 2 held-out (car-key 2.24) | 20261119-003225_relay-ho-ab200 | 648.8 | 0.958 | 46.8 |
+| baseline 2.24 replication | 20261119-003843_baseline-rep | 222.4 | 0.959 | 25.0 |
+| baseline 2.24 replication | 20261119-004105_baseline-rep | 694.4 | 0.956 | 7.3 |
+| baseline 2.24 replication | 20261119-004435_baseline-rep | 628.8 | 0.946 | 3.7 |
+| baseline 2.24 replication | 20261119-004651_baseline-rep | 548.8 | 0.944 | 9.8 |
+| baseline 2.24 replication | 20261119-004906_baseline-rep | 502.8 | 0.958 | 27.8 |
+| baseline 2.24 replication | 20261119-005121_baseline-rep | 548.6 | 0.958 | 47.2 |
+| baseline 2.24 replication | 20261119-005449_baseline-rep | 44.3 | 0.956 | 38.0 |
+| baseline 2.24 replication | 20261119-005704_baseline-rep | 410.9 | 0.958 | 6.6 |
+| baseline 2.24 replication | 20261119-005919_baseline-rep | 798.6 | 0.957 | 43.4 |
+| baseline 2.24 replication | 20261119-010134_baseline-rep | 2.8 | 0.939 | 46.1 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-004004_relay-rep-ab200 | 489.4 | 0.956 | 34.7 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-004334_relay-rep-ab200 | 363.3 | 0.959 | 21.4 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-004549_relay-rep-ab200 | 428.7 | 0.959 | 40.0 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-004805_relay-rep-ab200 | 335.0 | 0.957 | 37.2 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-005020_relay-rep-ab200 | 455.1 | 0.941 | 45.0 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-005348_relay-rep-ab200 | 592.9 | 0.958 | 35.1 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-005603_relay-rep-ab200 | 806.6 | 0.958 | 24.4 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-005819_relay-rep-ab200 | 55.2 | 0.947 | 2.1 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-010034_relay-rep-ab200 | 274.6 | 0.942 | 44.1 |
+| unicast A-B 2 replication (car-key 2.24) | 20261119-010401_relay-rep-ab200 | 128.8 | 0.938 | 48.0 |
 
 ## 2. RTT per condition (answered rounds, ms)
 
@@ -89,27 +109,29 @@ R is the resultant length of the send phases within a campaign: 1 means every se
 | unicast A-B 2 M-19 (car-key 2.24) | 400 | 115.3 | 397.5 | 456.8 | 550.5 |
 | baseline 2.24 held-out | 500 | 57.6 | 81.2 | 107.3 | 150.6 |
 | unicast A-B 2 held-out (car-key 2.24) | 500 | 121.0 | 356.7 | 456.6 | 512.0 |
+| baseline 2.24 replication | 500 | 57.5 | 80.2 | 107.7 | 143.3 |
+| unicast A-B 2 replication (car-key 2.24) | 500 | 107.4 | 354.7 | 454.0 | 454.5 |
 
 ## 3. Operating curve of a bound (pooled over all campaigns, held-out ones included)
 
-Honest rounds: 1350 from 27 direct campaigns. Relayed rounds: 1800 from 36 relayed campaigns. A round is rejected by a bound T when it has no answer or its RTT is above T; a relayed round is accepted when it is answered and its RTT is at most T.
+Honest rounds: 1850 from 37 direct campaigns. Relayed rounds: 2300 from 46 relayed campaigns. A round is rejected by a bound T when it has no answer or its RTT is above T; a relayed round is accepted when it is answered and its RTT is at most T.
 
 | Bound T (ms) | Honest rejected (FRR) | Relayed accepted (FAR) |
 |---|---|---|
-| 100 | 10.1 % | 0.0 % |
-| 110 | 1.7 % | 0.0 % |
-| 120 | 1.1 % | 0.5 % |
-| 130 | 0.8 % | 0.8 % |
-| 140 | 0.2 % | 0.8 % |
-| 150 | 0.1 % | 0.8 % |
-| 160 | 0.0 % | 1.0 % |
+| 100 | 12.8 % | 0.0 % |
+| 110 | 1.4 % | 0.4 % |
+| 120 | 0.9 % | 0.8 % |
+| 130 | 0.6 % | 1.0 % |
+| 140 | 0.2 % | 1.0 % |
+| 150 | 0.1 % | 1.0 % |
+| 160 | 0.0 % | 1.3 % |
 | 170 | 0.0 % | 2.9 % |
-| 180 | 0.0 % | 3.6 % |
-| 200 | 0.0 % | 4.4 % |
+| 180 | 0.0 % | 3.7 % |
+| 200 | 0.0 % | 4.6 % |
 | 250 | 0.0 % | 9.9 % |
-| 300 | 0.0 % | 26.6 % |
+| 300 | 0.0 % | 26.1 % |
 
-The largest honest RTT is 150.6 ms. A bound at that value rejects no honest round in sample, and accepts 0.8 % of relayed rounds.
+The largest honest RTT is 150.6 ms. A bound at that value rejects no honest round in sample, and accepts 1.0 % of relayed rounds.
 
 ## 4. Leave-one-campaign-out check (pooled)
 
@@ -117,8 +139,8 @@ For each direct campaign h: T_h is the (1 - alpha) quantile of the honest rounds
 
 | alpha | T_h min (ms) | T_h median (ms) | T_h max (ms) | Held-out FRR mean | Held-out FRR max | FAR (relayed, pooled) min | FAR median | FAR max |
 |---|---|---|---|---|---|---|---|---|
-| 0.01 | 119.7 | 128.0 | 128.0 | 1.0 % | 6.0 % | 0.5 % | 0.8 % | 0.8 % |
-| 0.05 | 103.9 | 104.9 | 104.9 | 6.4 % | 44.0 % | 0.0 % | 0.0 % | 0.0 % |
+| 0.01 | 116.6 | 119.7 | 119.7 | 1.0 % | 6.0 % | 0.8 % | 0.8 % | 0.8 % |
+| 0.05 | 105.2 | 105.8 | 105.9 | 5.5 % | 26.0 % | 0.0 % | 0.0 % | 0.0 % |
 
 ## 5. Operating curve, M-19 campaigns only (in-sample)
 
@@ -209,26 +231,83 @@ Honest rounds: 500 from 10 direct campaigns. Relayed rounds: 500 from 10 relayed
 
 The largest honest RTT is 150.6 ms. A bound at that value rejects no honest round in sample, and accepts 1.0 % of relayed rounds.
 
-## 8. Operating curve, all M-19 firmware campaigns at 2.24 m (in-sample and held-out pooled)
+## 8. Operating curve, all M-19 firmware campaigns at 2.24 m (in-sample, held-out and replication pooled)
 
-Honest rounds: 900 from 18 direct campaigns. Relayed rounds: 900 from 18 relayed campaigns. A round is rejected by a bound T when it has no answer or its RTT is above T; a relayed round is accepted when it is answered and its RTT is at most T.
+Honest rounds: 1400 from 28 direct campaigns. Relayed rounds: 1400 from 28 relayed campaigns. A round is rejected by a bound T when it has no answer or its RTT is above T; a relayed round is accepted when it is answered and its RTT is at most T.
 
 | Bound T (ms) | Honest rejected (FRR) | Relayed accepted (FAR) |
 |---|---|---|
-| 100 | 8.6 % | 0.0 % |
-| 110 | 1.2 % | 0.0 % |
-| 120 | 0.7 % | 0.7 % |
-| 130 | 0.4 % | 1.2 % |
-| 140 | 0.2 % | 1.2 % |
-| 150 | 0.1 % | 1.2 % |
-| 160 | 0.0 % | 1.4 % |
-| 170 | 0.0 % | 2.4 % |
-| 180 | 0.0 % | 3.1 % |
-| 200 | 0.0 % | 4.2 % |
-| 250 | 0.0 % | 10.4 % |
-| 300 | 0.0 % | 31.1 % |
+| 100 | 12.7 % | 0.0 % |
+| 110 | 1.0 % | 0.6 % |
+| 120 | 0.6 % | 1.1 % |
+| 130 | 0.4 % | 1.5 % |
+| 140 | 0.2 % | 1.5 % |
+| 150 | 0.1 % | 1.5 % |
+| 160 | 0.0 % | 1.9 % |
+| 170 | 0.0 % | 2.6 % |
+| 180 | 0.0 % | 3.5 % |
+| 200 | 0.0 % | 4.5 % |
+| 250 | 0.0 % | 10.1 % |
+| 300 | 0.0 % | 28.7 % |
 
-The largest honest RTT is 150.6 ms. A bound at that value rejects no honest round in sample, and accepts 1.2 % of relayed rounds.
+The largest honest RTT is 150.6 ms. A bound at that value rejects no honest round in sample, and accepts 1.5 % of relayed rounds.
+
+## 9. Replication of the 160 ms bound (fixed before these campaigns)
+
+T = 160 ms was fixed in `replication-160ms-plan.md` before these campaigns were recorded. Replication: 10 direct and 10 relayed campaigns, 500 honest and 500 relayed rounds.
+
+Criterion 1, honest false rejects: 0 of 500 honest rounds above T or unanswered (0.0 %), expected 0. Met.
+
+Criterion 2, relayed accepts: 13 of 500 relayed rounds at or below T (2.6 %), 95 % Wilson interval 1.5 to 4.4 %. Reported as found; the plan sets no pass threshold for it.
+
+The largest replication honest RTT is 143.3 ms.
+
+| Direct campaign | Rounds above T or unanswered | Max answered RTT (ms) |
+|---|---|---|
+| 20261119-003843_baseline-rep | 0 | 87.2 |
+| 20261119-004105_baseline-rep | 0 | 143.3 |
+| 20261119-004435_baseline-rep | 0 | 107.4 |
+| 20261119-004651_baseline-rep | 0 | 107.6 |
+| 20261119-004906_baseline-rep | 0 | 125.0 |
+| 20261119-005121_baseline-rep | 0 | 64.8 |
+| 20261119-005449_baseline-rep | 0 | 67.2 |
+| 20261119-005704_baseline-rep | 0 | 100.1 |
+| 20261119-005919_baseline-rep | 0 | 112.4 |
+| 20261119-010134_baseline-rep | 0 | 108.4 |
+
+| Relayed campaign | Answered rounds | Min (ms) | Median (ms) | Max (ms) | Rounds at or below T |
+|---|---|---|---|---|---|
+| 20261119-004004_relay-rep-ab200 | 50 | 270.9 | 370.0 | 417.3 | 0 |
+| 20261119-004334_relay-rep-ab200 | 50 | 199.4 | 343.9 | 446.3 | 0 |
+| 20261119-004549_relay-rep-ab200 | 50 | 164.2 | 362.1 | 417.9 | 0 |
+| 20261119-004805_relay-rep-ab200 | 50 | 172.8 | 368.5 | 372.1 | 0 |
+| 20261119-005020_relay-rep-ab200 | 50 | 107.4 | 401.9 | 406.1 | 8 |
+| 20261119-005348_relay-rep-ab200 | 50 | 109.8 | 262.8 | 365.7 | 5 |
+| 20261119-005603_relay-rep-ab200 | 50 | 275.1 | 374.0 | 430.5 | 0 |
+| 20261119-005819_relay-rep-ab200 | 50 | 297.5 | 449.1 | 454.5 | 0 |
+| 20261119-010034_relay-rep-ab200 | 50 | 208.8 | 304.3 | 409.3 | 0 |
+| 20261119-010401_relay-rep-ab200 | 50 | 308.2 | 407.5 | 453.6 | 0 |
+
+## 9b. Operating curve on the replication campaigns
+
+Honest rounds: 500 from 10 direct campaigns. Relayed rounds: 500 from 10 relayed campaigns. A round is rejected by a bound T when it has no answer or its RTT is above T; a relayed round is accepted when it is answered and its RTT is at most T.
+
+| Bound T (ms) | Honest rejected (FRR) | Relayed accepted (FAR) |
+|---|---|---|
+| 100 | 20.2 % | 0.0 % |
+| 110 | 0.6 % | 1.8 % |
+| 120 | 0.4 % | 2.0 % |
+| 130 | 0.2 % | 2.0 % |
+| 140 | 0.2 % | 2.0 % |
+| 150 | 0.0 % | 2.0 % |
+| 160 | 0.0 % | 2.6 % |
+| 170 | 0.0 % | 3.0 % |
+| 180 | 0.0 % | 4.2 % |
+| 200 | 0.0 % | 5.0 % |
+| 250 | 0.0 % | 9.6 % |
+| 300 | 0.0 % | 24.4 % |
+
+The largest honest RTT is 143.3 ms. A bound at that value rejects no honest round in sample, and accepts 2.0 % of relayed rounds.
 
 ## Notes
 
@@ -236,5 +315,5 @@ The largest honest RTT is 150.6 ms. A bound at that value rejects no honest roun
 - Within one campaign the sends stay on one phase, so every campaign's RTT is shifted by its own phase (section 1 shows R per campaign).
 - The bound is set from honest data only. Relayed data never set it.
 - The M-19 sections are at one distance (car-key 2.24 m, A-B 2 m). The 0.52 m and 0.99 m campaigns are in sections 1 to 4 only.
-- Section 7 is the only test of T on campaigns recorded after T was fixed. Sections 3 to 6 and 8 are in-sample or pooled.
+- Sections 7 and 9 are the tests of T on campaigns recorded after T was fixed (150 ms and 160 ms). Sections 3 to 6 and 8 are in-sample or pooled.
 - A bound is valid for this stack and these distances. It is not a general defence (LIMITATIONS.md, limit 2).

@@ -31,7 +31,10 @@ bound to the nonce, not to time or place.
    section 7) tested 150 ms on ten new direct and ten new relayed campaigns. One honest round in 500 took
    150.6 ms, so 150 ms failed its criterion. The next grid value, 160 ms, was then evaluated as a separate row:
    no honest round was rejected, and 1.4 % of relayed rounds were accepted. It was chosen after the held-out
-   maximum was seen, so it needs its own check.
+   maximum was seen, so it needs its own check. A replication set of ten direct and ten relayed campaigns then
+   tested 160 ms, fixed in advance (`data/analysis-20261118/cutoff.md`, section 9): no honest round above it
+   (highest 143.3 ms), and 2.6 % of relayed rounds accepted (95 % interval 1.5 to 4.4 %). The bound still
+   describes this stack and these distances only.
 3. **Replication.** Each condition is one session. The bootstrap intervals in `tools/analyze_runs.py`
    treat rounds as independent, so they describe the spread within one session only. Use at least three
    sessions per condition and treat the session as the unit (D-08).
@@ -48,13 +51,14 @@ bound to the nonce, not to time or place.
 7. **Round grid.** The 1 s grid keeps the rounds of one campaign on one connection phase, because the
    50 ms interval divides 1000 ms. The M-19 firmware (`b79a463`) draws a start offset per campaign, so the
    campaigns sample different phases. The rounds inside one campaign are still correlated.
-8. **Firmware.** The pilot used older firmware. The M-19 firmware (`b79a463`) has run: 36 campaigns at
-   2.24 m, 16 in-sample and 20 held-out (`data/runs/README.md`). The other checkpoints still need their own campaigns.
+8. **Firmware.** The pilot used older firmware. The M-19 firmware (`b79a463`) has run: 56 campaigns at
+   2.24 m, 16 in-sample, 20 held-out and 20 replication (`data/runs/README.md`). The other checkpoints still need their own campaigns.
 9. **The phase sets the overlap.** The relayed RTT depends on the connection phase of each campaign, as the
-   honest RTT does. The honest maximum is 136 ms in the in-sample campaigns and 150.6 ms in the held-out ones.
-   In each set, one relayed campaign reaches below 150 ms (115 ms and 121 ms); the other relayed campaigns do
-   not go below 159.5 ms. The held-out rates (1.0 % at 150 ms, 1.4 % at 160 ms) come from two of the ten
-   held-out relayed campaigns. More campaigns at more phases are needed before those rates are quoted.
+   honest RTT does. The honest maximum is 136 ms in the in-sample campaigns, 150.6 ms in the held-out ones and
+   143.3 ms in the replication ones. In each set, one or two relayed campaigns reach below 160 ms (down to
+   107 ms); the other relayed campaigns do not go below 159.5 ms. Across the 28 relayed campaigns at 2.24 m,
+   26 of 1400 rounds are accepted at 160 ms (1.9 %), all from five campaigns. More campaigns at more phases are
+   needed before that rate is quoted.
 
 ## Mitigations to discuss (not built)
 

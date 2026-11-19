@@ -1,6 +1,6 @@
 # Campaign summary, 2026-11-18
 
-Each condition pools the campaigns of one setup: three campaigns of 50 rounds, eight for the M-19 setups, and ten for the held-out setups (random start offset of the round grid). Distance is the car-key separation. For relayed conditions, CSVB rounds equal the OK rounds (every answered round went through the relays).
+Each condition pools the campaigns of one setup: three campaigns of 50 rounds, eight for the M-19 setups, and ten for the held-out and replication setups (random start offset of the round grid). Distance is the car-key separation. For relayed conditions, CSVB rounds equal the OK rounds (every answered round went through the relays).
 
 ## Outcomes
 
@@ -19,6 +19,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 M-19 (car-key 2.24) | unicast, A-B 2 m | 2.24 | 8 | 400 | 400 | 0 | 0 | 400 | 100.0 % (99.0-100.0) |
 | baseline 2.24 held-out | direct | 2.24 | 10 | 500 | 500 | 0 | 0 | 0 | 100.0 % (99.2-100.0) |
 | unicast A-B 2 held-out (car-key 2.24) | unicast, A-B 2 m | 2.24 | 10 | 500 | 500 | 0 | 0 | 500 | 100.0 % (99.2-100.0) |
+| baseline 2.24 replication | direct | 2.24 | 10 | 500 | 500 | 0 | 0 | 0 | 100.0 % (99.2-100.0) |
+| unicast A-B 2 replication (car-key 2.24) | unicast, A-B 2 m | 2.24 | 10 | 500 | 500 | 0 | 0 | 500 | 100.0 % (99.2-100.0) |
 
 ## Vehicle RTT, answered rounds (ms)
 
@@ -37,6 +39,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 M-19 (car-key 2.24) | 400 | 115.3 | 299.7 | 397.5 (359.2-399.7) | 425.6 | 446.0 | 550.5 | 361.8 |
 | baseline 2.24 held-out | 500 | 57.6 | 69.2 | 81.2 (79.7-83.5) | 95.4 | 100.1 | 150.6 | 82.6 |
 | unicast A-B 2 held-out (car-key 2.24) | 500 | 121.0 | 275.6 | 356.7 (346.6-359.0) | 399.0 | 432.0 | 512.0 | 337.0 |
+| baseline 2.24 replication | 500 | 57.5 | 61.7 | 80.2 (77.2-83.3) | 97.7 | 104.9 | 143.3 | 80.8 |
+| unicast A-B 2 replication (car-key 2.24) | 500 | 107.4 | 302.1 | 354.7 (346.5-363.2) | 401.9 | 430.3 | 454.5 | 341.1 |
 
 ## Campaign spread: median RTT of OK rounds per campaign (ms)
 
@@ -55,6 +59,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 M-19 (car-key 2.24) | 358.2 | 347.0 | 263.0 | 322.4 | 410.9 | 432.5 | 397.4 | 444.7 | - | - |
 | baseline 2.24 held-out | 103.0 | 91.9 | 69.6 | 78.5 | 82.9 | 67.9 | 96.9 | 96.5 | 61.1 | 69.6 |
 | unicast A-B 2 held-out (car-key 2.24) | 427.1 | 300.5 | 394.8 | 447.3 | 311.5 | 358.5 | 347.4 | 274.4 | 359.7 | 357.7 |
+| baseline 2.24 replication | 83.8 | 95.4 | 61.0 | 82.3 | 77.2 | 61.4 | 63.4 | 96.6 | 61.4 | 103.4 |
+| unicast A-B 2 replication (car-key 2.24) | 370.0 | 343.9 | 362.1 | 368.5 | 401.9 | 262.8 | 374.0 | 449.1 | 304.3 | 407.5 |
 
 ## Round legs, median (IQR) in ms
 
@@ -73,6 +79,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 M-19 (car-key 2.24) | 161.9 (126.3-189.7) | 24.5 (23.5-26.6) | 193.9 (164.8-218.1) |
 | baseline 2.24 held-out | - | - | - |
 | unicast A-B 2 held-out (car-key 2.24) | 131.2 (90.8-165.8) | 24.5 (23.5-26.2) | 202.8 (162.6-212.6) |
+| baseline 2.24 replication | - | - | - |
+| unicast A-B 2 replication (car-key 2.24) | 156.0 (99.0-167.8) | 24.7 (23.6-26.5) | 179.2 (160.5-222.7) |
 
 ## Tunnel counters
 
@@ -91,6 +99,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 M-19 (car-key 2.24) | 0 | 0 |
 | baseline 2.24 held-out | 0 | 0 |
 | unicast A-B 2 held-out (car-key 2.24) | 0 | 0 |
+| baseline 2.24 replication | 0 | 0 |
+| unicast A-B 2 replication (car-key 2.24) | 0 | 0 |
 
 ## Comparisons (difference of medians, ms)
 
@@ -109,6 +119,7 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | direct baseline, 2.24 m minus 0.99 m | 82.0 | 85.7 | 3.7 (1.6 to 5.6) |
 | relayed unicast minus direct, car-key 2.24 m, M-19 firmware | 74.7 | 397.5 | 322.8 (283.6 to 326.2) |
 | relayed unicast minus direct, car-key 2.24 m, held-out campaigns | 81.2 | 356.7 | 275.5 (264.7 to 278.3) |
+| relayed unicast minus direct, car-key 2.24 m, replication campaigns | 80.2 | 354.7 | 274.6 (266.1 to 284.4) |
 
 ## Notes
 
@@ -119,4 +130,4 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 - 2 dBm sessions applied TXPOW 8 to both relays after the bring-up; the relay logs confirm it.
 - Car-key separations of 2.24 m are estimated from the layout (12 cm + about 2 m + 12 cm).
 - Rounds are not independent: the RTT moves in plateaus within a campaign. The bootstrap intervals assume independent rounds, so they are optimistic.
-- The spread between campaigns (campaign spread table) is larger than most differences between settings. Three campaigns per condition do not resolve differences below about 50 ms; the M-19 setups have eight and the held-out setups ten.
+- The spread between campaigns (campaign spread table) is larger than most differences between settings. Three campaigns per condition do not resolve differences below about 50 ms; the M-19 setups have eight and the held-out and replication setups ten.
