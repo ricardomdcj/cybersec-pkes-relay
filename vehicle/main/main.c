@@ -10,7 +10,8 @@
  *
  * Commands over UART0 (the same port as the console and the OTA):
  *   RUN label=<label> dist=<meters>    tags the campaign (shown in the CSV and on the display)
- *   START                              runs the ROUNDS rounds (only after subscription)
+ *   START                              runs the ROUNDS rounds (only after subscription); the first
+ *                                      round goes out at a random offset within one period (M-19)
  * Without RUN the label is "run" and the distance "-", with a warning in the log.
  *
  * Result of each round (the result column of the CSV):
@@ -274,7 +275,20 @@ static void start_campaign(void)
     ESP_LOGI(TAG, "CSVHDR v2 label,dist_m,round,nonce,t_tx_us,rtt_us,result,rssi_dbm,itvl_1_25ms,mtu");
     cyd_ui_set_state("measuring", ACCENT);
     cyd_ui_set_progress(0, ROUNDS);
-    send_challenge();
+
+    /* Random start offset (M-19). The round grid is INTERVAL_MS, a multiple of the 50 ms connection
+     * interval, so every round of a campaign keeps the same phase on the connection grid: one campaign
+     * samples one phase, and the campaigns are not independent. Starting at a random point within one
+     * period gives each campaign another phase. Drawn once per campaign; the rounds that follow keep
+     * the INTERVAL_MS grid from this first send (finish_round). */
+    uint32_t offset_us = esp_random() % ((uint32_t) INTERVAL_MS * 1000u);
+    ESP_LOGI(TAG, "grid start offset %lu us (connection interval %u x 1.25 ms)",
+             (unsigned long) offset_us, (unsigned) conn_itvl);
+    esp_timer_stop(round_timer);                      /* safety: it must not be armed */
+    if (esp_timer_start_once(round_timer, (uint64_t) offset_us) != ESP_OK) {
+        ESP_LOGE(TAG, "round timer busy; sending round 1 now");
+        send_challenge();
+    }
 }
 
 static void bench_cmd(const char *line)
