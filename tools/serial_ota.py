@@ -107,7 +107,11 @@ def main():
         data = f.read()
     size = len(data)
 
-    s = serial.Serial(port, baud, timeout=2)
+    s = serial.Serial()
+    s.port, s.baudrate, s.timeout = port, baud, 2
+    s.dtr = False   # pyserial asserts DTR and RTS on open; that would reset the board
+    s.rts = False
+    s.open()
     time.sleep(0.3)
     s.reset_input_buffer()
 

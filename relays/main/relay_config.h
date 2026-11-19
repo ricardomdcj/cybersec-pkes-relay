@@ -29,11 +29,15 @@
 #define RELAY_LINK_SELFTEST 1
 #endif
 
-/* MAC address of the other relay (M-06b), in the form {0xAA,0xBB,...}. Each board needs the
- * OTHER board's MAC: Relay A puts Relay B's MAC here, and Relay B puts Relay A's MAC here.
- * The MACs are printed in the boot log ("this board MAC"). While this is all zeros, the link
- * uses broadcast, as before. Broadcast has no MAC-layer ACK, so tunnel losses do not show up
- * in the counters. */
+/* Board MACs, as printed in the boot log ("this board MAC"). Each relay unicasts to the
+ * other one, so the tunnel gets a MAC-level ACK and its losses show up in tx_failures.
+ * Set RELAY_PEER_MAC to all zeros to go back to broadcast (no ACK). */
+#define RELAY_MAC_A {0xb8, 0xbb, 0x11, 0x83, 0xa9, 0x80}
+#define RELAY_MAC_B {0x48, 0xaf, 0xf3, 0x70, 0x1d, 0x58}
 #ifndef RELAY_PEER_MAC
-#define RELAY_PEER_MAC {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+#if RELAY_ROLE == RELAY_ROLE_A
+#define RELAY_PEER_MAC RELAY_MAC_B
+#else
+#define RELAY_PEER_MAC RELAY_MAC_A
+#endif
 #endif
