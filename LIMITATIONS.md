@@ -27,7 +27,9 @@ bound to the nonce, not to time or place.
 2. **A timing limit is not a general defence.** In the pilot, the baseline maximum is 97.5 ms and the
    relayed minimum is 263 ms, so a limit between them would separate these rounds. That is in-sample and
    holds only for this stack. A faster relay with fewer hops could stay below such a limit. Any limit must
-   be checked on sessions that were not used to set it.
+   be checked on sessions that were not used to set it. The 150 ms value that the M-19 campaigns suggest
+   was read from those same campaigns, so it is in-sample too (`data/analysis-20261118/cutoff.md`,
+   sections 5 and 6).
 3. **Replication.** Each condition is one session. The bootstrap intervals in `tools/analyze_runs.py`
    treat rounds as independent, so they describe the spread within one session only. Use at least three
    sessions per condition and treat the session as the unit (D-08).
@@ -41,10 +43,16 @@ bound to the nonce, not to time or place.
    rounds near 93 ms, 3 near 193 ms and 8 near 243 ms, about 50 ms apart. This may come from the BLE
    connection-event grid, since the vehicle requests 30-50 ms. The pilot does not log the negotiated
    interval, so the cause is not established. The v2 CSV logs `itvl_1_25ms` (M-19).
-7. **Round grid.** The fixed 1 s grid can keep rounds at one connection phase if the interval divides
-   1000 ms. That would correlate the samples (M-19).
-8. **Firmware.** The pilot used older firmware. The current checkpoints have not run on a board, so their
-   results need their own campaigns.
+7. **Round grid.** The 1 s grid keeps the rounds of one campaign on one connection phase, because the
+   50 ms interval divides 1000 ms. The M-19 firmware (`b79a463`) draws a start offset per campaign, so the
+   campaigns sample different phases. The rounds inside one campaign are still correlated.
+8. **Firmware.** The pilot used older firmware. The M-19 firmware (`b79a463`) has run: 16 campaigns at
+   2.24 m (`data/runs/README.md`). The other checkpoints still need their own campaigns.
+9. **The phase sets the overlap.** The relayed RTT depends on the connection phase of each campaign, as the
+   honest RTT does. In the M-19 campaigns at 2.24 m the honest maximum is 136 ms. One relayed campaign of
+   eight reaches 115 ms (6 of 50 rounds at or below 150 ms); the other seven start at 165 ms or more. So the
+   1.5 % of relayed rounds accepted at 150 ms rests on one phase. More campaigns at more phases are needed
+   before that rate is quoted.
 
 ## Mitigations to discuss (not built)
 
@@ -69,3 +77,5 @@ bound to the nonce, not to time or place.
 - That the relay can be detected at any distance, or by any timing limit beyond this bench.
 - That the HMAC length matters for the relay. It does not.
 - Anything about the current firmware before its campaigns have run.
+- That a relay's false-accept rate is known from one campaign. The rate depends on the connection phase,
+  so it needs more campaigns and more distances.

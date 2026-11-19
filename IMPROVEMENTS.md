@@ -121,12 +121,15 @@ English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16
   CSV or in the summary. **Files:** `vehicle/main/main.c`, `relays/main/relay_a.c`,
   `relays/main/relay_b.c`, `key/main/main.c`. **Depends on:** nothing.
 
-- [ ] **M-19. Read the connection interval before the first campaign.** The vehicle logs the negotiated
+- [x] **M-19. Read the connection interval before the first campaign.** The vehicle logs the negotiated
   interval in its `CONN` line (`components/pkes_contract/ble_link.c`). If `itvl` divides 1000 ms (40 or 50 ms,
   for example), the fixed 1 s round grid (M-16) can keep rounds at one connection phase, and the samples are
   correlated. Then add a random start offset to the grid, as a checkpoint, before the campaign. Do not change
   firmware during a campaign. **Files:** `vehicle/main/main.c`. **Depends on:** M-10, M-16. **Acceptance:** the
   `itvl` value is in the first campaign's notes, and the offset checkpoint exists if it divides 1000 ms.
+  **Done** (branch `m19-start-offset`, firmware `b79a463`): `START` draws one start offset per campaign in
+  [0, 1 s) and logs `grid start offset`. The connection interval was 40 (50 ms) in all 16 campaigns at
+  2.24 m (`data/runs/README.md`, M-19 section).
 
 - [ ] **M-20. Run the timeout path on a board.** A round with no response ends in `timeout_cb`
   (`vehicle/main/main.c`), which calls `finish_round`, and so `ble_gap_conn_rssi`, from the esp_timer task.

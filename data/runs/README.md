@@ -58,6 +58,27 @@ reaches.
 | 20261118-215933, -220155, -220529 | relayed | unicast, TX power default | `relay-unicast-ab200` |
 | 20261118-222135, -222302, -222527 | relayed | unicast, TXPOW 8 (2 dBm) on both relays | `relay-unicast-ab200-tx8` |
 
+## M-19 campaigns at about 2 m (firmware b79a463)
+
+Same layout as the 2 m section above. The vehicle runs the M-19 firmware (commit `b79a463`): each START
+draws one start offset in [0, 1 s) and sends the first round after it, logged as `grid start offset <us>`.
+The connection interval was 40 units (50 ms) in every campaign (`CONN` line and the `itvl_1_25ms` column),
+so the offset sets the phase of each campaign. Eight baseline and eight relayed campaigns, 400 rounds per
+condition, all answered OK, no timeouts.
+
+| Session | Condition | Label | Start offset (ms) |
+|---|---|---|---|
+| 20261118-225639, -230050, -230423, -230754, -231139, -231408, -231627, -231958 | baseline (vehicle to key, direct) | `baseline-m19` | 126.0, 592.9, 140.7, 729.1, 116.4, 94.2, 223.7, 21.5 |
+| 20261118-225814, -230151, -230523, -230856, -231239, -231507, -231727, -232058 | relayed, unicast, default TX | `relay-m19-ab200` | 402.3, 859.9, 498.5, 456.7, 697.0, 926.9, 607.9, 763.4 |
+
+Notes:
+
+- The baseline and relayed campaigns alternated in time.
+- Relay bring-up took one attempt in three relayed campaigns and three attempts in five. The three-attempt
+  cases reset relay A, as in the earlier sessions.
+- Three campaigns logged drops before START (reason 574, the stale key slot): 4 drops in 20261118-225639,
+  2 in 20261118-230754 and 1 in 20261118-231239. No campaign was interrupted.
+
 ## Run history
 
 `INDEX.csv` has one row per campaign and one row per aborted session. The columns give the session,
@@ -69,4 +90,5 @@ index with `python -I tools/run_index.py` after adding a run.
 ## Analysis
 
 `tools/analyze_runs.py` and `tools/plot_runs.py` read the campaign folders (see `TESTING.md`,
-section 5).
+section 5). `tools/analyze_conditions.py` pools the campaigns of each condition, and
+`tools/analyze_cutoff.py` writes the cutoff analysis; its sections 5 and 6 use the M-19 campaigns only.

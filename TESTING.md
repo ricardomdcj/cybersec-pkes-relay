@@ -266,8 +266,9 @@ RTT tables (step 5). Photos of the physical layout help the paper.
 For each condition, run the vehicle's 50-round campaign and keep the captures.
 
 Before the first campaign, read the vehicle's `CONN` line at connect and note `itvl`. If it divides 1000 ms (40 or
-50 ms, for example), the 1 s round grid can keep rounds at one connection phase. In that case, ask for the
-start-offset change (M-19) before the first campaign. Do not change firmware during a campaign.
+50 ms, for example), the 1 s round grid keeps the rounds of a campaign on one connection phase. Since M-19
+(`b79a463`), each START draws a start offset in [0, 1 s), so the campaigns sample different phases. Note the
+offset (`grid start offset` line) with the campaign. Do not change firmware during a campaign.
 
 1. **Baseline** (Stage B): vehicle ↔ key directly. Repeat several times for a distribution.
 2. **Relayed** (Stage C): full chain, same `ROUNDS`. Repeat.
