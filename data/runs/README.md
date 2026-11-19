@@ -79,6 +79,27 @@ Notes:
 - Three campaigns logged drops before START (reason 574, the stale key slot): 4 drops in 20261118-225639,
   2 in 20261118-230754 and 1 in 20261118-231239. No campaign was interrupted.
 
+## Held-out campaigns at 2.24 m (firmware b79a463)
+
+These campaigns were recorded after the 150 ms bound had been read from the M-19 campaigns. The plan,
+`data/analysis-20261118/heldout-150ms-plan.md` (commit 11803fb), was committed before the first one. Same
+layout and firmware as the M-19 section above. Ten direct baseline campaigns and ten relayed campaigns
+(unicast, default TX): every round was answered, with no timeouts.
+
+| Session | Condition | Label |
+|---|---|---|
+| 20261119-000248, -000405, -000732, -001100, -001316, -001644, -002011, -002340, -002707, -002924 | baseline (vehicle to key, direct) | `baseline-ho` |
+| 20261119-000505, -000833, -001201, -001417, -001744, -002112, -002440, -002808, -003025, -003207 | relayed, unicast, default TX | `relay-ho-ab200` |
+
+Notes:
+
+- The first relayed attempt (20261119-000348) aborted before its campaign: the passive logger could not open
+  the three ports. It is under `_invalid/aborted/`. One replacement relayed campaign (20261119-003207) was run
+  to reach the planned ten. The replacement was decided on the count, before any RTT was read.
+- The relay bring-up took one attempt in four relayed campaigns and three attempts in six.
+- Three campaigns logged drops before START (1, 4 and 1 drops). None logged a drop after START. Every CSV row
+  has `itvl_1_25ms` = 40.
+
 ## Run history
 
 `INDEX.csv` has one row per campaign and one row per aborted session. The columns give the session,
