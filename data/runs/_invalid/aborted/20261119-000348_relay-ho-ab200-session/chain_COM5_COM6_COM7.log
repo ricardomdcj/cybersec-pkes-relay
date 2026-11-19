@@ -1,0 +1,159 @@
+00:03:54.018 [LOGGER] COM5 logged as RELAY_A (DTR/RTS idle)
+00:03:54.037 [LOGGER] COM6 logged as KEY (DTR/RTS idle)
+00:03:54.037 [LOGGER] ERROR COM7: could not open port 'COM7': PermissionError(13, 'Acesso negado.', None, 5)
+00:03:54.239 [LOGGER] reset pulse on COM5 (start)
+00:03:54.402 [RELAY_A] 0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+00:03:54.402 [RELAY_A] configsip: 0, SPIWP:0xee
+00:03:54.402 [RELAY_A] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+00:03:54.402 [RELAY_A] mode:DIO, clock div:2
+00:03:54.402 [RELAY_A] load:0x3fff0040,len:6272
+00:03:54.402 [RELAY_A] load:0x40078000,len:15824
+00:03:54.402 [RELAY_A] load:0x40080400,l�ets Jul 29 2019 12:21:46
+00:03:54.402 [RELAY_A] 
+00:03:54.402 [RELAY_A] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+00:03:54.402 [RELAY_A] configsip: 0, SPIWP:0xee
+00:03:54.402 [RELAY_A] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+00:03:54.402 [RELAY_A] mode:DIO, clock div:2
+00:03:54.402 [RELAY_A] load:0x3fff0040,len:6272
+00:03:54.402 [RELAY_A] load:0x40078000,len:15824
+00:03:54.402 [RELAY_A] load:0x40080400,len:3988
+00:03:54.402 [RELAY_A] entry 0x40080644
+00:03:54.402 [RELAY_A] I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+00:03:54.402 [RELAY_A] I (27) boot: compile time Nov 18 2026 19:31:31
+00:03:54.402 [RELAY_A] I (27) boot: Multicore bootloader
+00:03:54.402 [RELAY_A] I (29) boot: chip revision: v3.1
+00:03:54.402 [RELAY_A] I (31) boot.esp32: SPI Speed      : 40MHz
+00:03:54.402 [RELAY_A] I (35) boot.esp32: SPI Mode       : DIO
+00:03:54.402 [RELAY_A] I (39) boot.esp32: SPI Flash Size : 4MB
+00:03:54.402 [RELAY_A] I (42) boot: Enabling RNG early entropy source...
+00:03:54.402 [RELAY_A] I (47) boot: Partition Table:
+00:03:54.402 [RELAY_A] I (49) boot: ## Label            Usage          Type ST Offset   Length
+00:03:54.402 [RELAY_A] I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+00:03:54.402 [RELAY_A] I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+00:03:54.402 [RELAY_A] I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+00:03:54.402 [RELAY_A] I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+00:03:54.402 [RELAY_A] I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+00:03:54.402 [RELAY_A] I (88) boot: End of partition table
+00:03:54.402 [RELAY_A] I (92) esp_image: segment 0: paddr=001d0020 vaddr=3f400020 size=3f3bch (259004) map
+00:03:54.505 [RELAY_A] I (191) esp_image: segment 1: paddr=0020f3e4 vaddr=3ffbdb60 size=00c34h (  3124) load
+00:03:54.505 [RELAY_A] I (193) esp_image: segment 2: paddr=00210020 vaddr=400d0020 size=e92a0h (955040) map
+00:03:55.029 [RELAY_A] I (535) esp_image: segment 3: paddr=002f92c8 vaddr=3ffbe794 size=056b4h ( 22196) load
+00:03:55.029 [RELAY_A] I (544) esp_image: segment 4: paddr=002fe984 vaddr=40080000 size=1a09ch (106652) load
+00:03:55.029 [RELAY_A] I (588) esp_image: segment 5: paddr=00318a28 vaddr=50000000 size=00028h (    40) load
+00:03:55.029 [RELAY_A] I (602) boot: Loaded app from partition at offset 0x1d0000
+00:03:55.029 [RELAY_A] I (602) boot: Disabling RNG early entropy source...
+00:03:55.029 [RELAY_A] I (613) cpu_start: Multicore app
+00:03:55.029 [RELAY_A] I (621) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+00:03:55.029 [RELAY_A] I (621) cpu_start: Pro cpu start user code
+00:03:55.029 [RELAY_A] I (621) cpu_start: cpu freq: 240000000 Hz
+00:03:55.029 [RELAY_A] I (623) app_init: Application information:
+00:03:55.029 [RELAY_A] I (627) app_init: Project name:     relays
+00:03:55.029 [RELAY_A] I (631) app_init: App version:      1cf7f0c-dirty
+00:03:55.029 [RELAY_A] I (635) app_init: Compile time:     Nov 18 2026 20:14:32
+00:03:55.029 [RELAY_A] I (640) app_init: ELF file SHA256:  f178143d0...
+00:03:55.029 [RELAY_A] I (645) app_init: ESP-IDF:          v6.1
+00:03:55.029 [RELAY_A] I (648) efuse_init: Min chip rev:     v0.0
+00:03:55.029 [RELAY_A] I (652) efuse_init: Max chip rev:     v3.99 
+00:03:55.029 [RELAY_A] I (656) efuse_init: Chip rev:         v3.1
+00:03:55.029 [RELAY_A] I (660) heap_init: Initializing. RAM available for dynamic allocation:
+00:03:55.029 [RELAY_A] I (666) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+00:03:55.029 [RELAY_A] I (671) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+00:03:55.029 [RELAY_A] I (676) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+00:03:55.029 [RELAY_A] I (682) heap_init: At 3FFD65D0 len 00009A30 (38 KiB): DRAM
+00:03:55.029 [RELAY_A] I (687) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+00:03:55.029 [RELAY_A] I (692) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+00:03:55.029 [RELAY_A] I (698) heap_init: At 4009A09C len 00005F64 (23 KiB): IRAM
+00:03:55.029 [RELAY_A] I (705) spi_flash: detected chip: gd
+00:03:55.029 [RELAY_A] I (706) spi_flash: flash io: dio
+00:03:55.029 [RELAY_A] I (711) coexist: coex firmware version: a830d28
+00:03:55.029 [RELAY_A] I (714) main_task: Started on CPU0
+00:03:55.029 [RELAY_A] I (716) main_task: Calling app_main()
+00:03:55.029 [RELAY_A] I (729) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+00:03:55.161 [RELAY_A] I (863) cyd_display: ST7789 + LVGL ready
+00:03:55.394 [RELAY_A] I (1094) RUN_META: role=relay-a fw=1cf7f0c+mod build=2026-11-18 20:14
+00:03:55.529 [RELAY_A] I (1152) wifi:wifi driver task: 3ffdfd70, prio:23, stack:6656, core=0
+00:03:55.529 [RELAY_A] I (1159) wifi:wifi firmware version: e12a754
+00:03:55.529 [RELAY_A] I (1159) wifi:wifi certification version: v7.0
+00:03:55.529 [RELAY_A] I (1159) wifi:config NVS flash: enabled
+00:03:55.529 [RELAY_A] I (1161) wifi:config nano formatting: disabled
+00:03:55.529 [RELAY_A] I (1166) wifi:Init data frame dynamic rx buffer num: 32
+00:03:55.529 [RELAY_A] I (1171) wifi:Init static rx mgmt buffer num: 5
+00:03:55.529 [RELAY_A] I (1174) wifi:Init management short buffer num: 32
+00:03:55.529 [RELAY_A] I (1179) wifi:Init dynamic tx buffer num: 32
+00:03:55.529 [RELAY_A] I (1183) wifi:Init static rx buffer size: 1600
+00:03:55.529 [RELAY_A] I (1187) wifi:Init static rx buffer num: 10
+00:03:55.529 [RELAY_A] I (1191) wifi:Init dynamic rx buffer num: 32
+00:03:55.529 [RELAY_A] I (1197) wifi_init: rx ba win: 6
+00:03:55.529 [RELAY_A] I (1198) wifi_init: accept mbox: 6
+00:03:55.529 [RELAY_A] I (1201) wifi_init: tcpip mbox: 32
+00:03:55.529 [RELAY_A] I (1204) wifi_init: udp mbox: 6
+00:03:55.529 [RELAY_A] I (1207) wifi_init: tcp mbox: 6
+00:03:55.529 [RELAY_A] I (1210) wifi_init: tcp tx win: 5760
+00:03:55.529 [RELAY_A] I (1213) wifi_init: tcp rx win: 5760
+00:03:55.529 [RELAY_A] I (1217) wifi_init: tcp mss: 1440
+00:03:55.529 [RELAY_A] I (1220) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+00:03:55.696 [RELAY_A] I (1298) phy_init: Saving new calibration data due to checksum failure or outdated calibration data, mode(0)
+00:03:55.696 [RELAY_A] I (1353) wifi:mode : sta (b8:bb:11:83:a9:80)
+00:03:55.696 [RELAY_A] I (1355) wifi:enable tsf
+00:03:55.696 [RELAY_A] I (1359) wifi:Set ps type: 0, coexist: 0
+00:03:55.696 [RELAY_A] 
+00:03:55.696 [RELAY_A] I (1360) LINK: power save WiFi = NONE (rc=0)
+00:03:55.696 [RELAY_A] I (1360) LINK: this board MAC: b8:bb:11:83:a9:80
+00:03:55.696 [RELAY_A] I (1363) ESPNOW: espnow [version: 2.0] init
+00:03:55.696 [RELAY_A] I (1366) LINK: ESP-NOW ready (channel 1), unicast to 48:af:f3:70:1d:58
+00:03:55.696 [RELAY_A] I (1373) BTDM_INIT: BT controller compile version [4a0f94d]
+00:03:55.696 [RELAY_A] I (1377) BTDM_INIT: Using main XTAL as clock source
+00:03:55.696 [RELAY_A] I (1383) BTDM_INIT: Bluetooth MAC: b8:bb:11:83:a9:82
+00:03:55.696 [RELAY_A] I (1391) wifi:Coexist!!! Wi-Fi station would only keep waked when available
+00:03:55.696 [RELAY_A] 
+00:03:55.909 [RELAY_A] I (1556) RELAY_A: Relay A started (BLE central: connects to the key and tunnels)
+00:03:55.909 [RELAY_A] I (1557) main_task: Returned from app_main()
+00:03:55.909 [RELAY_A] I (1593) NimBLE: GAP procedure initiated: discovery; 
+00:03:55.909 [RELAY_A] I (1593) NimBLE: own_addr_type=0 filter_policy=0 passive=0 limited=0 filter_duplicates=1 
+00:03:55.909 [RELAY_A] I (1595) NimBLE: duration=forever
+00:03:55.909 [RELAY_A] I (1598) NimBLE: 
+00:03:55.909 [RELAY_A] 
+00:03:55.909 [RELAY_A] I (1605) RELAY_A: scanning for the key service...
+00:03:56.013 [RELAY_A] I (1677) RELAY_A: key found, connecting...
+00:03:56.013 [RELAY_A] I (1680) NimBLE: GAP procedure initiated: connect; 
+00:03:56.013 [RELAY_A] I (1680) NimBLE: peer_addr_type=0 peer_addr=
+00:03:56.013 [RELAY_A] I (1680) NimBLE: c8:8a:7b:be:0d:f2
+00:03:56.013 [RELAY_A] I (1682) NimBLE:  scan_itvl=16 scan_window=16 itvl_min=24 itvl_max=40 latency=0 supervision_timeout=256 min_ce_len=0 max_ce_len=0 own_addr_type=0
+00:03:56.013 [RELAY_A] I (1695) NimBLE: 
+00:03:56.013 [RELAY_A] 
+00:03:56.281 [KEY] I (15451909) KEY: vehicle connected (handle 0)
+00:03:56.281 [KEY] I (15451913) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+00:03:56.281 [KEY] 
+00:03:56.281 [KEY] I (15451914) KEY: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=peripheral phy_tx=? phy_rx=?
+00:03:56.349 [RELAY_A] I (2012) RELAY_A: connected to key (handle 0); discovering service
+00:03:56.349 [RELAY_A] I (2015) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+00:03:56.349 [RELAY_A] 
+00:03:56.349 [RELAY_A] I (2016) RELAY_A: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=central phy_tx=? phy_rx=?
+00:03:56.349 [RELAY_A] I (2026) NimBLE: GATT procedure initiated: exchange mtu
+00:03:56.349 [RELAY_A] 
+00:03:56.349 [RELAY_A] I (2036) NimBLE: GATT procedure initiated: discover service by uuid; uuid=
+00:03:56.349 [RELAY_A] I (2038) NimBLE: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10
+00:03:56.349 [RELAY_A] I (2043) NimBLE: 
+00:03:56.349 [RELAY_A] 
+00:03:56.400 [KEY] I (15452011) KEY: MTU handle=0 mtu=256
+00:03:56.451 [RELAY_A] I (2113) RELAY_A: MTU handle=0 mtu=256
+00:03:56.675 [RELAY_A] I (2360) RELAY_A: service at 14..19
+00:03:56.675 [RELAY_A] I (2361) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+00:03:56.675 [RELAY_A] I (2361) NimBLE: start_handle=14 end_handle=19 uuid=
+00:03:56.675 [RELAY_A] I (2364) NimBLE: 8f2a0002-1b2c-4e6a-9f3d-2a7c1e5b0a10
+00:03:56.676 [RELAY_A] I (2369) NimBLE: 
+00:03:56.676 [RELAY_A] 
+00:03:57.088 [RELAY_A] I (2760) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+00:03:57.088 [RELAY_A] I (2761) NimBLE: start_handle=14 end_handle=19 uuid=
+00:03:57.088 [RELAY_A] I (2761) NimBLE: 8f2a0003-1b2c-4e6a-9f3d-2a7c1e5b0a10
+00:03:57.088 [RELAY_A] I (2766) NimBLE: 
+00:03:57.088 [RELAY_A] 
+00:03:57.501 [RELAY_A] I (3161) NimBLE: GATT procedure initiated: discover all descriptors; 
+00:03:57.501 [RELAY_A] I (3162) NimBLE: chr_val_handle=18 end_handle=19
+00:03:57.501 [RELAY_A] 
+00:03:57.707 [RELAY_A] I (3361) NimBLE: GATT procedure initiated: write; 
+00:03:57.707 [RELAY_A] I (3361) NimBLE: att_handle=19 len=2
+00:03:57.707 [RELAY_A] 
+00:03:57.758 [KEY] I (15453406) KEY: vehicle enabled notify on RESPONSE
+00:03:57.861 [RELAY_A] I (3560) RELAY_A: subscribed to key notify; ready to forward tunnel challenges
+00:04:04.919 [LOGGER] closed

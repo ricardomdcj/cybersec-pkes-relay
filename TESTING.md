@@ -266,8 +266,9 @@ RTT tables (step 5). Photos of the physical layout help the paper.
 For each condition, run the vehicle's 50-round campaign and keep the captures.
 
 Before the first campaign, read the vehicle's `CONN` line at connect and note `itvl`. If it divides 1000 ms (40 or
-50 ms, for example), the 1 s round grid can keep rounds at one connection phase. In that case, ask for the
-start-offset change (M-19) before the first campaign. Do not change firmware during a campaign.
+50 ms, for example), the 1 s round grid keeps the rounds of a campaign on one connection phase. Since M-19
+(`b79a463`), each START draws a start offset in [0, 1 s), so the campaigns sample different phases. Note the
+offset (`grid start offset` line) with the campaign. Do not change firmware during a campaign.
 
 1. **Baseline** (Stage B): vehicle ↔ key directly. Repeat several times for a distribution.
 2. **Relayed** (Stage C): full chain, same `ROUNDS`. Repeat.
@@ -322,6 +323,27 @@ start-offset change (M-19) before the first campaign. Do not change firmware dur
 
    `rtt_timeseries.svg` has one panel per condition, coloured by result, with a cross for each TIMEOUT.
    `rtt_histogram.svg` and `rtt_boxplot.svg` compare the conditions.
+
+---
+
+### Latency sweep (`DELAY`, relay B)
+
+Relay B holds every vehicle challenge for `DELAY <ms>` before it goes on the tunnel (`relays/main/relay_b.c`,
+off at 0). The verifier authenticates a round only if its response arrives within `ROUND_TIMEOUT_MS`
+(2000 ms), so the success rate falls where the injected delay plus the honest relayed round trip reaches the
+timeout. The vehicle must run M-22 or later: a response that arrives after its round has timed out is
+discarded instead of closing the round in flight.
+
+- The sweep runs from the repo root, one relayed campaign per delay, labelled `relay-dNNNN`:
+  `powershell -NoProfile -ExecutionPolicy Bypass -File tools\campaign\run_sweep.ps1 -Delays 500,1000 -Dist 0.99`.
+  Without `-Delays` it runs the default list in the script, which starts at 0.
+- `run_relay.ps1 -DelayMs <ms>` sends `COM7 DELAY <ms>` and waits for the relay's `DELAY set=<ms> ms` line.
+  It is sent on every relayed campaign (default 0), so no campaign inherits the delay of the one before.
+- The deskrab status-line bridge respawns while a session is active and takes COM5, COM6 and COM8 during
+  bring-up. `run_relay.ps1` keeps it stopped until the passive logger has the three ports; a campaign that
+  still fails at that step is retried by the sweep.
+- The expected threshold is the timeout minus the honest relayed round trip at D = 0; `tools/analyze_delay.py`
+  computes it, with the measured D50 and the table, into `data/analysis-20261118/delay_sweep.md`.
 
 ---
 

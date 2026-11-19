@@ -1,0 +1,440 @@
+08:20:33.276592 ets Jul 29 2019 12:21:46
+08:20:33.276720 
+08:20:33.276753 rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+08:20:33.276779 configsip: 0, SPIWP:0xee
+08:20:33.276802 clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+08:20:33.276867 mode:DIO, clock div:2
+08:20:33.276895 load:0x3fff0040,len:6272
+08:20:33.276948 load:0x40078000,len:15824
+08:20:33.276974 load:0x40080400,len:3988
+08:20:33.276996 entry 0x40080644
+08:20:33.277016 I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+08:20:33.277036 I (27) boot: compile time Nov 18 2026 19:27:43
+08:20:33.277056 I (28) boot: Multicore bootloader
+08:20:33.277175 I (29) boot: chip revision: v3.1
+08:20:33.277202 I (31) boot.esp32: SPI Speed      : 40MHz
+08:20:33.277215 I (35) boot.esp32: SPI Mode       : DIO
+08:20:33.277225 I (39) boot.esp32: SPI Flash Size : 4MB
+08:20:33.277234 I (42) boot: Enabling RNG early entropy source...
+08:20:33.277242 I (47) boot: Partition Table:
+08:20:33.277252 I (49) boot: ## Label            Usage          Type ST Offset   Length
+08:20:33.277261 I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+08:20:33.277269 I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+08:20:33.277277 I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+08:20:33.277286 I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+08:20:33.277294 I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+08:20:33.277303 I (88) boot: End of partition table
+08:20:33.277312 I (92) esp_image: segment 0: paddr=00020020 vaddr=3f400020 size=33cc0h (212160) map
+08:20:33.277321 I (175) esp_image: segment 1: paddr=00053ce8 vaddr=3ffbdb60 size=0531ch ( 21276) load
+08:20:33.277329 I (183) esp_image: segment 2: paddr=0005900c vaddr=40080000 size=0700ch ( 28684) load
+08:20:33.277337 I (195) esp_image: segment 3: paddr=00060020 vaddr=400d0020 size=89b1ch (563996) map
+08:20:33.277346 I (396) esp_image: segment 4: paddr=000e9b44 vaddr=4008700c size=12504h ( 75012) load
+08:20:33.277354 I (427) esp_image: segment 5: paddr=000fc050 vaddr=50000000 size=00028h (    40) load
+08:20:33.277363 I (440) boot: Loaded app from partition at offset 0x20000
+08:20:33.277372 I (440) boot: Disabling RNG early entropy source...
+08:20:33.277380 I (451) cpu_start: Multicore app
+08:20:33.277389 I (459) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+08:20:33.277398 I (460) cpu_start: Pro cpu start user code
+08:20:33.277407 I (460) cpu_start: cpu freq: 240000000 Hz
+08:20:33.277415 I (462) app_init: Application information:
+08:20:33.277424 I (465) app_init: Project name:     vehicle
+08:20:33.277432 I (469) app_init: App version:      d795f50-dirty
+08:20:33.277441 I (474) app_init: Compile time:     Nov 19 2026 07:39:33
+08:20:33.277449 I (479) app_init: ELF file SHA256:  55eecb703...
+08:20:33.277458 I (483) app_init: ESP-IDF:          v6.1
+08:20:33.277466 I (487) efuse_init: Min chip rev:     v0.0
+08:20:33.277474 I (491) efuse_init: Max chip rev:     v3.99 
+08:20:33.277482 I (495) efuse_init: Chip rev:         v3.1
+08:20:33.277497 I (499) heap_init: Initializing. RAM available for dynamic allocation:
+08:20:33.277507 I (505) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+08:20:33.277516 I (510) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+08:20:33.277524 I (515) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+08:20:33.277542 I (520) heap_init: At 3FFD19A8 len 0000E658 (57 KiB): DRAM
+08:20:33.277568 I (525) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+08:20:33.277579 I (531) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+08:20:33.277589 I (536) heap_init: At 40099510 len 00006AF0 (26 KiB): IRAM
+08:20:33.277598 I (543) spi_flash: detected chip: gd
+08:20:33.277611 I (545) spi_flash: flash io: dio
+08:20:33.277621 I (549) coexist: coex firmware version: a830d28
+08:20:33.277630 I (553) main_task: Started on CPU0
+08:20:33.277638 I (555) main_task: Calling app_main()
+08:20:33.277646 I (567) RUN_META: role=vehicle fw=d795f50+mod build=2026-11-19 07:39
+08:20:33.277654 I (569) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+08:20:33.277686 I (700) cyd_display: ST7789 + LVGL ready
+08:20:33.277699 I (895) BTDM_INIT: BT controller compile version [4a0f94d]
+08:20:33.277708 I (896) BTDM_INIT: Using main XTAL as clock source
+08:20:33.277717 I (898) BTDM_INIT: Bluetooth MAC: b8:bb:11:83:e5:f2
+08:20:33.277725 I (903) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+08:20:33.913286 I (1140) main_task: Returned from app_main()
+08:20:33.913335 I (1187) NimBLE: GAP procedure initiated: discovery; 
+08:20:33.913352 I (1188) NimBLE: own_addr_type=0 filter_policy=0 passive=0 limited=0 filter_duplicates=1 
+08:20:33.913365 I (1189) NimBLE: duration=forever
+08:20:33.913376 I (1192) NimBLE: 
+08:20:33.913388 
+08:20:33.913399 I (1200) VEHICLE: scanning for the key service...
+08:20:33.913410 I (1257) VEHICLE: key found, connecting...
+08:20:33.913421 I (1260) NimBLE: GAP procedure initiated: connect; 
+08:20:33.913432 I (1260) NimBLE: peer_addr_type=0 peer_addr=
+08:20:33.913442 I (1260) NimBLE: 48:af:f3:70:1d:5a
+08:20:33.913453 I (1262) NimBLE:  scan_itvl=16 scan_window=16 itvl_min=24 itvl_max=40 latency=0 supervision_timeout=256 min_ce_len=0 max_ce_len=0 own_addr_type=0
+08:20:33.913464 I (1275) NimBLE: 
+08:20:33.913474 
+08:20:33.913484 I (1448) VEHICLE: connected (handle 0); discovering service
+08:20:33.913494 I (1455) NimBLE: ogf=0x08, ocf=0x0030, hci_err=0x201 : BLE_ERR_UNKNOWN_HCI_CMD (Unknown HCI Command)
+08:20:33.913504 
+08:20:33.913513 I (1455) VEHICLE: CONN handle=0 itvl=40 (50000 us) latency=0 supervision=2560 ms role=central phy_tx=? phy_rx=?
+08:20:33.913523 I (1464) NimBLE: GATT procedure initiated: exchange mtu
+08:20:33.913532 
+08:20:33.913542 I (1474) NimBLE: GATT procedure initiated: discover service by uuid; uuid=
+08:20:33.913551 I (1476) NimBLE: 8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10
+08:20:33.913560 I (1481) NimBLE: 
+08:20:33.913570 
+08:20:33.913579 I (1549) VEHICLE: MTU handle=0 mtu=256
+08:20:34.226709 I (1845) VEHICLE: service at 14..19
+08:20:34.226756 I (1846) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+08:20:34.226773 I (1846) NimBLE: start_handle=14 end_handle=19 uuid=
+08:20:34.226785 I (1849) NimBLE: 8f2a0002-1b2c-4e6a-9f3d-2a7c1e5b0a10
+08:20:34.226797 I (1854) NimBLE: 
+08:20:34.226807 
+08:20:34.623294 I (2245) NimBLE: GATT procedure initiated: discover characteristics by uuid; 
+08:20:34.623349 I (2246) NimBLE: start_handle=14 end_handle=19 uuid=
+08:20:34.623365 I (2246) NimBLE: 8f2a0003-1b2c-4e6a-9f3d-2a7c1e5b0a10
+08:20:34.623378 I (2251) NimBLE: 
+08:20:34.623389 
+08:20:35.413096 I (2645) NimBLE: GATT procedure initiated: discover all descriptors; 
+08:20:35.413147 I (2646) NimBLE: chr_val_handle=18 end_handle=19
+08:20:35.413164 
+08:20:35.413176 I (2846) NimBLE: GATT procedure initiated: write; 
+08:20:35.413187 I (2846) NimBLE: att_handle=19 len=2
+08:20:35.413197 
+08:20:35.413207 I (3045) VEHICLE: subscribed to notify; ready. Send START to begin the campaign
+08:20:36.420084[HOST] > RUN label=relay-d1650 dist=0.99
+08:20:36.420641[HOST] > START
+08:20:36.759684 W (4369) VEHICLE: RUN label=relay-d1650 dist=0.99
+08:20:36.759730 I (4370) VEHICLE: campaign started: label=relay-d1650 dist=0.99 rounds=50 interval=1000 ms timeout=2000 ms
+08:20:36.759746 I (4372) VEHICLE: CSVHDR v2 label,dist_m,round,nonce,t_tx_us,rtt_us,result,rssi_dbm,itvl_1_25ms,mtu
+08:20:36.759758 I (4381) VEHICLE: grid start offset 588378 us (connection interval 40 x 1.25 ms)
+08:20:37.349829 I (4976) VEHICLE: HOP V tx_chal nonce=8579300a t=4435049 us
+08:20:37.349871 I (4977) NimBLE: GATT procedure initiated: write; 
+08:20:37.349886 I (4977) NimBLE: att_handle=16 len=16
+08:20:37.349897 
+08:20:39.420198 W (6980) VEHICLE: round 1/50: TIMEOUT  no response within 2000 ms  RSSI=-38 dBm  nonce=8579300a
+08:20:39.420240 I (6980) VEHICLE: CSV,relay-d1650,0.99,1,8579300a,4435049,-1,TIMEOUT,-38,40,256
+08:20:39.420257 I (7014) VEHICLE: HOP V tx_chal nonce=d93c0061 t=6472725 us
+08:20:39.420270 I (7015) NimBLE: GATT procedure initiated: write; 
+08:20:39.420281 I (7015) NimBLE: att_handle=16 len=16
+08:20:39.420329 
+08:20:39.420346 W (7050) VEHICLE: late response to the timed-out challenge 8579300a discarded; round in flight kept
+08:20:41.516723 W (9017) VEHICLE: round 2/50: TIMEOUT  no response within 2000 ms  RSSI=-33 dBm  nonce=d93c0061
+08:20:41.516765 I (9018) VEHICLE: CSV,relay-d1650,0.99,2,d93c0061,6472725,-1,TIMEOUT,-33,40,256
+08:20:41.516780 I (9028) VEHICLE: HOP V tx_chal nonce=5494dfb3 t=8486343 us
+08:20:41.516792 I (9029) NimBLE: GATT procedure initiated: write; 
+08:20:41.516803 I (9032) NimBLE: att_handle=16 len=16
+08:20:41.516813 
+08:20:41.516823 W (9148) VEHICLE: late response to the timed-out challenge d93c0061 discarded; round in flight kept
+08:20:43.517925 W (11031) VEHICLE: round 3/50: TIMEOUT  no response within 2000 ms  RSSI=-36 dBm  nonce=5494dfb3
+08:20:43.517968 I (11031) VEHICLE: CSV,relay-d1650,0.99,3,5494dfb3,8486343,-1,TIMEOUT,-36,40,256
+08:20:43.517985 I (11045) VEHICLE: HOP V tx_chal nonce=d2dee5d0 t=10502741 us
+08:20:43.517996 I (11045) NimBLE: GATT procedure initiated: write; 
+08:20:43.518007 I (11046) NimBLE: att_handle=16 len=16
+08:20:43.518018 
+08:20:43.518029 W (11148) VEHICLE: late response to the timed-out challenge 5494dfb3 discarded; round in flight kept
+08:20:45.339665 I (12950) VEHICLE: round 4/50: OK  RTT=1901511 us  RSSI=-46 dBm  nonce=d2dee5d0
+08:20:45.339708 I (12951) VEHICLE: CSV,relay-d1650,0.99,4,d2dee5d0,10502741,1901511,OK,-46,40,256
+08:20:45.339723 I (12960) VEHICLE: HOP V tx_chal nonce=d3927f44 t=12419234 us
+08:20:45.339736 I (12961) NimBLE: GATT procedure initiated: write; 
+08:20:45.339747 I (12964) NimBLE: att_handle=16 len=16
+08:20:45.339757 
+08:20:47.239402 I (14851) VEHICLE: round 5/50: OK  RTT=1885090 us  RSSI=-37 dBm  nonce=d3927f44
+08:20:47.239447 I (14852) VEHICLE: CSV,relay-d1650,0.99,5,d3927f44,12419234,1885090,OK,-37,40,256
+08:20:47.239463 I (14862) VEHICLE: HOP V tx_chal nonce=d9db1ba0 t=14320413 us
+08:20:47.239475 I (14862) NimBLE: GATT procedure initiated: write; 
+08:20:47.239486 I (14865) NimBLE: att_handle=16 len=16
+08:20:47.239496 
+08:20:49.140599 I (16752) VEHICLE: round 6/50: OK  RTT=1884109 us  RSSI=-33 dBm  nonce=d9db1ba0
+08:20:49.140642 I (16753) VEHICLE: CSV,relay-d1650,0.99,6,d9db1ba0,14320413,1884109,OK,-33,40,256
+08:20:49.140659 I (16763) VEHICLE: HOP V tx_chal nonce=8b19222d t=16221312 us
+08:20:49.140671 I (16764) NimBLE: GATT procedure initiated: write; 
+08:20:49.140682 I (16766) NimBLE: att_handle=16 len=16
+08:20:49.140693 
+08:20:51.038727 I (18651) VEHICLE: round 7/50: OK  RTT=1883100 us  RSSI=-36 dBm  nonce=8b19222d
+08:20:51.038770 I (18651) VEHICLE: CSV,relay-d1650,0.99,7,8b19222d,16221312,1883100,OK,-36,40,256
+08:20:51.038787 I (18661) VEHICLE: HOP V tx_chal nonce=cc07459f t=18119373 us
+08:20:51.038799 I (18661) NimBLE: GATT procedure initiated: write; 
+08:20:51.038810 I (18664) NimBLE: att_handle=16 len=16
+08:20:51.038820 
+08:20:52.938310 I (20551) VEHICLE: round 8/50: OK  RTT=1885076 us  RSSI=-44 dBm  nonce=cc07459f
+08:20:52.938352 I (20551) VEHICLE: CSV,relay-d1650,0.99,8,cc07459f,18119373,1885076,OK,-44,40,256
+08:20:52.938368 I (20561) VEHICLE: HOP V tx_chal nonce=b5c42911 t=20019378 us
+08:20:52.938381 I (20561) NimBLE: GATT procedure initiated: write; 
+08:20:52.938391 I (20564) NimBLE: att_handle=16 len=16
+08:20:52.938402 
+08:20:54.839616 I (22451) VEHICLE: round 9/50: OK  RTT=1885117 us  RSSI=-38 dBm  nonce=b5c42911
+08:20:54.839659 I (22451) VEHICLE: CSV,relay-d1650,0.99,9,b5c42911,20019378,1885117,OK,-38,40,256
+08:20:54.839676 I (22461) VEHICLE: HOP V tx_chal nonce=85bd27e8 t=21919393 us
+08:20:54.839688 I (22461) NimBLE: GATT procedure initiated: write; 
+08:20:54.839699 I (22464) NimBLE: att_handle=16 len=16
+08:20:54.839709 
+08:20:56.739427 I (24351) VEHICLE: round 10/50: OK  RTT=1885138 us  RSSI=-34 dBm  nonce=85bd27e8
+08:20:56.739469 I (24351) VEHICLE: CSV,relay-d1650,0.99,10,85bd27e8,21919393,1885138,OK,-34,40,256
+08:20:56.739485 I (24361) VEHICLE: HOP V tx_chal nonce=b0564f5b t=23819628 us
+08:20:56.739498 I (24362) NimBLE: GATT procedure initiated: write; 
+08:20:56.739509 I (24365) NimBLE: att_handle=16 len=16
+08:20:56.739519 
+08:20:58.739431 I (26351) VEHICLE: round 11/50: OK  RTT=1984964 us  RSSI=-37 dBm  nonce=b0564f5b
+08:20:58.739475 I (26351) VEHICLE: CSV,relay-d1650,0.99,11,b0564f5b,23819628,1984964,OK,-37,40,256
+08:20:58.739492 I (26361) VEHICLE: HOP V tx_chal nonce=22f95696 t=25819704 us
+08:20:58.739503 I (26362) NimBLE: GATT procedure initiated: write; 
+08:20:58.739513 I (26365) NimBLE: att_handle=16 len=16
+08:20:58.739523 
+08:21:00.751450 I (28351) VEHICLE: round 12/50: OK  RTT=1984978 us  RSSI=-44 dBm  nonce=22f95696
+08:21:00.751492 I (28351) VEHICLE: CSV,relay-d1650,0.99,12,22f95696,25819704,1984978,OK,-44,40,256
+08:21:00.751508 I (28378) VEHICLE: HOP V tx_chal nonce=53869b1b t=27836361 us
+08:21:00.751520 I (28378) NimBLE: GATT procedure initiated: write; 
+08:21:00.751531 I (28378) NimBLE: att_handle=16 len=16
+08:21:00.751541 
+08:21:02.740505 I (30351) VEHICLE: round 13/50: OK  RTT=1968367 us  RSSI=-35 dBm  nonce=53869b1b
+08:21:02.740548 I (30351) VEHICLE: CSV,relay-d1650,0.99,13,53869b1b,27836361,1968367,OK,-35,40,256
+08:21:02.740564 I (30361) VEHICLE: HOP V tx_chal nonce=6f46ce4a t=29819904 us
+08:21:02.740576 I (30362) NimBLE: GATT procedure initiated: write; 
+08:21:02.740586 I (30365) NimBLE: att_handle=16 len=16
+08:21:02.740597 
+08:21:04.770074 I (32351) VEHICLE: round 14/50: OK  RTT=1984872 us  RSSI=-33 dBm  nonce=6f46ce4a
+08:21:04.770124 I (32351) VEHICLE: CSV,relay-d1650,0.99,14,6f46ce4a,29819904,1984872,OK,-33,40,256
+08:21:04.770140 I (32395) VEHICLE: HOP V tx_chal nonce=81a85e82 t=31854262 us
+08:21:04.770153 I (32396) NimBLE: GATT procedure initiated: write; 
+08:21:04.770163 I (32396) NimBLE: att_handle=16 len=16
+08:21:04.770173 
+08:21:06.819754 W (34398) VEHICLE: round 15/50: TIMEOUT  no response within 2000 ms  RSSI=-33 dBm  nonce=81a85e82
+08:21:06.819796 I (34399) VEHICLE: CSV,relay-d1650,0.99,15,81a85e82,31854262,-1,TIMEOUT,-33,40,256
+08:21:06.819812 I (34409) VEHICLE: HOP V tx_chal nonce=77543504 t=33868053 us
+08:21:06.819824 I (34410) NimBLE: GATT procedure initiated: write; 
+08:21:06.819835 I (34414) NimBLE: att_handle=16 len=16
+08:21:06.819846 
+08:21:06.819856 W (34451) VEHICLE: late response to the timed-out challenge 81a85e82 discarded; round in flight kept
+08:21:08.738535 I (36351) VEHICLE: round 16/50: OK  RTT=1936808 us  RSSI=-43 dBm  nonce=77543504
+08:21:08.738577 I (36352) VEHICLE: CSV,relay-d1650,0.99,16,77543504,33868053,1936808,OK,-43,40,256
+08:21:08.738592 I (36361) VEHICLE: HOP V tx_chal nonce=ffe7a9d1 t=35820054 us
+08:21:08.738605 I (36362) NimBLE: GATT procedure initiated: write; 
+08:21:08.738615 I (36365) NimBLE: att_handle=16 len=16
+08:21:08.738625 
+08:21:10.747439 I (38351) VEHICLE: round 17/50: OK  RTT=1984844 us  RSSI=-34 dBm  nonce=ffe7a9d1
+08:21:10.747484 I (38352) VEHICLE: CSV,relay-d1650,0.99,17,ffe7a9d1,35820054,1984844,OK,-34,40,256
+08:21:10.747501 I (38373) VEHICLE: HOP V tx_chal nonce=11980e49 t=37831524 us
+08:21:10.747513 I (38374) NimBLE: GATT procedure initiated: write; 
+08:21:10.747524 I (38374) NimBLE: att_handle=16 len=16
+08:21:10.747534 
+08:21:12.738699 I (40351) VEHICLE: round 18/50: OK  RTT=1973420 us  RSSI=-36 dBm  nonce=11980e49
+08:21:12.738740 I (40352) VEHICLE: CSV,relay-d1650,0.99,18,11980e49,37831524,1973420,OK,-36,40,256
+08:21:12.738757 I (40362) VEHICLE: HOP V tx_chal nonce=cca1f49b t=39820367 us
+08:21:12.738769 I (40363) NimBLE: GATT procedure initiated: write; 
+08:21:12.738780 I (40365) NimBLE: att_handle=16 len=16
+08:21:12.738791 
+08:21:14.791707 I (42351) VEHICLE: round 19/50: OK  RTT=1984619 us  RSSI=-44 dBm  nonce=cca1f49b
+08:21:14.791752 I (42352) VEHICLE: CSV,relay-d1650,0.99,19,cca1f49b,39820367,1984619,OK,-44,40,256
+08:21:14.791769 I (42418) VEHICLE: HOP V tx_chal nonce=86ae2e26 t=41876595 us
+08:21:14.791781 I (42419) NimBLE: GATT procedure initiated: write; 
+08:21:14.791792 I (42419) NimBLE: att_handle=16 len=16
+08:21:14.791803 
+08:21:16.790398 I (44402) VEHICLE: round 20/50: OK  RTT=1978450 us  RSSI=-47 dBm  nonce=86ae2e26
+08:21:16.790437 I (44402) VEHICLE: CSV,relay-d1650,0.99,20,86ae2e26,41876595,1978450,OK,-47,40,256
+08:21:16.790451 I (44416) VEHICLE: HOP V tx_chal nonce=965cf1c3 t=43874510 us
+08:21:16.790502 I (44416) NimBLE: GATT procedure initiated: write; 
+08:21:16.790516 I (44417) NimBLE: att_handle=16 len=16
+08:21:16.790526 
+08:21:18.868668 W (46419) VEHICLE: round 21/50: TIMEOUT  no response within 2000 ms  RSSI=-36 dBm  nonce=965cf1c3
+08:21:18.868710 I (46419) VEHICLE: CSV,relay-d1650,0.99,21,965cf1c3,43874510,-1,TIMEOUT,-36,40,256
+08:21:18.868725 I (46445) VEHICLE: HOP V tx_chal nonce=c668af25 t=45903426 us
+08:21:18.868737 I (46446) NimBLE: GATT procedure initiated: write; 
+08:21:18.868748 I (46447) NimBLE: att_handle=16 len=16
+08:21:18.868759 
+08:21:18.868770 W (46499) VEHICLE: late response to the timed-out challenge 965cf1c3 discarded; round in flight kept
+08:21:20.967932 W (48448) VEHICLE: round 22/50: TIMEOUT  no response within 2000 ms  RSSI=-34 dBm  nonce=c668af25
+08:21:20.967975 I (48448) VEHICLE: CSV,relay-d1650,0.99,22,c668af25,45903426,-1,TIMEOUT,-34,40,256
+08:21:20.967991 I (48459) VEHICLE: HOP V tx_chal nonce=fe50e139 t=47917790 us
+08:21:20.968004 I (48460) NimBLE: GATT procedure initiated: write; 
+08:21:20.968015 I (48463) NimBLE: att_handle=16 len=16
+08:21:20.968025 
+08:21:20.968035 W (48599) VEHICLE: late response to the timed-out challenge c668af25 discarded; round in flight kept
+08:21:22.967567 W (50462) VEHICLE: round 23/50: TIMEOUT  no response within 2000 ms  RSSI=-37 dBm  nonce=fe50e139
+08:21:22.967609 I (50462) VEHICLE: CSV,relay-d1650,0.99,23,fe50e139,47917790,-1,TIMEOUT,-37,40,256
+08:21:22.967631 I (50473) VEHICLE: HOP V tx_chal nonce=dfbb78b4 t=49931706 us
+08:21:22.967643 I (50474) NimBLE: GATT procedure initiated: write; 
+08:21:22.967653 I (50477) NimBLE: att_handle=16 len=16
+08:21:22.967663 
+08:21:22.967674 W (50599) VEHICLE: late response to the timed-out challenge fe50e139 discarded; round in flight kept
+08:21:24.967727 W (52477) VEHICLE: round 24/50: TIMEOUT  no response within 2000 ms  RSSI=-45 dBm  nonce=dfbb78b4
+08:21:24.967769 I (52478) VEHICLE: CSV,relay-d1650,0.99,24,dfbb78b4,49931706,-1,TIMEOUT,-45,40,256
+08:21:24.967785 I (52488) VEHICLE: HOP V tx_chal nonce=72b98697 t=51946936 us
+08:21:24.967797 I (52489) NimBLE: GATT procedure initiated: write; 
+08:21:24.967808 I (52493) NimBLE: att_handle=16 len=16
+08:21:24.967818 
+08:21:24.967829 W (52599) VEHICLE: late response to the timed-out challenge dfbb78b4 discarded; round in flight kept
+08:21:26.969835 W (54491) VEHICLE: round 25/50: TIMEOUT  no response within 2000 ms  RSSI=-35 dBm  nonce=72b98697
+08:21:26.969876 I (54492) VEHICLE: CSV,relay-d1650,0.99,25,72b98697,51946936,-1,TIMEOUT,-35,40,256
+08:21:26.969892 I (54502) VEHICLE: HOP V tx_chal nonce=0f41dec6 t=53961051 us
+08:21:26.969904 I (54503) NimBLE: GATT procedure initiated: write; 
+08:21:26.969915 I (54506) NimBLE: att_handle=16 len=16
+08:21:26.969925 
+08:21:26.969935 W (54601) VEHICLE: late response to the timed-out challenge 72b98697 discarded; round in flight kept
+08:21:28.969412 W (56505) VEHICLE: round 26/50: TIMEOUT  no response within 2000 ms  RSSI=-44 dBm  nonce=0f41dec6
+08:21:28.969462 I (56506) VEHICLE: CSV,relay-d1650,0.99,26,0f41dec6,53961051,-1,TIMEOUT,-44,40,256
+08:21:28.969478 I (56516) VEHICLE: HOP V tx_chal nonce=fb27f2ad t=55974972 us
+08:21:28.969489 I (56517) NimBLE: GATT procedure initiated: write; 
+08:21:28.969501 I (56520) NimBLE: att_handle=16 len=16
+08:21:28.969511 
+08:21:28.969521 W (56601) VEHICLE: late response to the timed-out challenge 0f41dec6 discarded; round in flight kept
+08:21:30.969929 W (58519) VEHICLE: round 27/50: TIMEOUT  no response within 2000 ms  RSSI=-34 dBm  nonce=fb27f2ad
+08:21:30.969972 I (58520) VEHICLE: CSV,relay-d1650,0.99,27,fb27f2ad,55974972,-1,TIMEOUT,-34,40,256
+08:21:30.969988 I (58531) VEHICLE: HOP V tx_chal nonce=90999fc1 t=57989395 us
+08:21:30.970001 I (58531) NimBLE: GATT procedure initiated: write; 
+08:21:30.970012 I (58535) NimBLE: att_handle=16 len=16
+08:21:30.970023 
+08:21:30.970033 W (58601) VEHICLE: late response to the timed-out challenge fb27f2ad discarded; round in flight kept
+08:21:32.969264 W (60534) VEHICLE: round 28/50: TIMEOUT  no response within 2000 ms  RSSI=-34 dBm  nonce=90999fc1
+08:21:32.969310 I (60535) VEHICLE: CSV,relay-d1650,0.99,28,90999fc1,57989395,-1,TIMEOUT,-34,40,256
+08:21:32.969328 I (60549) VEHICLE: HOP V tx_chal nonce=621735b1 t=60007691 us
+08:21:32.969340 I (60550) NimBLE: GATT procedure initiated: write; 
+08:21:32.969351 I (60550) NimBLE: att_handle=16 len=16
+08:21:32.969361 
+08:21:32.969372 W (60600) VEHICLE: late response to the timed-out challenge 90999fc1 discarded; round in flight kept
+08:21:35.069965 W (62553) VEHICLE: round 29/50: TIMEOUT  no response within 2000 ms  RSSI=-44 dBm  nonce=621735b1
+08:21:35.070009 I (62553) VEHICLE: CSV,relay-d1650,0.99,29,621735b1,60007691,-1,TIMEOUT,-44,40,256
+08:21:35.070025 I (62564) VEHICLE: HOP V tx_chal nonce=f732d74b t=62022879 us
+08:21:35.070038 I (62565) NimBLE: GATT procedure initiated: write; 
+08:21:35.070049 I (62568) NimBLE: att_handle=16 len=16
+08:21:35.070059 
+08:21:35.070069 W (62700) VEHICLE: late response to the timed-out challenge 621735b1 discarded; round in flight kept
+08:21:37.068546 W (64567) VEHICLE: round 30/50: TIMEOUT  no response within 2000 ms  RSSI=-37 dBm  nonce=f732d74b
+08:21:37.068590 I (64568) VEHICLE: CSV,relay-d1650,0.99,30,f732d74b,62022879,-1,TIMEOUT,-37,40,256
+08:21:37.068606 I (64578) VEHICLE: HOP V tx_chal nonce=f4185dac t=64037039 us
+08:21:37.068618 I (64579) NimBLE: GATT procedure initiated: write; 
+08:21:37.068629 I (64582) NimBLE: att_handle=16 len=16
+08:21:37.068640 
+08:21:37.068650 W (64699) VEHICLE: late response to the timed-out challenge f732d74b discarded; round in flight kept
+08:21:39.068635 W (66582) VEHICLE: round 31/50: TIMEOUT  no response within 2000 ms  RSSI=-33 dBm  nonce=f4185dac
+08:21:39.068681 I (66582) VEHICLE: CSV,relay-d1650,0.99,31,f4185dac,64037039,-1,TIMEOUT,-33,40,256
+08:21:39.068697 I (66596) VEHICLE: HOP V tx_chal nonce=4040e26d t=66054597 us
+08:21:39.068709 I (66597) NimBLE: GATT procedure initiated: write; 
+08:21:39.068720 I (66597) NimBLE: att_handle=16 len=16
+08:21:39.068731 
+08:21:39.068741 W (66699) VEHICLE: late response to the timed-out challenge f4185dac discarded; round in flight kept
+08:21:41.070269 W (68599) VEHICLE: round 32/50: TIMEOUT  no response within 2000 ms  RSSI=-36 dBm  nonce=4040e26d
+08:21:41.070311 I (68600) VEHICLE: CSV,relay-d1650,0.99,32,4040e26d,66054597,-1,TIMEOUT,-36,40,256
+08:21:41.070326 I (68610) VEHICLE: HOP V tx_chal nonce=d8f1bef5 t=68069061 us
+08:21:41.070338 I (68611) NimBLE: GATT procedure initiated: write; 
+08:21:41.070348 I (68614) NimBLE: att_handle=16 len=16
+08:21:41.070358 
+08:21:41.070369 W (68701) VEHICLE: late response to the timed-out challenge 4040e26d discarded; round in flight kept
+08:21:43.069627 W (70613) VEHICLE: round 33/50: TIMEOUT  no response within 2000 ms  RSSI=-33 dBm  nonce=d8f1bef5
+08:21:43.069669 I (70614) VEHICLE: CSV,relay-d1650,0.99,33,d8f1bef5,68069061,-1,TIMEOUT,-33,40,256
+08:21:43.069685 I (70625) VEHICLE: HOP V tx_chal nonce=ab9e161d t=70083470 us
+08:21:43.069697 I (70625) NimBLE: GATT procedure initiated: write; 
+08:21:43.069708 I (70629) NimBLE: att_handle=16 len=16
+08:21:43.069718 
+08:21:43.069728 W (70701) VEHICLE: late response to the timed-out challenge d8f1bef5 discarded; round in flight kept
+08:21:45.069201 W (72627) VEHICLE: round 34/50: TIMEOUT  no response within 2000 ms  RSSI=-37 dBm  nonce=ab9e161d
+08:21:45.069246 I (72628) VEHICLE: CSV,relay-d1650,0.99,34,ab9e161d,70083470,-1,TIMEOUT,-37,40,256
+08:21:45.069262 I (72638) VEHICLE: HOP V tx_chal nonce=4bbd5511 t=72097206 us
+08:21:45.069274 I (72639) NimBLE: GATT procedure initiated: write; 
+08:21:45.069285 I (72643) NimBLE: att_handle=16 len=16
+08:21:45.069296 
+08:21:45.069306 W (72700) VEHICLE: late response to the timed-out challenge ab9e161d discarded; round in flight kept
+08:21:47.169772 W (74642) VEHICLE: round 35/50: TIMEOUT  no response within 2000 ms  RSSI=-45 dBm  nonce=4bbd5511
+08:21:47.169815 I (74643) VEHICLE: CSV,relay-d1650,0.99,35,4bbd5511,72097206,-1,TIMEOUT,-45,40,256
+08:21:47.169832 I (74654) VEHICLE: HOP V tx_chal nonce=77ce8e71 t=74112489 us
+08:21:47.169844 I (74654) NimBLE: GATT procedure initiated: write; 
+08:21:47.169858 I (74658) NimBLE: att_handle=16 len=16
+08:21:47.169870 
+08:21:47.169881 W (74801) VEHICLE: late response to the timed-out challenge 4bbd5511 discarded; round in flight kept
+08:21:49.037464 I (76602) VEHICLE: round 36/50: OK  RTT=1943487 us  RSSI=-34 dBm  nonce=77ce8e71
+08:21:49.037512 I (76603) VEHICLE: CSV,relay-d1650,0.99,36,77ce8e71,74112489,1943487,OK,-34,40,256
+08:21:49.037528 I (76664) VEHICLE: HOP V tx_chal nonce=5868fd0c t=76122738 us
+08:21:49.037540 I (76665) NimBLE: GATT procedure initiated: write; 
+08:21:49.037551 I (76665) NimBLE: att_handle=16 len=16
+08:21:49.037562 
+08:21:50.989699 I (78602) VEHICLE: round 37/50: OK  RTT=1933060 us  RSSI=-34 dBm  nonce=5868fd0c
+08:21:50.989742 I (78603) VEHICLE: CSV,relay-d1650,0.99,37,5868fd0c,76122738,1933060,OK,-34,40,256
+08:21:50.989758 I (78613) VEHICLE: HOP V tx_chal nonce=fd8bcbc4 t=78071301 us
+08:21:50.989771 I (78613) NimBLE: GATT procedure initiated: write; 
+08:21:50.989782 I (78616) NimBLE: att_handle=16 len=16
+08:21:50.989792 
+08:21:52.890493 I (80502) VEHICLE: round 38/50: OK  RTT=1884534 us  RSSI=-34 dBm  nonce=fd8bcbc4
+08:21:52.890540 I (80503) VEHICLE: CSV,relay-d1650,0.99,38,fd8bcbc4,78071301,1884534,OK,-34,40,256
+08:21:52.890557 I (80513) VEHICLE: HOP V tx_chal nonce=756ec673 t=79971355 us
+08:21:52.890569 I (80513) NimBLE: GATT procedure initiated: write; 
+08:21:52.890580 I (80516) NimBLE: att_handle=16 len=16
+08:21:52.890590 
+08:21:54.821807 I (82402) VEHICLE: round 39/50: OK  RTT=1884519 us  RSSI=-39 dBm  nonce=756ec673
+08:21:54.821852 I (82403) VEHICLE: CSV,relay-d1650,0.99,39,756ec673,79971355,1884519,OK,-39,40,256
+08:21:54.821868 I (82448) VEHICLE: HOP V tx_chal nonce=b4c265f2 t=81906581 us
+08:21:54.821880 I (82449) NimBLE: GATT procedure initiated: write; 
+08:21:54.821890 I (82449) NimBLE: att_handle=16 len=16
+08:21:54.821900 
+08:21:56.789485 I (84402) VEHICLE: round 40/50: OK  RTT=1949340 us  RSSI=-34 dBm  nonce=b4c265f2
+08:21:56.789526 I (84403) VEHICLE: CSV,relay-d1650,0.99,40,b4c265f2,81906581,1949340,OK,-34,40,256
+08:21:56.789542 I (84413) VEHICLE: HOP V tx_chal nonce=c155ece9 t=83871393 us
+08:21:56.789555 I (84413) NimBLE: GATT procedure initiated: write; 
+08:21:56.789565 I (84416) NimBLE: att_handle=16 len=16
+08:21:56.789575 
+08:21:58.714504 I (86302) VEHICLE: round 41/50: OK  RTT=1884514 us  RSSI=-38 dBm  nonce=c155ece9
+08:21:58.714542 I (86303) VEHICLE: CSV,relay-d1650,0.99,41,c155ece9,83871393,1884514,OK,-38,40,256
+08:21:58.714555 I (86340) VEHICLE: HOP V tx_chal nonce=f372050d t=85799019 us
+08:21:58.714565 I (86341) NimBLE: GATT procedure initiated: write; 
+08:21:58.714573 I (86341) NimBLE: att_handle=16 len=16
+08:21:58.714582 
+08:22:00.591974 I (88204) VEHICLE: round 42/50: OK  RTT=1856926 us  RSSI=-45 dBm  nonce=f372050d
+08:22:00.592013 I (88205) VEHICLE: CSV,relay-d1650,0.99,42,f372050d,85799019,1856926,OK,-45,40,256
+08:22:00.592026 I (88215) VEHICLE: HOP V tx_chal nonce=46568ca1 t=87673365 us
+08:22:00.592036 I (88216) NimBLE: GATT procedure initiated: write; 
+08:22:00.592045 I (88218) NimBLE: att_handle=16 len=16
+08:22:00.592053 
+08:22:02.627551 I (90202) VEHICLE: round 43/50: OK  RTT=1982629 us  RSSI=-43 dBm  nonce=46568ca1
+08:22:02.627589 I (90203) VEHICLE: CSV,relay-d1650,0.99,43,46568ca1,87673365,1982629,OK,-43,40,256
+08:22:02.627602 I (90254) VEHICLE: HOP V tx_chal nonce=560495ae t=89713194 us
+08:22:02.627612 I (90255) NimBLE: GATT procedure initiated: write; 
+08:22:02.627621 I (90255) NimBLE: att_handle=16 len=16
+08:22:02.627630 
+08:22:04.590789 I (92202) VEHICLE: round 44/50: OK  RTT=1942853 us  RSSI=-33 dBm  nonce=560495ae
+08:22:04.590833 I (92203) VEHICLE: CSV,relay-d1650,0.99,44,560495ae,89713194,1942853,OK,-33,40,256
+08:22:04.590849 I (92213) VEHICLE: HOP V tx_chal nonce=27922b37 t=91671585 us
+08:22:04.590861 I (92213) NimBLE: GATT procedure initiated: write; 
+08:22:04.590871 I (92216) NimBLE: att_handle=16 len=16
+08:22:04.590882 
+08:22:06.590539 I (94202) VEHICLE: round 45/50: OK  RTT=1984516 us  RSSI=-37 dBm  nonce=27922b37
+08:22:06.590583 I (94203) VEHICLE: CSV,relay-d1650,0.99,45,27922b37,91671585,1984516,OK,-37,40,256
+08:22:06.590602 I (94213) VEHICLE: HOP V tx_chal nonce=8808d765 t=93671589 us
+08:22:06.590616 I (94213) NimBLE: GATT procedure initiated: write; 
+08:22:06.590628 I (94216) NimBLE: att_handle=16 len=16
+08:22:06.590638 
+08:22:08.589859 I (96202) VEHICLE: round 46/50: OK  RTT=1984542 us  RSSI=-45 dBm  nonce=8808d765
+08:22:08.589911 I (96203) VEHICLE: CSV,relay-d1650,0.99,46,8808d765,93671589,1984542,OK,-45,40,256
+08:22:08.589928 I (96213) VEHICLE: HOP V tx_chal nonce=92ceaf44 t=95671581 us
+08:22:08.589941 I (96213) NimBLE: GATT procedure initiated: write; 
+08:22:08.589951 I (96216) NimBLE: att_handle=16 len=16
+08:22:08.589962 
+08:22:10.620497 W (98216) VEHICLE: round 47/50: TIMEOUT  no response within 2000 ms  RSSI=-34 dBm  nonce=92ceaf44
+08:22:10.620539 I (98217) VEHICLE: CSV,relay-d1650,0.99,47,92ceaf44,95671581,-1,TIMEOUT,-34,40,256
+08:22:10.620553 I (98227) VEHICLE: HOP V tx_chal nonce=3808d3a3 t=97685928 us
+08:22:10.620563 I (98228) NimBLE: GATT procedure initiated: write; 
+08:22:10.620573 I (98231) NimBLE: att_handle=16 len=16
+08:22:10.620582 
+08:22:10.620591 W (98251) VEHICLE: late response to the timed-out challenge 92ceaf44 discarded; round in flight kept
+08:22:12.718669 W (100231) VEHICLE: round 48/50: TIMEOUT  no response within 2000 ms  RSSI=-37 dBm  nonce=3808d3a3
+08:22:12.718711 I (100232) VEHICLE: CSV,relay-d1650,0.99,48,3808d3a3,97685928,-1,TIMEOUT,-37,40,256
+08:22:12.718728 I (100245) VEHICLE: HOP V tx_chal nonce=497966ec t=99703502 us
+08:22:12.718740 I (100245) NimBLE: GATT procedure initiated: write; 
+08:22:12.718751 I (100247) NimBLE: att_handle=16 len=16
+08:22:12.718761 
+08:22:12.718772 W (100350) VEHICLE: late response to the timed-out challenge 3808d3a3 discarded; round in flight kept
+08:22:14.718746 W (102247) VEHICLE: round 49/50: TIMEOUT  no response within 2000 ms  RSSI=-43 dBm  nonce=497966ec
+08:22:14.718788 I (102247) VEHICLE: CSV,relay-d1650,0.99,49,497966ec,99703502,-1,TIMEOUT,-43,40,256
+08:22:14.718804 I (102258) VEHICLE: HOP V tx_chal nonce=aa35970e t=101717083 us
+08:22:14.718816 I (102259) NimBLE: GATT procedure initiated: write; 
+08:22:14.718827 I (102262) NimBLE: att_handle=16 len=16
+08:22:14.718837 
+08:22:14.718848 W (102351) VEHICLE: late response to the timed-out challenge 497966ec discarded; round in flight kept
+08:22:16.716375 W (104261) VEHICLE: round 50/50: TIMEOUT  no response within 2000 ms  RSSI=-37 dBm  nonce=aa35970e
+08:22:16.716429 I (104262) VEHICLE: CSV,relay-d1650,0.99,50,aa35970e,101717083,-1,TIMEOUT,-37,40,256
+08:22:16.716446 I (104278) VEHICLE: === relay-d1650 dist=0.99 n=50 ok=27 fail=0 timeout=23 disconnects=0 | RTT us (answered): min=1856926 avg=1934125 max=1984978 ===
+08:22:16.716459 W (104349) VEHICLE: response past the deadline (round already marked TIMEOUT); discarded
