@@ -23,6 +23,11 @@ $culture  = [Globalization.CultureInfo]::InvariantCulture
 function Stop-Helpers {
     New-Item -ItemType File -Path $stopHold -Force | Out-Null
     New-Item -ItemType File -Path $stopLog -Force | Out-Null
+    # An aborted attempt must not leave its logger or holder running: a leftover logger keeps COM5/COM6/COM7
+    # open and the next attempt cannot open them. The stop files alone are not enough.
+    foreach ($h in @($holder, $logger)) {
+        if ($h -and -not $h.HasExited) { try { $h.Kill() } catch { } }
+    }
 }
 
 function Stop-Bridge {
@@ -50,19 +55,34 @@ function Log-Times([string]$pattern) {
 }
 
 Stop-Bridge
+# The deskrab status-line bridge respawns within about a second of being stopped and takes COM5, COM6 and
+# COM8 while the passive logger opens them. This watchdog keeps it stopped until the logger has all three
+# ports, and stops itself on every exit path below.
+$bridgeWatchdog = Start-Job -ScriptBlock {
+    $end = (Get-Date).AddSeconds(40)
+    while ((Get-Date) -lt $end) {
+        Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'deskrab_bridge' } |
+            ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+        Start-Sleep -Milliseconds 300
+    }
+}
 
 $holder = Start-Process -FilePath $py -ArgumentList @((Join-Path $PSScriptRoot 'hold_and_log.py'), '--hold', 'COM8', '--out', $holdLog, '--stop', $stopHold) -PassThru -WindowStyle Hidden
 Start-Sleep -Seconds 5
 if (-not (Select-String -LiteralPath $holdLog -Pattern 'held COM8' -Quiet)) {
     'ABORT: could not hold the vehicle in reset (COM8 busy?)'
+    Stop-Job $bridgeWatchdog -ErrorAction SilentlyContinue; Remove-Job $bridgeWatchdog -Force -ErrorAction SilentlyContinue
     Stop-Helpers; exit 1
 }
 
 $logger = Start-Process -FilePath $py -ArgumentList @((Join-Path $PSScriptRoot 'log_ports.py'), '--ports', 'COM5:RELAY_A,COM6:KEY,COM7:RELAY_B', '--pulse', 'COM5,COM7', '--cmd', $cmdFile, '--out', $chainLog, '--stop', $stopLog) -PassThru -WindowStyle Hidden
 if (-not (Wait-Count 'LOGGER\] COM5 logged as RELAY_A' 0 20) -or -not (Wait-Count 'LOGGER\] COM6 logged as KEY' 0 20) -or -not (Wait-Count 'LOGGER\] COM7 logged as RELAY_B' 0 20)) {
     'ABORT: the passive logger could not open all three ports'
+    Stop-Job $bridgeWatchdog -ErrorAction SilentlyContinue; Remove-Job $bridgeWatchdog -Force -ErrorAction SilentlyContinue
     Stop-Helpers; exit 1
 }
+Stop-Job $bridgeWatchdog -ErrorAction SilentlyContinue; Remove-Job $bridgeWatchdog -Force -ErrorAction SilentlyContinue
+"logger has the three ports; bridge watchdog stopped"
 
 if (-not (Wait-Count '\[RELAY_B\].*advertising the key clone' 0 60)) {
     'ABORT: relay B is not advertising'

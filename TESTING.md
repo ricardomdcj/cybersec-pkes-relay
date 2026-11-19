@@ -326,6 +326,27 @@ offset (`grid start offset` line) with the campaign. Do not change firmware duri
 
 ---
 
+### Latency sweep (`DELAY`, relay B)
+
+Relay B holds every vehicle challenge for `DELAY <ms>` before it goes on the tunnel (`relays/main/relay_b.c`,
+off at 0). The verifier authenticates a round only if its response arrives within `ROUND_TIMEOUT_MS`
+(2000 ms), so the success rate falls where the injected delay plus the honest relayed round trip reaches the
+timeout. The vehicle must run M-22 or later: a response that arrives after its round has timed out is
+discarded instead of closing the round in flight.
+
+- The sweep runs from the repo root, one relayed campaign per delay, labelled `relay-dNNNN`:
+  `powershell -NoProfile -ExecutionPolicy Bypass -File tools\campaign\run_sweep.ps1 -Delays 500,1000 -Dist 0.99`.
+  Without `-Delays` it runs the default list in the script, which starts at 0.
+- `run_relay.ps1 -DelayMs <ms>` sends `COM7 DELAY <ms>` and waits for the relay's `DELAY set=<ms> ms` line.
+  It is sent on every relayed campaign (default 0), so no campaign inherits the delay of the one before.
+- The deskrab status-line bridge respawns while a session is active and takes COM5, COM6 and COM8 during
+  bring-up. `run_relay.ps1` keeps it stopped until the passive logger has the three ports; a campaign that
+  still fails at that step is retried by the sweep.
+- The expected threshold is the timeout minus the honest relayed round trip at D = 0; `tools/analyze_delay.py`
+  computes it, with the measured D50 and the table, into `data/analysis-20261118/delay_sweep.md`.
+
+---
+
 ## 6. Capturing logs to files
 
 `idf.py monitor` is interactive (exit with **Ctrl+]**). For hands-off capture, use

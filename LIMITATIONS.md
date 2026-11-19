@@ -52,13 +52,29 @@ bound to the nonce, not to time or place.
    50 ms interval divides 1000 ms. The M-19 firmware (`b79a463`) draws a start offset per campaign, so the
    campaigns sample different phases. The rounds inside one campaign are still correlated.
 8. **Firmware.** The pilot used older firmware. The M-19 firmware (`b79a463`) has run: 56 campaigns at
-   2.24 m, 16 in-sample, 20 held-out and 20 replication (`data/runs/README.md`). The other checkpoints still need their own campaigns.
+   2.24 m (16 in-sample, 20 held-out, 20 replication) and 20 at 0.99 m (10 direct, 10 relayed), all 50 rounds
+   answered OK (`data/runs/README.md`). The latency sweep at 0.99 m (14 campaigns) uses the M-22 vehicle firmware.
 9. **The phase sets the overlap.** The relayed RTT depends on the connection phase of each campaign, as the
    honest RTT does. The honest maximum is 136 ms in the in-sample campaigns, 150.6 ms in the held-out ones and
-   143.3 ms in the replication ones. In each set, one or two relayed campaigns reach below 160 ms (down to
-   107 ms); the other relayed campaigns do not go below 159.5 ms. Across the 28 relayed campaigns at 2.24 m,
-   26 of 1400 rounds are accepted at 160 ms (1.9 %), all from five campaigns. More campaigns at more phases are
-   needed before that rate is quoted.
+   143.3 ms in the replication ones. In the held-out and replication sets, two relayed campaigns contributed every round accepted at 160 ms
+   (down to 107 ms), and the other eight in each set have no round below 164 ms. Across the 28 relayed campaigns
+   at 2.24 m, 26 of 1400 rounds are accepted at 160 ms (1.9 %), from a few campaigns. More campaigns at more
+   phases are needed before that rate is quoted.
+10. **Latency sweep.** One campaign per delay level, plus replicates at 1625 and 1675 ms (14 campaigns, all
+   50 rounds answered). The 50 % point is bracketed by the Wilson intervals of the 1650 and 1675 ms campaigns
+   (1640 to 1675 ms); the interpolated value is 1656 ms against the predicted 1641 ms. More replicates, or a
+   logistic fit on the rounds, would sharpen it. The bench sets the timeout to 2 s, so the value is the bench's
+   budget, not a vehicle's.
+11. **Late answers.** Two mechanisms keep a late answer from closing the round in flight. Relay B keeps one
+   pending round and drops the answer to an earlier one (`response for round N dropped`, the M-04 rule). The
+   vehicle discards a late answer that does reach it (M-22, `late response to the timed-out challenge`).
+   Without M-22 those reached the vehicle as FAIL rows near the threshold (36 such answers in the 1700 ms
+   campaign); the sweep has no FAIL row.
+12. **Provenance flags.** The sweep's vehicle image reports `d795f50+mod`: the source of `vehicle/` is the commit
+   `d795f50`, and `+mod` records uncommitted analysis files in the working tree at build time. The 0.99 m M-19
+   relays ran `1cf7f0c` (relay A flagged `+mod`). The deskrab status-line bridge takes the COM ports while a
+   session is active; `run_relay.ps1` stops it during bring-up, and aborted sessions are kept in
+   `data/runs/_invalid/aborted/`.
 
 ## Mitigations to discuss (not built)
 

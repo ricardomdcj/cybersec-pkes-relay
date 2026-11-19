@@ -118,6 +118,70 @@ Notes:
 - One campaign (20261119-005118) logged a drop before START. None logged a drop after START. Every CSV row
   has `itvl_1_25ms` = 40.
 
+## M-19 campaigns at 0.99 m (vehicle b79a463, relays 1cf7f0c)
+
+The same M-19 vehicle firmware as the 2 m section (commit `b79a463`). The relays ran firmware `1cf7f0c`
+(relay A's identifier carries a `+mod` suffix; relay B's does not). Layout: the car and Relay B 12 cm apart,
+Relay A and the key 12 cm apart, the relays 75 cm apart (`unicast A-B 0.75`), so the car-to-key distance is
+about 0.99 m. Ten direct baseline and ten relayed campaigns, 500 rounds per condition, all answered OK, no
+timeouts.
+
+| Session | Condition | Label | Start offset (ms) |
+|---|---|---|---|
+| 20261119-070054, -070422, -071049, -071416, -071747, -072010, -072227, -072442, -072810, -073140 | baseline (vehicle to key, direct) | `baseline-m19-099` | 300.2, 721.6, 407.1, 566.3, 566.2, 382.4, 754.4, 778.5, 658.8, 262.8 |
+| 20261119-070154, -071149, -071519, -071848, -072111, -072328, -072543, -072912, -073240, -073536 | relayed, unicast, default TX | `relay-m19-ab075` | 482.4, 940.2, 810.5, 778.4, 928.2, 113.8, 649.7, 760.2, 471.4, 90.8 |
+
+Notes:
+
+- The baseline and relayed campaigns alternated in time.
+- Session 20261119-070523 (relayed) recorded no rows: its capture was interrupted and no relayed `CSVB` line
+  was logged. It is under `_invalid/aborted/`. The series loop did not catch it, because `run_relay.ps1` exited
+  0 with a warning; the script now exits 1 in that case. Session 20261119-073536 was recorded at the end of the
+  series as the replacement, so the relayed condition has the planned ten campaigns.
+- The start offsets are the `grid start offset` lines of each `capture_COM8.log`.
+
+## Latency sweep at 0.99 m (relay B holds each challenge; vehicle M-22)
+
+Vehicle image `d795f50+mod` (M-22: the source of `vehicle/` is commit `d795f50`; `+mod` records uncommitted
+analysis files in the working tree at build time). Relays `8d27b6a` (the `DELAY` firmware). Layout as the 0.99 m
+M-19 section (car-key 0.99 m, relays 0.75 m apart). Each campaign is one relayed run with `COM7 DELAY <ms>`,
+confirmed in the relay log as `DELAY set=<ms> ms`, labelled `relay-dNNNN`. The analysis is
+`tools/analyze_delay.py`, written to `data/analysis-20261118/delay_sweep.md` and `delay_sweep.csv`.
+
+| Session | D (ms) | OK / TIMEOUT | Late answers discarded by the vehicle | Dropped by relay B |
+|---|---|---|---|---|
+| 20261119-080112 | 0 | 50 / 0 | 0 | 0 |
+| 20261119-080701 | 500 | 50 / 0 | 0 | 0 |
+| 20261119-080828 | 1000 | 50 / 0 | 0 | 0 |
+| 20261119-081107 | 1400 | 50 / 0 | 0 | 0 |
+| 20261119-081352 | 1500 | 50 / 0 | 0 | 0 |
+| 20261119-081655 | 1600 | 36 / 14 | 8 | 0 |
+| 20261119-083552 | 1625 | 45 / 5 | 2 | 0 |
+| 20261119-082006 | 1650 | 27 / 23 | 22 | 0 |
+| 20261119-083805 | 1675 | 18 / 32 | 31 | 0 |
+| 20261119-082330 | 1700 | 8 / 42 | 36 | 1 |
+| 20261119-082544 | 1750 | 8 / 42 | 9 | 32 |
+| 20261119-082758 | 1800 | 0 / 50 | 17 | 32 |
+| 20261119-083013 | 1900 | 0 / 50 | 1 | 48 |
+| 20261119-083325 | 2200 | 0 / 50 | 0 | 0 |
+
+Notes:
+
+- No row is FAIL in any sweep campaign. A late answer reaches the vehicle only when relay B still holds the
+  earlier challenge's round; otherwise relay B drops it (`response for round N dropped`). The vehicle discards
+  the ones that reach it (`late response to the timed-out challenge`, M-22).
+- The expected threshold is 2000 ms minus the honest relayed median at D = 0 (358.6 ms): 1641 ms. The 50 % point
+  is between 1650 and 1675 ms (interpolated 1656 ms).
+- Replicates at 1625 and 1675 ms were added after the first pass, to place the 50 % point. They are campaigns
+  like the others.
+- Aborted attempts, all moved to `_invalid/aborted/`: 20261119-080022 and -080056 (before the D = 0 run);
+  -080431, -080447, -080503, -080519, -080535 (D = 500); -080554 and -080610 (D = 1000); -082219, -082235 and
+  -082251 (D = 1700). Each failed at the passive logger opening the ports. Two causes: the deskrab status-line
+  bridge respawned and held COM5, COM6 and COM8, and loggers left by a failed attempt held COM6. `run_relay.ps1`
+  now keeps the bridge stopped during bring-up and kills its own logger and holder on abort; `run_sweep.ps1`
+  clears leftovers between attempts. After the fix, every campaign from D = 1700 to 2200 ms and the replicates
+  succeeded on the first attempt.
+
 ## Run history
 
 `INDEX.csv` has one row per campaign and one row per aborted session. The columns give the session,

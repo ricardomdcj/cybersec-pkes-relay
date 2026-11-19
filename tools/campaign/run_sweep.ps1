@@ -42,11 +42,16 @@ foreach ($d in $Delays) {
         Stop-Bridge
         & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $here 'run_relay.ps1') -Label $label -Dist $Dist -DelayMs $d
         if ($LASTEXITCODE -eq 0) { $ok = $true; break }
+        # run_relay has returned, so no campaign is running: any logger or holder still alive is a leftover
+        # of this attempt and would keep the ports closed for the next one.
+        Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'log_ports\.py|hold_and_log\.py|capture_run\.py' } |
+            ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
         Get-ChildItem -LiteralPath $runs -Directory -Filter "*_$label-session" |
             Where-Object { $_.CreationTime -ge $started.AddSeconds(-5) } | ForEach-Object {
                 Move-Item -LiteralPath $_.FullName -Destination $aborted
                 "moved failed session aside: $($_.Name)"
             }
+        Start-Sleep -Seconds 5
     }
     if (-not $ok) { $failed += $d }
     "=== sweep: DELAY $d ms done, ok=$ok"
