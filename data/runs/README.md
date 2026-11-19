@@ -10,10 +10,12 @@ Each run is a session folder, `<YYYYmmdd-HHMMSS>_<label>-session/`, with:
   sessions only.
 - `key_COM6.log`: key UART during the baseline campaign. Baseline sessions only.
 
-## Conditions in this folder (distance 0.52 m)
+`dist_m` is the car-key separation in every session. For relayed sessions, the relay A-B separation
+is in the label.
 
-`dist_m` is the car-key separation in every session. The relays were placed between the car and
-the key, but their exact positions were not recorded.
+## Conditions at 0.52 m car-key
+
+The relays were placed between the car and the key, but their exact positions were not recorded.
 
 | Session | Condition | Relay tunnel | TX power |
 |---|---|---|---|
@@ -22,13 +24,24 @@ the key, but their exact positions were not recorded.
 | 20261118-202314, -205220, -205758 | relayed | unicast (`RELAY_PEER_MAC`, MAC ACK) | default |
 | 20261118-210207, -210459, -210625 | relayed | unicast | 2 dBm (`TXPOW 8` on both relays) |
 
+## Physical separation at 0.99 m car-key
+
+Layout on the table, in order: car, relay B, relay A, key. Car to relay B 12 cm, relay A to key 12 cm,
+relay A to relay B 75 cm.
+
+| Session | Condition | Relay tunnel | Label |
+|---|---|---|---|
+| 20261118-212448, -212709, -213129 | baseline (vehicle to key, direct) | none, relays silent | `baseline` |
+| 20261118-212551, -212812, -213233 | relayed | unicast, TX power default | `relay-unicast-ab075` |
+
 Notes:
 
 - The campaign label `relay` is used both by the broadcast sessions and by session 202314 (unicast).
-  Use the table above, not the label, to tell them apart.
+  Use the tables above, not the label, to tell them apart.
 - Relayed sessions reset relay A and relay B at the start. The vehicle is held in reset until relay A
-  is connected to the key. From session 210207 on, the bring-up also waits for the key to confirm
-  relay A's connection before the vehicle is released.
+  is connected to the key and the key confirms it. Sessions 210207 onward and the 0.99 m relayed
+  sessions use this bring-up. The earlier relayed sessions used a looser bring-up; every session here
+  has relay lines (`CSVA`/`CSVB`) for all rounds that were answered.
 - Sessions that were aborted or that did not go through the relays are not included here.
 
 ## Analysis
