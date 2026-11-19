@@ -43,6 +43,7 @@ GROUPS = [
     ("2.24 m, held-out", "baseline 2.24 held-out", "unicast A-B 2 held-out (car-key 2.24)"),
     ("2.24 m, replication", "baseline 2.24 replication", "unicast A-B 2 replication (car-key 2.24)"),
     ("0.99 m, M-19", "baseline 0.99 M-19", "unicast A-B 0.75 M-19 (car-key 0.99)"),
+    ("0.52 m, M-19", "baseline 0.52 M-19", "unicast A-B 0.52 M-19 (car-key 0.52)"),
     ("2.24 m, pre-M-19 firmware", "baseline 2.24", "unicast A-B 2 (car-key 2.24)"),
     ("0.99 m, pre-M-19 firmware", "baseline 0.99", "unicast A-B 0.75 (car-key 0.99)"),
     ("0.52 m, pre-M-19 firmware", "baseline 0.52", "unicast 0.52"),

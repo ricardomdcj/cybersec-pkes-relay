@@ -1,6 +1,6 @@
 # Campaign summary, 2026-11-18
 
-Each condition pools the campaigns of one setup: three campaigns of 50 rounds, eight for the M-19 setups, and ten for the held-out and replication setups (random start offset of the round grid). Distance is the car-key separation. For relayed conditions, CSVB rounds equal the OK rounds (every answered round went through the relays).
+Each condition pools the campaigns of one setup: three campaigns of 50 rounds, eight for the 2.24 m M-19 setup, and ten for the 0.99 m M-19, held-out and replication setups (random start offset of the round grid). Distance is the car-key separation. For relayed conditions, CSVB rounds equal the OK rounds (every answered round went through the relays).
 
 ## Outcomes
 
@@ -23,6 +23,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 replication (car-key 2.24) | unicast, A-B 2 m | 2.24 | 10 | 500 | 500 | 0 | 0 | 500 | 100.0 % (99.2-100.0) |
 | baseline 0.99 M-19 | direct | 0.99 | 10 | 500 | 500 | 0 | 0 | 0 | 100.0 % (99.2-100.0) |
 | unicast A-B 0.75 M-19 (car-key 0.99) | unicast, A-B 0.75 m | 0.99 | 10 | 500 | 500 | 0 | 0 | 500 | 100.0 % (99.2-100.0) |
+| baseline 0.52 M-19 | direct | 0.52 | 10 | 500 | 500 | 0 | 0 | 0 | 100.0 % (99.2-100.0) |
+| unicast A-B 0.52 M-19 (car-key 0.52) | unicast, relays between car and key | 0.52 | 10 | 500 | 500 | 0 | 0 | 500 | 100.0 % (99.2-100.0) |
 
 ## Vehicle RTT, answered rounds (ms)
 
@@ -45,6 +47,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 replication (car-key 2.24) | 500 | 107.4 | 302.1 | 354.7 (346.5-363.2) | 401.9 | 430.3 | 454.5 | 341.1 |
 | baseline 0.99 M-19 | 500 | 57.5 | 82.2 | 90.4 (89.4-91.5) | 96.3 | 103.9 | 150.5 | 88.8 |
 | unicast A-B 0.75 M-19 (car-key 0.99) | 500 | 156.9 | 312.0 | 379.6 (349.7-381.5) | 401.2 | 441.7 | 450.9 | 356.0 |
+| baseline 0.52 M-19 | 500 | 57.3 | 63.3 | 90.0 (88.8-91.1) | 99.7 | 104.8 | 150.6 | 84.6 |
+| unicast A-B 0.52 M-19 (car-key 0.52) | 500 | 135.1 | 298.5 | 371.5 (367.1-382.3) | 396.1 | 428.8 | 581.7 | 353.4 |
 
 ## Campaign spread: median RTT of OK rounds per campaign (ms)
 
@@ -67,6 +71,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 replication (car-key 2.24) | 370.0 | 343.9 | 362.1 | 368.5 | 401.9 | 262.8 | 374.0 | 449.1 | 304.3 | 407.5 |
 | baseline 0.99 M-19 | 88.5 | 84.9 | 81.6 | 91.6 | 92.9 | 73.2 | 103.3 | 103.6 | 98.2 | 95.2 |
 | unicast A-B 0.75 M-19 (car-key 0.99) | 402.3 | 393.6 | 387.8 | 309.4 | 380.0 | 336.5 | 348.1 | 442.0 | 381.7 | 389.1 |
+| baseline 0.52 M-19 | 61.4 | 61.3 | 75.9 | 99.8 | 62.5 | 103.0 | 61.5 | 90.0 | 90.6 | 92.6 |
+| unicast A-B 0.52 M-19 (car-key 0.52) | 385.4 | 391.0 | 366.9 | 338.1 | 385.2 | 404.2 | 407.8 | 268.7 | 396.9 | 380.6 |
 
 ## Round legs, median (IQR) in ms
 
@@ -89,6 +95,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 replication (car-key 2.24) | 156.0 (99.0-167.8) | 24.7 (23.6-26.5) | 179.2 (160.5-222.7) |
 | baseline 0.99 M-19 | - | - | - |
 | unicast A-B 0.75 M-19 (car-key 0.99) | 152.2 (114.7-182.0) | 24.5 (23.1-26.4) | 182.8 (165.1-226.2) |
+| baseline 0.52 M-19 | - | - | - |
+| unicast A-B 0.52 M-19 (car-key 0.52) | 161.9 (108.2-176.9) | 24.5 (23.5-26.2) | 189.0 (170.0-232.8) |
 
 ## Tunnel counters
 
@@ -111,6 +119,8 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | unicast A-B 2 replication (car-key 2.24) | 0 | 0 |
 | baseline 0.99 M-19 | 0 | 0 |
 | unicast A-B 0.75 M-19 (car-key 0.99) | 0 | 0 |
+| baseline 0.52 M-19 | 0 | 0 |
+| unicast A-B 0.52 M-19 (car-key 0.52) | 0 | 0 |
 
 ## Comparisons (difference of medians, ms)
 
@@ -131,6 +141,7 @@ Each condition pools the campaigns of one setup: three campaigns of 50 rounds, e
 | relayed unicast minus direct, car-key 2.24 m, held-out campaigns | 81.2 | 356.7 | 275.5 (264.7 to 278.3) |
 | relayed unicast minus direct, car-key 2.24 m, replication campaigns | 80.2 | 354.7 | 274.6 (266.1 to 284.4) |
 | relayed unicast minus direct, car-key 0.99 m, M-19 firmware | 90.4 | 379.6 | 289.2 (259.1 to 291.5) |
+| relayed unicast minus direct, car-key 0.52 m, M-19 firmware | 90.0 | 371.5 | 281.5 (277.4 to 292.7) |
 
 ## Notes
 

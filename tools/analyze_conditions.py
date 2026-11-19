@@ -147,6 +147,28 @@ CONDITIONS = [
         ("20261119-072912_relay-m19-ab075-session", "20261119-073043_relay-m19-ab075"),
         ("20261119-073240_relay-m19-ab075-session", "20261119-073411_relay-m19-ab075"),
         ("20261119-073536_relay-m19-ab075-session", "20261119-073601_relay-m19-ab075")]),
+    dict(name="baseline 0.52 M-19", dist=0.52, tunnel="direct", campaigns=[
+        ("20261119-181640_baseline-m19-052-session", "20261119-181644_baseline-m19-052"),
+        ("20261119-182009_baseline-m19-052-session", "20261119-182013_baseline-m19-052"),
+        ("20261119-182339_baseline-m19-052-session", "20261119-182342_baseline-m19-052"),
+        ("20261119-182709_baseline-m19-052-session", "20261119-182715_baseline-m19-052"),
+        ("20261119-183039_baseline-m19-052-session", "20261119-183045_baseline-m19-052"),
+        ("20261119-183410_baseline-m19-052-session", "20261119-183413_baseline-m19-052"),
+        ("20261119-183738_baseline-m19-052-session", "20261119-183742_baseline-m19-052"),
+        ("20261119-184108_baseline-m19-052-session", "20261119-184112_baseline-m19-052"),
+        ("20261119-184324_baseline-m19-052-session", "20261119-184328_baseline-m19-052"),
+        ("20261119-184702_baseline-m19-052-session", "20261119-184706_baseline-m19-052")]),
+    dict(name="unicast A-B 0.52 M-19 (car-key 0.52)", dist=0.52, tunnel="unicast, relays between car and key", campaigns=[
+        ("20261119-181741_relay-m19-052-session", "20261119-181913_relay-m19-052"),
+        ("20261119-182110_relay-m19-052-session", "20261119-182241_relay-m19-052"),
+        ("20261119-182439_relay-m19-052-session", "20261119-182612_relay-m19-052"),
+        ("20261119-182811_relay-m19-052-session", "20261119-182942_relay-m19-052"),
+        ("20261119-183142_relay-m19-052-session", "20261119-183313_relay-m19-052"),
+        ("20261119-183510_relay-m19-052-session", "20261119-183641_relay-m19-052"),
+        ("20261119-183839_relay-m19-052-session", "20261119-184011_relay-m19-052"),
+        ("20261119-184208_relay-m19-052-session", "20261119-184227_relay-m19-052"),
+        ("20261119-184425_relay-m19-052-session", "20261119-184556_relay-m19-052"),
+        ("20261119-184803_relay-m19-052-session", "20261119-184829_relay-m19-052")]),
 ]
 
 COMPARISONS = [
@@ -165,6 +187,7 @@ COMPARISONS = [
     ("baseline 2.24 held-out", "unicast A-B 2 held-out (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, held-out campaigns"),
     ("baseline 2.24 replication", "unicast A-B 2 replication (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, replication campaigns"),
     ("baseline 0.99 M-19", "unicast A-B 0.75 M-19 (car-key 0.99)", "relayed unicast minus direct, car-key 0.99 m, M-19 firmware"),
+    ("baseline 0.52 M-19", "unicast A-B 0.52 M-19 (car-key 0.52)", "relayed unicast minus direct, car-key 0.52 m, M-19 firmware"),
 ]
 
 
