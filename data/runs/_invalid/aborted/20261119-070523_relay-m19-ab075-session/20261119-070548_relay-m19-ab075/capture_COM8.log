@@ -1,0 +1,77 @@
+07:05:49.702866 ets Jul 29 2019 12:21:46
+07:05:49.703006 
+07:05:49.703041 rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+07:05:49.703068 configsip: 0, SPIWP:0xee
+07:05:49.703099 clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+07:05:49.703126 mode:DIO, clock div:2
+07:05:49.703149 load:0x3fff0040,len:6272
+07:05:49.703173 load:0x40078000,len:15824
+07:05:49.703203 load:0x40080400,len:3988
+07:05:49.703235 entry 0x40080644
+07:05:49.703264 I (27) boot: ESP-IDF v6.1 2nd stage bootloader
+07:05:49.703307 I (27) boot: compile time Nov 18 2026 19:27:43
+07:05:49.703349 I (28) boot: Multicore bootloader
+07:05:49.703516 I (29) boot: chip revision: v3.1
+07:05:49.703542 I (31) boot.esp32: SPI Speed      : 40MHz
+07:05:49.703558 I (35) boot.esp32: SPI Mode       : DIO
+07:05:49.703570 I (39) boot.esp32: SPI Flash Size : 4MB
+07:05:49.703581 I (42) boot: Enabling RNG early entropy source...
+07:05:49.703592 I (47) boot: Partition Table:
+07:05:49.703602 I (49) boot: ## Label            Usage          Type ST Offset   Length
+07:05:49.703613 I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+07:05:49.703623 I (62) boot:  1 otadata          OTA data         01 00 0000f000 00002000
+07:05:49.703634 I (69) boot:  2 phy_init         RF data          01 01 00011000 00001000
+07:05:49.703645 I (75) boot:  3 ota_0            OTA app          00 10 00020000 001a9000
+07:05:49.703654 I (82) boot:  4 ota_1            OTA app          00 11 001d0000 001a9000
+07:05:49.703664 I (88) boot: End of partition table
+07:05:49.703674 I (92) esp_image: segment 0: paddr=001d0020 vaddr=3f400020 size=33c60h (212064) map
+07:05:49.703684 I (175) esp_image: segment 1: paddr=00203c88 vaddr=3ffbdb60 size=0531ch ( 21276) load
+07:05:49.703694 I (183) esp_image: segment 2: paddr=00208fac vaddr=40080000 size=0706ch ( 28780) load
+07:05:49.703703 I (195) esp_image: segment 3: paddr=00210020 vaddr=400d0020 size=89a44h (563780) map
+07:05:49.703713 I (396) esp_image: segment 4: paddr=00299a6c vaddr=4008706c size=124a4h ( 74916) load
+07:05:49.703723 I (427) esp_image: segment 5: paddr=002abf18 vaddr=50000000 size=00028h (    40) load
+07:05:49.703732 I (440) boot: Loaded app from partition at offset 0x1d0000
+07:05:49.703741 I (440) boot: Disabling RNG early entropy source...
+07:05:49.703751 I (451) cpu_start: Multicore app
+07:05:49.703760 I (459) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+07:05:49.703770 I (460) cpu_start: Pro cpu start user code
+07:05:49.703779 I (460) cpu_start: cpu freq: 240000000 Hz
+07:05:49.703788 I (462) app_init: Application information:
+07:05:49.703801 I (465) app_init: Project name:     vehicle
+07:05:49.703815 I (469) app_init: App version:      b79a463
+07:05:49.703843 I (473) app_init: Compile time:     Nov 18 2026 22:51:09
+07:05:49.703856 I (478) app_init: ELF file SHA256:  3b3e77c56...
+07:05:49.703867 I (483) app_init: ESP-IDF:          v6.1
+07:05:49.703877 I (486) efuse_init: Min chip rev:     v0.0
+07:05:49.703887 I (490) efuse_init: Max chip rev:     v3.99 
+07:05:49.703896 I (494) efuse_init: Chip rev:         v3.1
+07:05:49.703906 I (498) heap_init: Initializing. RAM available for dynamic allocation:
+07:05:49.703915 I (504) heap_init: At 3FFAFF10 len 000000F0 (0 KiB): DRAM
+07:05:49.703925 I (509) heap_init: At 3FFB6388 len 00001C78 (7 KiB): DRAM
+07:05:49.703941 I (514) heap_init: At 3FFB9A20 len 00004108 (16 KiB): DRAM
+07:05:49.703952 I (520) heap_init: At 3FFD1960 len 0000E6A0 (57 KiB): DRAM
+07:05:49.703962 I (525) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+07:05:49.703971 I (530) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+07:05:49.703981 I (536) heap_init: At 40099510 len 00006AF0 (26 KiB): IRAM
+07:05:49.703990 I (543) spi_flash: detected chip: gd
+07:05:49.703999 I (544) spi_flash: flash io: dio
+07:05:49.704009 I (548) coexist: coex firmware version: a830d28
+07:05:49.704019 I (552) main_task: Started on CPU0
+07:05:49.704028 I (554) main_task: Calling app_main()
+07:05:49.704037 I (565) RUN_META: role=vehicle fw=b79a463 build=2026-11-18 22:50
+07:05:49.704046 I (567) serial_ota: serial OTA ready on UART0 (host: tools/serial_ota.py)
+07:05:49.704086 I (698) cyd_display: ST7789 + LVGL ready
+07:05:49.704101 I (891) BTDM_INIT: BT controller compile version [4a0f94d]
+07:05:49.704111 I (892) BTDM_INIT: Using main XTAL as clock source
+07:05:49.704120 I (893) BTDM_INIT: Bluetooth MAC: b8:bb:11:83:e5:f2
+07:05:49.704129 I (898) phy_init: phy_version 4863,a3a4459,Oct 28 2025,14:30:06
+07:05:49.999222 I (1139) main_task: Returned from app_main()
+07:05:49.999273 I (1186) NimBLE: GAP procedure initiated: discovery; 
+07:05:49.999290 I (1187) NimBLE: own_addr_type=0 filter_policy=0 passive=0 limited=0 filter_duplicates=1 
+07:05:49.999301 I (1188) NimBLE: duration=forever
+07:05:49.999311 I (1191) NimBLE: 
+07:05:49.999322 
+07:05:49.999332 I (1199) VEHICLE: scanning for the key service...
+07:05:52.818952[HOST] > RUN label=relay-m19-ab075 dist=0.99
+07:05:53.133419 W (4337) VEHICLE: RUN label=relay-m19-ab075 dist=0.99
+07:10:48.697756[HOST] maximum capture time reached
