@@ -123,16 +123,16 @@ Fig.~\ref{fig:architecture} shows the four boards. The key emulator runs the key
   >=Latex
 ]
 \node[box] (key) {Key emulator\\(CYD, key firmware,\\\emph{peripheral})};
-\node[atk, right=of key] (relA) {Relay A\\(CYD, \emph{central})\\log};
-\node[atk, right=28mm of relA] (relB) {Relay B\\(CYD, \emph{peripheral})\\log};
-\node[box, right=of relB] (veh) {Verifier (vehicle)\\(CYD, \emph{central})\\decision, $t_0$, $t_1$};
-\draw[<->] (key) -- (relA) node[midway, above=1mm, lbl]{BLE\\GATT};
-\draw[<->] (relA) -- (relB) node[midway, above=1mm, lbl]{ESP-NOW\\(distance varied)};
-\draw[<->] (relB) -- (veh) node[midway, above=1mm, lbl]{BLE\\GATT};
+\node[atk, right=of key] (relA) {Relay A\\(CYD, \emph{central})\\clock, CSVA log};
+\node[atk, right=28mm of relA] (relB) {Relay B\\(CYD, \emph{peripheral})\\clock, CSVB log};
+\node[box, right=of relB] (veh) {Verifier (vehicle)\\(CYD, \emph{central})\\decision, $t_0$, $t_1$ on its clock};
+\draw[<->] (key) -- (relA) node[midway, above=1mm, lbl]{BLE, 2.4\,GHz RF\\GATT};
+\draw[<->] (relA) -- (relB) node[midway, above=1mm, lbl]{ESP-NOW, 2.4\,GHz RF\\(distance varied)};
+\draw[<->] (relB) -- (veh) node[midway, above=1mm, lbl]{BLE, 2.4\,GHz RF\\GATT};
 \node[boundary, fit=(relA)(relB), label={[font=\scriptsize]above:untrusted: relays and tunnel under the attacker's control}] (boundaryNode) {};
 \draw[<->, dotted] (key.south) to[out=-60,in=-120,looseness=0.6] node[pos=0.5, below=1mm, lbl]{baseline: direct connection, no relay} (veh.south);
 \end{tikzpicture}
-\caption{Bench architecture. Four ESP32-2432S028R (CYD) boards: the key emulator, Relay~A next to it, Relay~B next to the verifier, and the verifier. The two relays and the ESP-NOW tunnel between them form the untrusted region (dashed). Every link is bidirectional: the challenge goes from the verifier to the key and the response comes back the same way. The authentication decision and the timestamps $t_0$ and $t_1$ stay in the verifier. In the baseline the key connects directly to the verifier (dotted).}
+\caption{Bench architecture. Four ESP32-2432S028R (CYD) boards: the key emulator, Relay~A next to it, Relay~B next to the verifier, and the verifier. The two relays and the ESP-NOW tunnel between them form the untrusted region (dashed). Every link is bidirectional: the challenge goes from the verifier to the key and the response comes back the same way. The authentication decision and the timestamps $t_0$ and $t_1$ stay in the verifier. In the baseline the key connects directly to the verifier (dotted). Clocks: each board's esp\_timer (1\,$\mu$s resolution); the verifier stamps $t_0$ at the challenge write and $t_1$ at the notification, and the relays log their turnarounds (CSVA, CSVB). The three solid links are 2.4\,GHz RF hops; the dashed boundary is the attacker's region.}
 \label{fig:architecture}
 \end{figure*}
 
