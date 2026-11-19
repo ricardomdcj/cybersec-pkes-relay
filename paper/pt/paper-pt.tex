@@ -171,7 +171,7 @@ QP1 pergunta pelo \emph{overhead} e pelo sucesso do relay. QP2 pergunta em que d
 
 \subsection{Unidade de análise e estatística}
 
-A unidade de inferência é a campanha. As rodadas dentro de uma campanha compartilham uma fase da grade de conexão, de modo que valores-p em nível de rodada seriam pseudorreplicados. Por isso testamos as medianas das campanhas com o teste de Mann--Whitney, exato para os conjuntos pequenos e aproximado pela normal nos demais casos, e reportamos o tamanho de efeito como $\delta$ de Cliff $=2\,\mathrm{AUC}-1$. Os intervalos de confiança vêm de um \emph{bootstrap} por cluster que reamostra campanhas dentro de cada condição, com 2000 reamostragens e semente fixa. As proporções têm intervalos de Wilson. Os valores-p no nível de campanha dos seis grupos da Tabela~\ref{tab:overhead} são corrigidos pelo método de Holm. Os valores em nível de rodada são apresentados apenas como descritivos. Não ajustamos um modelo logístico nem um modelo misto; o teste no nível de campanha e o \emph{bootstrap} por cluster são as aproximações usadas no lugar deles.
+A unidade de inferência é a campanha. As rodadas dentro de uma campanha compartilham uma fase da grade de conexão, de modo que valores-p em nível de rodada seriam pseudorreplicados. Por isso testamos as medianas das campanhas com o teste de Mann--Whitney, exato para os conjuntos pequenos e aproximado pela normal nos demais casos, e reportamos o tamanho de efeito como $\delta$ de Cliff $=2\,\mathrm{AUC}-1$. Os intervalos de confiança vêm de um \emph{bootstrap} por cluster que reamostra campanhas dentro de cada condição, com 2000 reamostragens e semente fixa. As proporções têm intervalos de Wilson. Os valores-p no nível de campanha dos sete grupos da Tabela~\ref{tab:overhead} são corrigidos pelo método de Holm. Os valores em nível de rodada são apresentados apenas como descritivos. Não ajustamos um modelo logístico nem um modelo misto; o teste no nível de campanha e o \emph{bootstrap} por cluster são as aproximações usadas no lugar deles.
 
 Para o tamanho amostral, adotamos $\Delta=25$\,ms, metade do intervalo de conexão BLE, como a menor diferença de interesse. O número de campanhas por grupo é $n = 2(z_{0,975}+z_{0,80})^2\sigma^2/\Delta^2$, com $\sigma$ o desvio padrão entre campanhas das medianas.
 
@@ -199,7 +199,7 @@ A 2,24\,m, toda rodada retransmitida em \emph{unicast} foi respondida e autentic
 2,24\,m, teste independente & 10, 10 & 81,2 & 356,7 & 275,5 (211,5 a 297,4) \\
 2,24\,m, replicação & 10, 10 & 80,2 & 354,7 & 274,6 (225,7 a 305,4) \\
 2,24\,m, todas M-19 & 28, 28 & 79,1 & 358,5 & 279,5 (262,5 a 296,6) \\
-\pendente{0,99\,m, M-19} & \pendente{10, 10} & \pendente{-} & \pendente{-} & \pendente{-} \\
+0,99\,m, M-19 & 10, 10 & 90,4 & 379,6 & 289,2 (246,9 a 301,7) \\
 \midrule
 0,52\,m, firmware anterior & 3, 3 & 76,9 & 384,6 & 307,7 (215,1 a 319,6) \\
 0,99\,m, firmware anterior & 3, 3 & 82,0 & 376,6 & 294,6 (273,4 a 340,0) \\
@@ -221,7 +221,7 @@ As campanhas anteriores, registradas antes de existir o deslocamento de início,
 
 \subsection{Distância}
 
-Entre 0,52 e 2,24\,m, o \emph{overhead} ficou entre cerca de 275 e 310\,ms, e toda rodada retransmitida em \emph{unicast} foi respondida. O \emph{overhead} foi maior a 0,52\,m, mas três campanhas por layout se sobrepõem demais para mostrar uma tendência. Os layouts diferem em RSSI (Seção~\ref{sec:rssi}), mas o RSSI não segue um único expoente de perda de percurso entre eles. Um orçamento de enlace com as sensibilidades do \emph{datasheet}~\cite{b29} coloca o alcance do túnel ESP-NOW entre cerca de 50\,m e 2,3\,km na potência padrão, dependendo do expoente de perda de percurso. Trata-se de uma estimativa de modelo, não de uma medição, já que os relays nunca ficaram a mais de 2\,m um do outro. \pendente{resultado a 0,99\,m com M-19 e comparação com 2,24\,m}.
+Entre 0,52 e 2,24\,m, o \emph{overhead} ficou entre cerca de 275 e 310\,ms, e toda rodada retransmitida em \emph{unicast} foi respondida. O \emph{overhead} foi maior a 0,52\,m, mas três campanhas por layout se sobrepõem demais para mostrar uma tendência. Os layouts diferem em RSSI (Seção~\ref{sec:rssi}), mas o RSSI não segue um único expoente de perda de percurso entre eles. Um orçamento de enlace com as sensibilidades do \emph{datasheet}~\cite{b29} coloca o alcance do túnel ESP-NOW entre cerca de 50\,m e 2,3\,km na potência padrão, dependendo do expoente de perda de percurso. Trata-se de uma estimativa de modelo, não de uma medição, já que os relays nunca ficaram a mais de 2\,m um do outro. A 0,99\,m com o firmware M-19 (dez campanhas por lado), o \emph{overhead} foi de 289\,ms (intervalo de 95\,\%: 247 a 302\,ms), contra 280\,ms a 2,24\,m. Os dois intervalos se sobrepõem, de modo que a distância entre 0,99 e 2,24\,m não altera o \emph{overhead} além da dispersão entre campanhas.
 
 \subsection{O limite de efetividade: latência injetada}
 \label{sec:sweep}

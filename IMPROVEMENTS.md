@@ -143,6 +143,17 @@ English end to end (checkpoint 06), so on-screen text is ASCII English (see V-16
   when `key/` is rebuilt for another reason. **Files:** `key/main/main.c`. **Acceptance:** a 5-byte write gets an
   error status and no notification.
 
+- [x] **M-22. Vehicle: a late response does not answer the round in flight.** A response that arrives after its
+  round has timed out (round time plus RTT above 2 s) was taken for the answer to the round now in flight. Its
+  HMAC did not match that round's nonce, so the round closed as FAIL, and the real answer to the round in flight
+  was then discarded. The next round closed the same way, so one late response could misclassify the rest of a
+  campaign near the timeout. The latency sweep (DELAY on relay B) reaches that region. **Files:**
+  `vehicle/main/main.c`. **Done** (firmware `d795f50`): `timeout_cb` keeps the nonces of the last four timed-out
+  challenges; `handle_notify` discards a value that answers one of them and keeps the round open. No campaign
+  recorded before the change has a late response (no `response past the deadline` line in the logs, and no FAIL
+  row in the analysed rounds). **Acceptance:** in the sweep, the vehicle log shows `late response to the timed-out
+  challenge` for the delays above the threshold, and no sweep campaign has a FAIL row.
+
 ### D. Run header and labelling
 
 > **Status (2026-11-17):** implemented and compiled for `esp32`; to be validated on hardware.

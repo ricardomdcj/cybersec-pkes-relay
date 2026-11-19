@@ -42,6 +42,7 @@ GROUPS = [
     ("2.24 m, M-19 in-sample", "baseline 2.24 M-19", "unicast A-B 2 M-19 (car-key 2.24)"),
     ("2.24 m, held-out", "baseline 2.24 held-out", "unicast A-B 2 held-out (car-key 2.24)"),
     ("2.24 m, replication", "baseline 2.24 replication", "unicast A-B 2 replication (car-key 2.24)"),
+    ("0.99 m, M-19", "baseline 0.99 M-19", "unicast A-B 0.75 M-19 (car-key 0.99)"),
     ("2.24 m, pre-M-19 firmware", "baseline 2.24", "unicast A-B 2 (car-key 2.24)"),
     ("0.99 m, pre-M-19 firmware", "baseline 0.99", "unicast A-B 0.75 (car-key 0.99)"),
     ("0.52 m, pre-M-19 firmware", "baseline 0.52", "unicast 0.52"),
@@ -225,7 +226,7 @@ def main(argv=None):
     # 2. Holm correction across the independent groups
     adj = holm(pvals)
     md += ["", "## 2. Holm correction across the groups (campaign-level p-values)", "",
-           "Family: the six groups in table 1 (the pooled row is not included, to avoid counting the same campaigns twice).",
+           f"Family: the {len(GROUPS)} groups in table 1 (the pooled row is not included, to avoid counting the same campaigns twice).",
            "", "| Group | Raw p | Holm-adjusted p |", "|---|---|---|"]
     for lab, p, a in zip(labels, pvals, adj):
         md.append(f"| {lab} | {p:.4f} | {a:.4f} |")

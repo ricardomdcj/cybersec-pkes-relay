@@ -1,7 +1,10 @@
+# DelayMs: relay B holds each vehicle challenge for DelayMs before the tunnel (latency sweep).
+# It is always sent, so a campaign never inherits the delay of the previous one; 0 is the default.
 param(
     [string]$Label = 'relay',
     [string]$Dist = '0.52',
-    [int]$TxPow = 0
+    [int]$TxPow = 0,
+    [int]$DelayMs = 0
 )
 $ErrorActionPreference = 'Continue'
 $py      = 'C:\Espressif\tools\python\v6.1\venv\Scripts\python.exe'
@@ -118,6 +121,19 @@ if ($TxPow -gt 0) {
     "TXPOW $TxPow applied on both relays"
 }
 
+Set-Content -LiteralPath $cmdFile -Value "COM7 DELAY $DelayMs" -Encoding ascii
+$okD = $false
+for ($i = 0; $i -lt 40; $i++) {
+    Start-Sleep -Milliseconds 500
+    $okD = Select-String -LiteralPath $chainLog -Pattern "\[RELAY_B\].*DELAY set=$DelayMs ms" -Quiet
+    if ($okD) { break }
+}
+if (-not $okD) {
+    'ABORT: DELAY was not applied on relay B'
+    Stop-Helpers; exit 1
+}
+"DELAY $DelayMs ms applied on relay B"
+
 New-Item -ItemType File -Path $stopHold -Force | Out-Null
 $holder.WaitForExit(10000) | Out-Null
 Start-Sleep -Seconds 4
@@ -141,5 +157,13 @@ $logger.WaitForExit(15000) | Out-Null
 "capture exit=$captureCode"
 $csvb = Count-Log 'CSVB,'
 "relay CSVB lines: $csvb"
-if ($csvb -eq 0) { 'WARNING: campaign did not go through the relays; move this session to data/runs/_invalid' }
+if ($csvb -eq 0) {
+    'ABORT: campaign did not go through the relays; move this session to data/runs/_invalid'
+    exit 1
+}
+if ($captureCode -ne 0) {
+    'ABORT: capture did not complete'
+    exit 1
+}
 "session: $session"
+exit 0

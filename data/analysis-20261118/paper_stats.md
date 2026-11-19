@@ -9,6 +9,7 @@ Unit: the campaign. Rounds inside a campaign share one phase of the connection g
 | 2.24 m, M-19 in-sample | 8, 8 | 74.7 | 397.5 | 322.8 (273.9 to 343.8) | 0.0002 (exact) | 1.000 (1.000 to 1.000) | 1.000 |
 | 2.24 m, held-out | 10, 10 | 81.2 | 356.7 | 275.5 (211.5 to 297.4) | 0.0000 (exact) | 1.000 (1.000 to 1.000) | 1.000 |
 | 2.24 m, replication | 10, 10 | 80.2 | 354.7 | 274.6 (225.7 to 305.4) | 0.0000 (exact) | 1.000 (1.000 to 1.000) | 1.000 |
+| 0.99 m, M-19 | 10, 10 | 90.4 | 379.6 | 289.2 (246.9 to 301.7) | 0.0000 (exact) | 1.000 (1.000 to 1.000) | 1.000 |
 | 2.24 m, pre-M-19 firmware | 3, 3 | 85.7 | 364.5 | 278.9 (274.8 to 366.8) | 0.1000 (exact) | 1.000 (1.000 to 1.000) | 1.000 |
 | 0.99 m, pre-M-19 firmware | 3, 3 | 82.0 | 376.6 | 294.6 (273.4 to 340.0) | 0.1000 (exact) | 1.000 (1.000 to 1.000) | 0.999 |
 | 0.52 m, pre-M-19 firmware | 3, 3 | 76.9 | 384.6 | 307.7 (215.1 to 319.6) | 0.1000 (exact) | 1.000 (1.000 to 1.000) | 1.000 |
@@ -16,13 +17,14 @@ Unit: the campaign. Rounds inside a campaign share one phase of the connection g
 
 ## 2. Holm correction across the groups (campaign-level p-values)
 
-Family: the six groups in table 1 (the pooled row is not included, to avoid counting the same campaigns twice).
+Family: the 7 groups in table 1 (the pooled row is not included, to avoid counting the same campaigns twice).
 
 | Group | Raw p | Holm-adjusted p |
 |---|---|---|
 | 2.24 m, M-19 in-sample | 0.0002 | 0.0006 |
 | 2.24 m, held-out | 0.0000 | 0.0001 |
 | 2.24 m, replication | 0.0000 | 0.0001 |
+| 0.99 m, M-19 | 0.0000 | 0.0001 |
 | 2.24 m, pre-M-19 firmware | 0.1000 | 0.3000 |
 | 0.99 m, pre-M-19 firmware | 0.1000 | 0.3000 |
 | 0.52 m, pre-M-19 firmware | 0.1000 | 0.3000 |
@@ -48,6 +50,7 @@ The paper's RQ3 criterion (AUC above 0.5 in every campaign) cannot be applied as
 |---|---|---|---|---|
 | baseline 0.52 | 3 | 150 | 0 | 0.0 |
 | baseline 0.99 | 3 | 150 | 0 | 0.0 |
+| baseline 0.99 M-19 | 10 | 500 | 0 | 0.0 |
 | baseline 2.24 | 3 | 150 | 0 | 0.0 |
 | baseline 2.24 M-19 | 8 | 400 | 0 | 0.0 |
 | baseline 2.24 held-out | 10 | 500 | 0 | 0.0 |
@@ -56,6 +59,7 @@ The paper's RQ3 criterion (AUC above 0.5 in every campaign) cannot be applied as
 | unicast 0.52 | 3 | 150 | 0 | 0.0 |
 | unicast 2 dBm 0.52 | 3 | 150 | 0 | 0.0 |
 | unicast A-B 0.75 (car-key 0.99) | 3 | 150 | 0 | 0.0 |
+| unicast A-B 0.75 M-19 (car-key 0.99) | 10 | 500 | 0 | 0.0 |
 | unicast A-B 2 (car-key 2.24) | 3 | 150 | 0 | 0.0 |
 | unicast A-B 2 M-19 (car-key 2.24) | 8 | 400 | 0 | 0.0 |
 | unicast A-B 2 TX 2 dBm (car-key 2.24) | 3 | 150 | 0 | 0.0 |

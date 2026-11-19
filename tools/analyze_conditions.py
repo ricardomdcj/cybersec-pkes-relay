@@ -125,6 +125,28 @@ CONDITIONS = [
         ("20261119-005801_relay-rep-ab200-session", "20261119-005819_relay-rep-ab200"),
         ("20261119-010016_relay-rep-ab200-session", "20261119-010034_relay-rep-ab200"),
         ("20261119-010230_relay-rep-ab200-session", "20261119-010401_relay-rep-ab200")]),
+    dict(name="baseline 0.99 M-19", dist=0.99, tunnel="direct", campaigns=[
+        ("20261119-070054_baseline-m19-099-session", "20261119-070058_baseline-m19-099"),
+        ("20261119-070422_baseline-m19-099-session", "20261119-070426_baseline-m19-099"),
+        ("20261119-071049_baseline-m19-099-session", "20261119-071052_baseline-m19-099"),
+        ("20261119-071416_baseline-m19-099-session", "20261119-071422_baseline-m19-099"),
+        ("20261119-071747_baseline-m19-099-session", "20261119-071751_baseline-m19-099"),
+        ("20261119-072010_baseline-m19-099-session", "20261119-072014_baseline-m19-099"),
+        ("20261119-072227_baseline-m19-099-session", "20261119-072230_baseline-m19-099"),
+        ("20261119-072442_baseline-m19-099-session", "20261119-072446_baseline-m19-099"),
+        ("20261119-072810_baseline-m19-099-session", "20261119-072816_baseline-m19-099"),
+        ("20261119-073140_baseline-m19-099-session", "20261119-073144_baseline-m19-099")]),
+    dict(name="unicast A-B 0.75 M-19 (car-key 0.99)", dist=0.99, tunnel="unicast, A-B 0.75 m", campaigns=[
+        ("20261119-070154_relay-m19-ab075-session", "20261119-070325_relay-m19-ab075"),
+        ("20261119-071149_relay-m19-ab075-session", "20261119-071319_relay-m19-ab075"),
+        ("20261119-071519_relay-m19-ab075-session", "20261119-071649_relay-m19-ab075"),
+        ("20261119-071848_relay-m19-ab075-session", "20261119-071913_relay-m19-ab075"),
+        ("20261119-072111_relay-m19-ab075-session", "20261119-072129_relay-m19-ab075"),
+        ("20261119-072328_relay-m19-ab075-session", "20261119-072346_relay-m19-ab075"),
+        ("20261119-072543_relay-m19-ab075-session", "20261119-072713_relay-m19-ab075"),
+        ("20261119-072912_relay-m19-ab075-session", "20261119-073043_relay-m19-ab075"),
+        ("20261119-073240_relay-m19-ab075-session", "20261119-073411_relay-m19-ab075"),
+        ("20261119-073536_relay-m19-ab075-session", "20261119-073601_relay-m19-ab075")]),
 ]
 
 COMPARISONS = [
@@ -142,6 +164,7 @@ COMPARISONS = [
     ("baseline 2.24 M-19", "unicast A-B 2 M-19 (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, M-19 firmware"),
     ("baseline 2.24 held-out", "unicast A-B 2 held-out (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, held-out campaigns"),
     ("baseline 2.24 replication", "unicast A-B 2 replication (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, replication campaigns"),
+    ("baseline 0.99 M-19", "unicast A-B 0.75 M-19 (car-key 0.99)", "relayed unicast minus direct, car-key 0.99 m, M-19 firmware"),
 ]
 
 
@@ -184,7 +207,7 @@ def build(spec):
 def summary_markdown(conds):
     by = {c["name"]: c for c in conds}
     md = ["# Campaign summary, 2026-11-18", "",
-          "Each condition pools the campaigns of one setup: three campaigns of 50 rounds, eight for the M-19 setups, and ten for the held-out and replication setups (random start offset of the round grid). Distance is the "
+          "Each condition pools the campaigns of one setup: three campaigns of 50 rounds, eight for the 2.24 m M-19 setup, and ten for the 0.99 m M-19, held-out and replication setups (random start offset of the round grid). Distance is the "
           "car-key separation. For relayed conditions, CSVB rounds equal the OK rounds (every answered round "
           "went through the relays).", ""]
     md += ["## Outcomes", "",

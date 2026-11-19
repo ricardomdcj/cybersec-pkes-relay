@@ -161,7 +161,7 @@ RQ1 asks for the overhead and success of the relay. RQ2 asks at which distance a
 
 \subsection{Unit of analysis and statistics}
 
-The unit of inference is the campaign. Rounds inside a campaign share one phase of the connection grid, so round-level p-values would be pseudo-replicated. We therefore test campaign medians with the Mann--Whitney test, exact for the small sets and normal-approximated otherwise, and report the effect size as Cliff's $\delta=2\,\mathrm{AUC}-1$. Confidence intervals come from a cluster bootstrap that resamples campaigns within each condition, with 2000 resamples and a fixed seed. Proportions have Wilson intervals. The campaign-level p-values of the six groups in Table~\ref{tab:overhead} are corrected with Holm's method. Round-level values are reported as descriptive only. We did not fit a logistic or a mixed model; the campaign-level tests and the cluster bootstrap are the approximations used instead.
+The unit of inference is the campaign. Rounds inside a campaign share one phase of the connection grid, so round-level p-values would be pseudo-replicated. We therefore test campaign medians with the Mann--Whitney test, exact for the small sets and normal-approximated otherwise, and report the effect size as Cliff's $\delta=2\,\mathrm{AUC}-1$. Confidence intervals come from a cluster bootstrap that resamples campaigns within each condition, with 2000 resamples and a fixed seed. Proportions have Wilson intervals. The campaign-level p-values of the seven groups in Table~\ref{tab:overhead} are corrected with Holm's method. Round-level values are reported as descriptive only. We did not fit a logistic or a mixed model; the campaign-level tests and the cluster bootstrap are the approximations used instead.
 
 For the sample size, we used the effect that matters for the design. We take $\Delta=25$\,ms, half the BLE connection interval, as the smallest difference of interest. The required number of campaigns per group is $n = 2(z_{0.975}+z_{0.80})^2\sigma^2/\Delta^2$, with $\sigma$ the campaign-to-campaign standard deviation of the medians.
 
@@ -189,7 +189,7 @@ At 2.24\,m every relayed unicast round was answered and authenticated: 1400 roun
 2.24\,m, held-out & 10, 10 & 81.2 & 356.7 & 275.5 (211.5 to 297.4) \\
 2.24\,m, replication & 10, 10 & 80.2 & 354.7 & 274.6 (225.7 to 305.4) \\
 2.24\,m, all M-19 & 28, 28 & 79.1 & 358.5 & 279.5 (262.5 to 296.6) \\
-\pendente{0.99\,m, M-19} & \pendente{10, 10} & \pendente{-} & \pendente{-} & \pendente{-} \\
+0.99\,m, M-19 & 10, 10 & 90.4 & 379.6 & 289.2 (246.9 to 301.7) \\
 \midrule
 0.52\,m, earlier firmware & 3, 3 & 76.9 & 384.6 & 307.7 (215.1 to 319.6) \\
 0.99\,m, earlier firmware & 3, 3 & 82.0 & 376.6 & 294.6 (273.4 to 340.0) \\
@@ -211,7 +211,7 @@ The earlier sets, recorded before the start offset existed, have three campaigns
 
 \subsection{Distance}
 
-Between 0.52 and 2.24\,m the overhead stayed between about 275 and 310\,ms, and every unicast relayed round was answered. The overhead was largest at 0.52\,m, but three campaigns per layout overlap too much to show a trend. The layouts differ in RSSI (Section~\ref{sec:rssi}), but RSSI does not follow one path-loss exponent across them. A link budget with the datasheet sensitivities puts the ESP-NOW tunnel range between about 50\,m and 2.3\,km at the default power, depending on the path-loss exponent. That is a model estimate, not a measurement, since the relays were never more than 2\,m apart. \pendente{0.99\,m, M-19 result and comparison with 2.24\,m}.
+Between 0.52 and 2.24\,m the overhead stayed between about 275 and 310\,ms, and every unicast relayed round was answered. The overhead was largest at 0.52\,m, but three campaigns per layout overlap too much to show a trend. The layouts differ in RSSI (Section~\ref{sec:rssi}), but RSSI does not follow one path-loss exponent across them. A link budget with the datasheet sensitivities puts the ESP-NOW tunnel range between about 50\,m and 2.3\,km at the default power, depending on the path-loss exponent. That is a model estimate, not a measurement, since the relays were never more than 2\,m apart. At 0.99\,m with the M-19 firmware (ten campaigns per side) the overhead was 289\,ms (95\,\% interval 247 to 302\,ms), against 280\,ms at 2.24\,m. The two intervals overlap, so the distance between 0.99 and 2.24\,m does not change the overhead beyond the campaign-to-campaign spread.
 
 \subsection{The effectiveness limit: injected latency}
 \label{sec:sweep}
