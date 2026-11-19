@@ -100,6 +100,24 @@ Notes:
 - Three campaigns logged drops before START (1, 4 and 1 drops). None logged a drop after START. Every CSV row
   has `itvl_1_25ms` = 40.
 
+## Replication campaigns at 2.24 m (firmware b79a463)
+
+Recorded after the 160 ms bound was fixed in `data/analysis-20261118/replication-160ms-plan.md` (commit
+de7e0d3). Same layout and firmware as the M-19 and held-out sections. Ten direct baseline campaigns and ten
+relayed campaigns (unicast, default TX): every round was answered, with no timeouts.
+
+| Session | Condition | Label |
+|---|---|---|
+| 20261119-003839, -004102, -004431, -004647, -004902, -005118, -005445, -005700, -005915, -010131 | baseline (vehicle to key, direct) | `baseline-rep` |
+| 20261119-003939, -004202, -004532, -004747, -005002, -005218, -005545, -005801, -010016, -010230 | relayed, unicast, default TX | `relay-rep-ab200` |
+
+Notes:
+
+- No campaign aborted, so no session was moved to `_invalid/`.
+- The relay bring-up took one attempt in six relayed campaigns, two in one and three in three.
+- One campaign (20261119-005118) logged a drop before START. None logged a drop after START. Every CSV row
+  has `itvl_1_25ms` = 40.
+
 ## Run history
 
 `INDEX.csv` has one row per campaign and one row per aborted session. The columns give the session,
