@@ -63,6 +63,24 @@ CONDITIONS = [
         ("20261118-222135_relay-unicast-ab200-tx8-session", "20261118-222201_relay-unicast-ab200-tx8"),
         ("20261118-222302_relay-unicast-ab200-tx8-session", "20261118-222426_relay-unicast-ab200-tx8"),
         ("20261118-222527_relay-unicast-ab200-tx8-session", "20261118-222552_relay-unicast-ab200-tx8")]),
+    dict(name="baseline 2.24 M-19", dist=2.24, tunnel="direct", campaigns=[
+        ("20261118-225639_baseline-m19-session", "20261118-225643_baseline-m19"),
+        ("20261118-230050_baseline-m19-session", "20261118-230054_baseline-m19"),
+        ("20261118-230423_baseline-m19-session", "20261118-230427_baseline-m19"),
+        ("20261118-230754_baseline-m19-session", "20261118-230758_baseline-m19"),
+        ("20261118-231139_baseline-m19-session", "20261118-231143_baseline-m19"),
+        ("20261118-231408_baseline-m19-session", "20261118-231411_baseline-m19"),
+        ("20261118-231627_baseline-m19-session", "20261118-231631_baseline-m19"),
+        ("20261118-231958_baseline-m19-session", "20261118-232002_baseline-m19")]),
+    dict(name="unicast A-B 2 M-19 (car-key 2.24)", dist=2.24, tunnel="unicast, A-B 2 m", campaigns=[
+        ("20261118-225814_relay-m19-ab200-session", "20261118-225945_relay-m19-ab200"),
+        ("20261118-230151_relay-m19-ab200-session", "20261118-230321_relay-m19-ab200"),
+        ("20261118-230523_relay-m19-ab200-session", "20261118-230653_relay-m19-ab200"),
+        ("20261118-230856_relay-m19-ab200-session", "20261118-231026_relay-m19-ab200"),
+        ("20261118-231239_relay-m19-ab200-session", "20261118-231257_relay-m19-ab200"),
+        ("20261118-231507_relay-m19-ab200-session", "20261118-231526_relay-m19-ab200"),
+        ("20261118-231727_relay-m19-ab200-session", "20261118-231858_relay-m19-ab200"),
+        ("20261118-232058_relay-m19-ab200-session", "20261118-232116_relay-m19-ab200")]),
 ]
 
 COMPARISONS = [
@@ -77,6 +95,7 @@ COMPARISONS = [
     ("unicast A-B 2 (car-key 2.24)", "unicast A-B 2 TX 2 dBm (car-key 2.24)", "2 dBm minus default power, A-B 2 m"),
     ("baseline 0.52", "baseline 0.99", "direct baseline, 0.99 m minus 0.52 m"),
     ("baseline 0.99", "baseline 2.24", "direct baseline, 2.24 m minus 0.99 m"),
+    ("baseline 2.24 M-19", "unicast A-B 2 M-19 (car-key 2.24)", "relayed unicast minus direct, car-key 2.24 m, M-19 firmware"),
 ]
 
 
@@ -119,7 +138,7 @@ def build(spec):
 def summary_markdown(conds):
     by = {c["name"]: c for c in conds}
     md = ["# Campaign summary, 2026-11-18", "",
-          "Each condition pools the campaigns of one setup: three campaigns of 50 rounds. Distance is the "
+          "Each condition pools the campaigns of one setup: three campaigns of 50 rounds, or eight for the M-19 setups (random start offset of the round grid). Distance is the "
           "car-key separation. For relayed conditions, CSVB rounds equal the OK rounds (every answered round "
           "went through the relays).", ""]
     md += ["## Outcomes", "",
@@ -139,10 +158,13 @@ def summary_markdown(conds):
         md.append(f"| {c['name']} | {d['n']} | {ar.fmt_ms(d['min'])} | {ar.fmt_ms(d['q1'])} | "
                   f"{ar.fmt_ms(d['med'])} ({ar.fmt_ms(ci[0])}-{ar.fmt_ms(ci[1])}) | {ar.fmt_ms(d['q3'])} | "
                   f"{ar.fmt_ms(d['p90'])} | {ar.fmt_ms(d['max'])} | {ar.fmt_ms(d['mean'])} |")
+    width = max(len(c["campaign_medians"]) for c in conds)
     md += ["", "## Campaign spread: median RTT of OK rounds per campaign (ms)", "",
-           "| Condition | campaign 1 | campaign 2 | campaign 3 |", "|---|---|---|---|"]
+           "| Condition | " + " | ".join(f"campaign {i + 1}" for i in range(width)) + " |",
+           "|---|" + "---|" * width]
     for c in conds:
         cells = ["-" if m is None else ar.fmt_ms(m) for m in c["campaign_medians"]]
+        cells += ["-"] * (width - len(cells))
         md.append(f"| {c['name']} | " + " | ".join(cells) + " |")
     md += ["", "## Round legs, median (IQR) in ms", "",
            "| Condition | vehicle<->B | tunnel | A<->key |", "|---|---|---|---|"]
@@ -177,7 +199,7 @@ def summary_markdown(conds):
            "- Rounds are not independent: the RTT moves in plateaus within a campaign. The bootstrap "
            "intervals assume independent rounds, so they are optimistic.",
            "- The spread between campaigns (campaign spread table) is larger than most differences between "
-           "settings. Three campaigns per condition do not resolve differences below about 50 ms."]
+           "settings. Three campaigns per condition do not resolve differences below about 50 ms; the M-19 setups have eight."]
     return "\n".join(md) + "\n"
 
 
