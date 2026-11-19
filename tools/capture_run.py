@@ -125,12 +125,16 @@ def capture(args):
     log_path = run_dir / f"capture_{args.port}.log"
     started = dt.datetime.now().astimezone().isoformat(timespec="seconds")
 
-    ser = serial.Serial(args.port, 115200, timeout=0.2)
+    ser = serial.Serial()
+    ser.port, ser.baudrate, ser.timeout = args.port, 115200, 0.2
+    ser.dtr = False   # pyserial asserts DTR and RTS on open; RTS high holds EN low (reset)
+    ser.rts = False
+    ser.open()
     cmds = []
     if not args.no_reset:
-        ser.setRTS(False)
+        ser.rts = True            # EN low: reset
         time.sleep(0.1)
-        ser.setRTS(True)          # reset pulse: the boot (RUN_META) goes into the log
+        ser.rts = False           # EN high again: the boot (RUN_META) goes into the log
 
     buf = b""
     started_at = time.time()
