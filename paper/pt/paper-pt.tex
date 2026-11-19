@@ -1,0 +1,340 @@
+% A ieeeaccess.cls redefine a primitiva \year como macro (\year{...} define o ano do rodapé).
+% O pgf/TikZ lê \year para semear números aleatórios e quebra com "Missing number".
+% Guardamos a primitiva aqui e a emprestamos ao TikZ.
+\let\TeXyear\year
+\documentclass{ieeeaccess}
+
+% ---- Codificação e idioma (PT-BR) ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+
+% ---- Pacotes ----
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{url}
+\let\IEEEyear\year\let\year\TeXyear
+\usepackage{tikz}
+\let\year\IEEEyear
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,shapes.geometric}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{placeins}
+\usepackage{etoolbox}
+% Células de tabela alinhadas à esquerda (justificar colunas estreitas abre buracos).
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+% Permite quebrar URLs longas também em hífens e sublinhados.
+\makeatletter\g@addto@macro{\UrlBreaks}{\do\-\do\_}\makeatother
+\extrafloats{100}
+
+% ---- Compatibilidade com a classe IEEE Access ----
+% O TikZ carrega o xcolor, que conflita com a spot color que a classe usa em 'accessblue' e
+% 'greycolor'. Redefinimos ambas como cores RGB.
+\definecolor{accessblue}{RGB}{0,86,155}
+\definecolor{greycolor}{RGB}{51,51,51}
+% A classe usa \xfigwd (definido só pela macro \Figure) dentro do \@makecaption.
+\makeatletter
+\gdef\xfigwd{0pt}
+% O rodapé da classe traz fixo "VOLUME 4, 2016", herdado do template. Removemos o texto e
+% mantemos só a numeração.
+\def\semvolume#1{\patchcmd{#1}{VOLUME\ \thevol, 2016}{}{}{%
+  \patchcmd{#1}{VOLUME\ \thevol, \theyear}{}{}{\errmessage{rodapé: padrão não encontrado}}}}
+\semvolume\ps@headings\semvolume\ps@headings
+\semvolume\ps@titlepage\semvolume\ps@titlepage
+\pagestyle{headings}
+\makeatother
+
+% Marcador de pendência: tudo o que aparece em vermelho depende de dado que só os autores podem
+% produzir (busca, firmware, medição). Remover antes da submissão final.
+\newcommand{\pendente}[1]{\textcolor{red}{[PENDENTE: #1]}}
+
+\begin{document}
+\history{Artigo elaborado a partir do projeto da disciplina EC343E (UNIFEI, 2026). Dados e código: https://github.com/ricardomdcj/cybersec-pkes-relay.}
+\doi{}
+
+\title{Ataques de Retransmissão em Chaves Digitais BLE: Uma Validação Experimental Motivada pelo PKES Relay Attack}
+
+\author{\uppercase{Ricardo Magno do Carmo J\'unior}\authorrefmark{1} E \uppercase{Johny Francisco da Silva}\authorrefmark{1}}
+\address[1]{Programa de Pós-Graduação em Engenharia Elétrica (PPG-EEL), Universidade Federal de Itajubá (UNIFEI), Itajubá, MG, Brasil (e-mail: ricardomdcj@gmail.com; johnyfsilva@gmail.com)}
+\tfootnote{Trabalho desenvolvido para a disciplina EC343E --- Introdução à Segurança Cibernética, sob orientação do Prof. Dr. Otávio De Souza Martins Gomes, Universidade Federal de Itajubá (UNIFEI), 2026.}
+
+\markboth
+{do Carmo Júnior e da Silva: Ataques de Retransmissão em Chaves Digitais BLE}
+{do Carmo Júnior e da Silva: Ataques de Retransmissão em Chaves Digitais BLE}
+
+\begin{abstract}
+Sistemas de entrada sem chave passiva (PKES) inferem proximidade pelo alcance do rádio em vez de medir distância, e um ataque de retransmissão (\emph{relay}) os derrota estendendo o canal de rádio, sem quebrar nenhuma criptografia. Chaves digitais baseadas em Bluetooth Low Energy (BLE) herdam a mesma premissa. Montamos uma bancada de quatro placas ESP32-2432S028R (CYD): um emulador de chave, um verificador que faz o papel do veículo e dois relays que transportam um desafio--resposta HMAC baseado em \emph{nonce} sobre a camada GATT, por um túnel ESP-NOW. Em \pendente{N campanhas válidas} a 0,52, 0,99 e 2,24\,m, uma rodada retransmitida acrescentou uma mediana de cerca de 280\,ms ao tempo de ida e volta honesto (intervalo de 95\,\% no nível de campanha, de 263 a 297\,ms a 2,24\,m, com 28 campanhas por lado). Toda rodada retransmitida em \emph{unicast} foi respondida dentro do limite de 2\,s do verificador. Ao injetarmos um atraso fixo no Relay~B, o relay deixou de autenticar quando o atraso passou de \pendente{D50 ms}, o que coincide com o limite de tempo menos o tempo de ida e volta retransmitido honesto. Um limite de latência de 160\,ms, fixado antes de um conjunto de replicação com dez campanhas diretas e dez retransmitidas, não rejeitou nenhuma rodada honesta em 500 e aceitou 2,6\,\% das rodadas retransmitidas. Os tempos honestos e retransmitidos se sobrepõem entre cerca de 107 e 150\,ms, portanto nenhum limite único os separa por completo. Entre 0,52 e 2,24\,m, o \emph{overhead} de ida e volta não mostrou tendência que três campanhas por layout pudessem detectar, e o RSSI separou as duas configurações apenas pelo layout físico. O limite de tempo do verificador define, portanto, o orçamento de latência do relay, e um limite sobre o tempo de ida e volta troca rejeições honestas por aceitações retransmitidas, sem remover o relay.
+\end{abstract}
+
+\begin{keywords}
+Bluetooth Low Energy, chave digital, distance bounding, ESP32, latência, entrada sem chave passiva, ataque de retransmissão.
+\end{keywords}
+
+\titlepgskip=-15pt
+
+\maketitle
+
+\section{Introdução}
+\label{sec:introduction}
+
+\PARstart{V}{eículos} com entrada e partida sem chave passiva (PKES) destravam as portas e autorizam a partida do motor quando a chave está próxima, sem nenhuma ação do motorista. A conveniência repousa numa premissa implícita de segurança: se a chave responde ao veículo, a chave está por perto. Um ataque de retransmissão quebra essa premissa. Dois atacantes estendem o canal de curto alcance entre o veículo e a chave, de modo que a chave responde como se estivesse ao lado do carro, e nenhum segredo é recuperado nem clonado~\cite{b1}.
+
+Chaves digitais baseadas em BLE, o modelo de telefone como chave, usam a mesma inferência. Elas substituem o par de baixa frequência e UHF por um rádio que o telefone já carrega, e o Car Connectivity Consortium as especifica~\cite{b9}. Ataques de retransmissão contra chaves BLE foram demonstrados~\cite{b3,b4}. Esses relatos estabelecem a viabilidade. Eles não medem como a latência acrescentada, a distância e a decisão do verificador interagem na mesma bancada, com uma condição de controle sem relay.
+
+Este artigo traz essa medição. Montamos uma bancada de quatro placas CYD idênticas: um emulador de chave, um verificador que faz o papel do veículo e dois relays. Os relays transportam o desafio e a resposta GATT por um túnel ESP-NOW. O verificador registra o tempo de ida e volta de cada rodada, com e sem relay, e a decisão que toma. Formulamos duas questões de pesquisa. QP1: qual \emph{overhead} e qual taxa de sucesso um relay BLE acrescenta em relação a uma conexão direta? QP2: em que latência, e em que distância, o relay deixa de autenticar? Uma terceira questão, QP3, pergunta se o tempo de ida e volta ou o RSSI discriminam uma chave legítima de um relay.
+
+As contribuições são três. (i) Um protocolo reprodutível e uma bancada de medição para um desafio--resposta BLE com e sem relay, liberada com firmware, scripts, registros brutos e \emph{hashes}. (ii) Um conjunto de dados de \pendente{N} campanhas, cada uma com 50 rodadas, e as estatísticas no nível de campanha que esse conjunto sustenta. (iii) Uma caracterização empírica do orçamento de latência do relay: um limite temporal que separa as duas configurações nesta pilha, uma varredura de latência que localiza o ponto de falha e uma análise de quais sinais discriminam. Os resultados mostram que o limite de tempo do verificador é a grandeza que restringe o relay, e que um limite sobre o tempo de ida e volta é um compromisso, não uma defesa completa.
+
+A Seção~\ref{sec:background} situa o trabalho na literatura relacionada. A Seção~\ref{sec:threat} define o modelo de ameaça e o escopo. A Seção~\ref{sec:bench} descreve a bancada e o protocolo de medição. A Seção~\ref{sec:method} apresenta o desenho e a estatística. A Seção~\ref{sec:results} relata os resultados, a Seção~\ref{sec:discussion} discute as mitigações frente aos dados medidos, a Seção~\ref{sec:threats} lista as ameaças à validade, e a Seção~\ref{sec:conclusion} conclui.
+
+\section{Fundamentação e trabalhos relacionados}
+\label{sec:background}
+
+\subsection{Inferência de proximidade e o relay}
+
+Sistemas PKES usam um sinal de despertar de baixa frequência (LF) de cerca de 125 a 135\,kHz, cujo alcance é de poucos metros, e uma resposta UHF em 315 ou 433\,MHz, com alcance bem maior. Um sistema de retransmissão captura o despertar perto do carro e o reemite perto da chave, enquanto a resposta UHF da chave volta sem alteração. Uma sistematização de ataques e defesas em RKE e PKES é apresentada em~\cite{b2}. Francillon \emph{et al.} mediram, em dez modelos de carro, a dispersão do tempo de resposta da chave, que foi de 11 a 436\,$\mu$s, e o atraso máximo que cada carro aceitava, que foi de 35\,$\mu$s a dezenas de milissegundos. O relay sem fio deles acrescentou cerca de 120\,ns em um sentido, a 30\,m~\cite{b1}. Como a dispersão do tempo de resposta da própria chave é muito maior do que o atraso que um relay acrescenta, o tempo, sozinho, não era um detector confiável naquele trabalho.
+
+\subsection{Relays contra chaves digitais BLE}
+
+Staat \emph{et al.} construíram um relay analógico de camada física a partir de componentes de rádio de prateleira. Na prova de conceito com cabos, o relay destravou um carro e uma fechadura inteligente e ligou o motor enquanto o smartphone legítimo estava a mais de 65\,m~\cite{b3}. O \emph{advisory} de Khan descreve um relay na camada de enlace BLE contra um Tesla Model~3 (2020). O relay acrescentou apenas 8\,ms de latência de ida e volta e continuou eficaz com até 80\,ms de latência de ida e volta acrescentada, com o telefone a cerca de 25\,m~\cite{b4}. Xie \emph{et al.} analisaram a Phone Key de um Tesla Model~3 e demonstraram contra ela um ataque de intermediário (\emph{man-in-the-middle})~\cite{b25}. Nenhum desses estudos controla a latência acrescentada, e nenhum relata uma condição de controle sem relay na mesma bancada.
+
+\subsection{Medição de distância e \emph{distance bounding}}
+
+Protocolos de \emph{distance bounding} cronometram uma troca curta de desafio e resposta, de modo que um relay que acrescenta atraso só pode aumentar a estimativa de distância~\cite{b16,b27,b28}. A segurança depende da resolução temporal do dispositivo: um relay acrescenta tempo de propagação e de processamento, e o limite só é tão apertado quanto o relógio. A ranging por banda ultralarga (UWB) oferece essa resolução, e a emenda IEEE 802.15.4z define sua forma segura~\cite{b30}. Vários trabalhos mostram que a medição segura ainda pode ser atacada: Singh \emph{et al.} analisaram a medição de tempo de voo HRP~\cite{b6}, Leu \emph{et al.} reduziram a distância medida com picos fantasmas~\cite{b7}, e Anliker \emph{et al.} quebraram a medição segura pelo relógio~\cite{b8}. Singh \emph{et al.} também propuseram o reordenamento de pulsos como defesa~\cite{b5}. Um rádio BLE que não foi projetado para \emph{ranging} oferece um relógio mais grosseiro, que é a restrição com que esta bancada trabalha.
+
+\subsection{Detectores e a lacuna}
+
+Wang, Lounis e Zulkernine combinaram RSSI, tempo de ida e volta e outro contexto para detectar relays contra uma chave dedicada~\cite{b22}, e Revadigar \emph{et al.} usaram RSSI BLE e atividade do usuário para decidir a proximidade de uma chave em smartphone~\cite{b23}. Abidin \emph{et al.} implementaram uma ranging de banda estreita por tempo de voo em um chip dedicado~\cite{b24}, Suresh \emph{et al.} combinaram BLE, UWB e NFC num protótipo de acesso veicular~\cite{b10}, e um trabalho posterior usa a sondagem de canal BLE para ranging~\cite{b26}. Os detectores desse grupo medem a acurácia de um classificador ou de um método de ranging. Eles não medem como um relay altera a decisão de autenticação de um protocolo não modificado, em função da latência e da distância, com uma condição de controle repetida. Essa medição é a lacuna que este artigo trata.
+
+\section{Modelo de ameaça e escopo}
+\label{sec:threat}
+
+O atacante posiciona o Relay~A junto à chave e o Relay~B junto ao veículo. O Relay~A age como central BLE em direção à chave, e o Relay~B age como periférico BLE em direção ao verificador. Os dois relays trocam o desafio e a resposta por ESP-NOW. Cada relay vê os valores GATT em trânsito, mas nenhum dos dois conhece o segredo pré-compartilhado, e nenhum consegue produzir uma resposta válida. O atacante não consegue quebrar o HMAC, clonar a chave ou reproduzir uma resposta antiga, porque cada desafio é um \emph{nonce} novo de 16 bytes. O relay é, portanto, um encaminhador ao vivo que explora a inferência de proximidade, e não um ataque criptográfico.
+
+O escopo é deliberadamente restrito. O objeto é um desafio--resposta BLE sobre GATT com chave pré-compartilhada, emulado por placas ESP32. O estudo não testa uma chave em smartphone, um veículo real, o sistema PKES de LF/UHF, nem qualquer produto. Não testa os PHYs de 2\,Mbit/s nem o Coded PHY, porque o ESP32 é um dispositivo BLE~4.2 que suporta apenas o PHY de 1\,Mbit/s~\cite{b29}. Todos os experimentos rodam em placas de propriedade dos autores, em bancada fechada. Uma regra de parada encerra qualquer teste que possa interferir em dispositivos de terceiros na faixa de 2,4\,GHz.
+
+\section{Bancada e protocolo de medição}
+\label{sec:bench}
+
+\subsection{Arquitetura}
+
+A Fig.~\ref{fig:architecture} mostra as quatro placas. O emulador de chave executa o firmware da chave, um servidor GATT com o mesmo serviço, as mesmas características e o mesmo HMAC do contrato. O verificador executa o firmware do veículo, uma central BLE que escreve um \emph{nonce}, espera a notificação e decide: autentica uma rodada somente se o HMAC coincidir e a resposta chegar em até 2\,s. Os dois relays executam uma mesma imagem de firmware em dois papéis.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  node distance=8mm and 15mm,
+  box/.style={draw, rounded corners, align=center, font=\footnotesize, minimum height=12mm, minimum width=27mm, fill=gray!8},
+  atk/.style={box, fill=red!8},
+  lbl/.style={font=\scriptsize, align=center},
+  boundary/.style={draw, dashed, inner sep=5mm},
+  >=Latex
+]
+\node[box] (key) {Emulador de chave\\(CYD, firmware da chave,\\\emph{periférico})};
+\node[atk, right=of key] (relA) {Relay A\\(CYD, \emph{central})\\registro};
+\node[atk, right=28mm of relA] (relB) {Relay B\\(CYD, \emph{periférico})\\registro};
+\node[box, right=of relB] (veh) {Verificador (veículo)\\(CYD, \emph{central})\\decisão, $t_0$, $t_1$};
+\draw[<->] (key) -- (relA) node[midway, above=1mm, lbl]{BLE\\GATT};
+\draw[<->] (relA) -- (relB) node[midway, above=1mm, lbl]{ESP-NOW\\(distância variada)};
+\draw[<->] (relB) -- (veh) node[midway, above=1mm, lbl]{BLE\\GATT};
+\node[boundary, fit=(relA)(relB), label={[font=\scriptsize]above:não confiável: relays e túnel sob controle do atacante}] (boundaryNode) {};
+\draw[<->, dotted] (key.south) to[out=-60,in=-120,looseness=0.6] node[pos=0.5, below=1mm, lbl]{linha de base: conexão direta, sem relay} (veh.south);
+\end{tikzpicture}
+\caption{Arquitetura da bancada. Quatro módulos ESP32-2432S028R (CYD): o emulador de chave, o Relay~A junto a ele, o Relay~B junto ao verificador e o próprio verificador. Os dois relays e o túnel ESP-NOW entre eles formam a região não confiável (tracejada). Todo enlace é bidirecional: o desafio vai do verificador para a chave e a resposta volta pelo mesmo caminho. A decisão de autenticação e os carimbos de tempo $t_0$ e $t_1$ ficam no verificador. Na linha de base, a chave se conecta diretamente ao verificador (pontilhado).}
+\label{fig:architecture}
+\end{figure*}
+
+\subsection{Hardware e firmware}
+
+As quatro placas são módulos ESP32-2432S028R (CYD): um ESP32 clássico com BLE~4.2 e PHY de 1\,Mbit/s, display de 320$\times$240 e LED RGB. O firmware é escrito para o ESP-IDF v6.1 com a pilha NimBLE, e a interface do usuário usa LVGL~8.3. O contrato fixa o UUID de serviço \texttt{8f2a0001-1b2c-4e6a-9f3d-2a7c1e5b0a10}, uma característica CHALLENGE (escrita) e uma característica RESPONSE (notificação). O \emph{nonce} tem 16 bytes, a resposta é HMAC-SHA256 truncado em 16 bytes, e a chave pré-compartilhada é uma constante de bancada no código-fonte, de modo que um atacante que lê o código consegue calcular respostas válidas. Isso não afeta o relay, que nunca precisa da chave.
+
+O verificador mede o tempo de ida e volta com \texttt{esp\_timer} (resolução de 1\,$\mu$s), entre a escrita do desafio e a chegada da notificação. O intervalo de conexão é negociado para 50\,ms, o MTU para 256 bytes e a grade de rodadas para uma rodada por segundo. Como 1\,s é múltiplo de 50\,ms, cada rodada de uma campanha mantém a mesma fase da grade de conexão. A partir do firmware M-19, cada campanha começa num deslocamento aleatório dentro de um período, de modo que as campanhas amostram fases diferentes. O limite de tempo do verificador é de 2\,s. Uma resposta que chega depois que sua rodada já expirou é reconhecida pelo \emph{nonce} e descartada (M-22). Antes dessa mudança, uma resposta assim era tomada como a resposta da rodada em curso; nenhuma resposta tardia ocorre nas campanhas registradas antes da mudança.
+
+O Relay~B tem um comando de bancada além da potência de transmissão: \texttt{DELAY} $D$ retém cada desafio do verificador por $D$\,ms antes de enviá-lo ao túnel, usando um temporizador para que a tarefa do host BLE não seja bloqueada. O comando serve somente à varredura de latência e fica desativado por padrão.
+
+\subsection{Layouts e distâncias}
+
+As distâncias são o layout da bancada, estimadas pelo operador e não medidas com instrumento. Usamos três layouts. A 0,52\,m os relays foram posicionados entre o carro e a chave, e suas posições exatas não foram registradas. A 0,99\,m o carro e o Relay~B ficavam a 12\,cm, o Relay~A e a chave a 12\,cm, e os dois relays a 75\,cm; assim, a distância carro-chave é de cerca de 0,99\,m. A 2,24\,m, os mesmos deslocamentos de 12\,cm cercavam relays a 2\,m de distância. As campanhas anteriores ao firmware M-19 foram registradas a 0,52, 0,99 e 2,24\,m, e as campanhas com o firmware M-19 a 2,24\,m e a 0,99\,m.
+
+\subsection{Procedimento de campanha}
+
+Uma campanha tem 50 rodadas. Os scripts de campanha em \texttt{tools/campaign} abrem as quatro consoles seriais, iniciam a campanha e registram todas as portas. O rótulo e a distância da campanha são escritos no registro do verificador, e o atraso injetado é registrado pelo Relay~B. Cada campanha guarda sua captura e um manifesto com o \emph{commit} do firmware de cada placa, e cada sessão abortada ou inválida é mantida em pasta separada com o motivo. A ordem das campanhas alternou entre linha de base e retransmitida e não foi randomizada. Tratamos isso como limitação na Seção~\ref{sec:threats}.
+
+\section{Metodologia}
+\label{sec:method}
+
+\subsection{Questões de pesquisa e hipóteses}
+
+QP1 pergunta pelo \emph{overhead} e pelo sucesso do relay. QP2 pergunta em que distância e latência o relay deixa de autenticar. QP3 pergunta qual sinal, o tempo de ida e volta ou o RSSI, discrimina uma chave legítima de um relay. Testamos três hipóteses. H1: a latência é o principal discriminante, sustentada se a distribuição retransmitida se separa da linha de base com grande tamanho de efeito e se a variação da linha de base é pequena frente ao \emph{overhead}. H2: as falhas de autenticação vêm mais da implementação e do limite de tempo do que da distância, sustentada se a taxa de sucesso acompanha o limite de tempo e não a distância. H3: o RSSI não acrescenta discriminação estável quando ambiente e potência são controlados, sustentada se o RSSI não separa as configurações por uma razão alheia ao relay.
+
+\subsection{Unidade de análise e estatística}
+
+A unidade de inferência é a campanha. As rodadas dentro de uma campanha compartilham uma fase da grade de conexão, de modo que valores-p em nível de rodada seriam pseudorreplicados. Por isso testamos as medianas das campanhas com o teste de Mann--Whitney, exato para os conjuntos pequenos e aproximado pela normal nos demais casos, e reportamos o tamanho de efeito como $\delta$ de Cliff $=2\,\mathrm{AUC}-1$. Os intervalos de confiança vêm de um \emph{bootstrap} por cluster que reamostra campanhas dentro de cada condição, com 2000 reamostragens e semente fixa. As proporções têm intervalos de Wilson. Os valores-p no nível de campanha dos seis grupos da Tabela~\ref{tab:overhead} são corrigidos pelo método de Holm. Os valores em nível de rodada são apresentados apenas como descritivos. Não ajustamos um modelo logístico nem um modelo misto; o teste no nível de campanha e o \emph{bootstrap} por cluster são as aproximações usadas no lugar deles.
+
+Para o tamanho amostral, adotamos $\Delta=25$\,ms, metade do intervalo de conexão BLE, como a menor diferença de interesse. O número de campanhas por grupo é $n = 2(z_{0,975}+z_{0,80})^2\sigma^2/\Delta^2$, com $\sigma$ o desvio padrão entre campanhas das medianas.
+
+\subsection{Experimentos}
+
+E1 mede o \emph{overhead} em cada layout. E2 injeta um atraso de 0 a 2,2\,s no Relay~B a 0,99\,m e mede a taxa de sucesso das rodadas retransmitidas. E3 aplica um limite fixo $T$ ao tempo de ida e volta e mede as rodadas honestas rejeitadas e as rodadas retransmitidas aceitas. O limite foi primeiro lido em um conjunto de campanhas, depois testado num conjunto separado e, por fim, replicado num conjunto cujos critérios foram fixados antes de as campanhas serem registradas (os planos são versionados no repositório antes dos dados). E4 compara o tempo de ida e volta e o RSSI das duas configurações. E5 conta os \emph{timeouts} de cada transporte.
+
+\section{Resultados}
+\label{sec:results}
+
+\subsection{\emph{Overhead} e estatística no nível de campanha}
+
+A 2,24\,m, toda rodada retransmitida em \emph{unicast} foi respondida e autenticada: 1400 rodadas nos três conjuntos com o firmware M-19, e mais 300 nos conjuntos anteriores. A Tabela~\ref{tab:overhead} traz as medianas e o \emph{overhead}, com os intervalos de \emph{bootstrap} no nível de campanha. Nas 28 campanhas diretas e 28 retransmitidas a 2,24\,m, a mediana do tempo de ida e volta foi de 79,1\,ms sem o relay e de 358,5\,ms com ele, um \emph{overhead} de 279,5\,ms (intervalo de 95\,\%: 262,5 a 296,6\,ms). As medianas de campanha das duas configurações se separam por completo ($\delta$ de Cliff $=1{,}00$; Mann--Whitney exato $p\le 0{,}0002$ em cada conjunto; $p$ ajustado por Holm $\le 0{,}0006$). Os três conjuntos independentes mediram o \emph{overhead} em 323\,ms (na amostra), 276\,ms (teste independente) e 275\,ms (replicação).
+
+\begin{table*}[t]
+\caption{\emph{Overhead} da configuração retransmitida em \emph{unicast} sobre a linha de base direta, no nível de campanha. Medianas das rodadas respondidas; os intervalos são de 95\,\% por \emph{bootstrap} de cluster sobre campanhas.}
+\label{tab:overhead}
+\centering
+\footnotesize
+\begin{tabular}{L{3.9cm}L{2.2cm}L{2.2cm}L{2.2cm}L{3.9cm}}
+\toprule
+\textbf{Conjunto} & \textbf{Campanhas (direta, retransmitida)} & \textbf{Mediana direta (ms)} & \textbf{Mediana retransmitida (ms)} & \textbf{\emph{Overhead} (ms), IC de 95\,\%} \\
+\midrule
+2,24\,m, M-19, na amostra & 8, 8 & 74,7 & 397,5 & 322,8 (273,9 a 343,8) \\
+2,24\,m, teste independente & 10, 10 & 81,2 & 356,7 & 275,5 (211,5 a 297,4) \\
+2,24\,m, replicação & 10, 10 & 80,2 & 354,7 & 274,6 (225,7 a 305,4) \\
+2,24\,m, todas M-19 & 28, 28 & 79,1 & 358,5 & 279,5 (262,5 a 296,6) \\
+\pendente{0,99\,m, M-19} & \pendente{10, 10} & \pendente{-} & \pendente{-} & \pendente{-} \\
+\midrule
+0,52\,m, firmware anterior & 3, 3 & 76,9 & 384,6 & 307,7 (215,1 a 319,6) \\
+0,99\,m, firmware anterior & 3, 3 & 82,0 & 376,6 & 294,6 (273,4 a 340,0) \\
+2,24\,m, firmware anterior & 3, 3 & 85,7 & 364,5 & 278,9 (274,8 a 366,8) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+A Fig.~\ref{fig:overhead} mostra cada mediana de campanha, de modo que a dispersão entre campanhas fica visível ao lado do \emph{overhead}.
+
+\begin{figure*}[t]
+\centering
+\input{../figures/fig_overhead.tex}
+\caption{Medianas de campanha do tempo de ida e volta das rodadas respondidas, na linha de base direta (cinza) e na configuração retransmitida em \emph{unicast} (azul), por layout e conjunto. A barra marca a mediana de cada configuração. A dispersão entre campanhas é o efeito de fase discutido na Seção~\ref{sec:threats}.}
+\label{fig:overhead}
+\end{figure*}
+
+As campanhas anteriores, registradas antes de existir o deslocamento de início, têm três campanhas por lado. O menor valor-p exato bilateral possível para elas é de 0,10, de modo que são apenas descritivas. Elas mostram um \emph{overhead} de cerca de 280 a 310\,ms nos três layouts, o que é consistente com ausência de dependência da distância na resolução de três campanhas por layout. A dispersão da linha de base é pequena: o intervalo interquartil das rodadas diretas é de 20\,ms no conjunto na amostra e de 29\,ms em todas as campanhas M-19, frente a um \emph{overhead} de cerca de 280\,ms, de modo que H1 é sustentada.
+
+\subsection{Distância}
+
+Entre 0,52 e 2,24\,m, o \emph{overhead} ficou entre cerca de 275 e 310\,ms, e toda rodada retransmitida em \emph{unicast} foi respondida. O \emph{overhead} foi maior a 0,52\,m, mas três campanhas por layout se sobrepõem demais para mostrar uma tendência. Os layouts diferem em RSSI (Seção~\ref{sec:rssi}), mas o RSSI não segue um único expoente de perda de percurso entre eles. Um orçamento de enlace com as sensibilidades do \emph{datasheet}~\cite{b29} coloca o alcance do túnel ESP-NOW entre cerca de 50\,m e 2,3\,km na potência padrão, dependendo do expoente de perda de percurso. Trata-se de uma estimativa de modelo, não de uma medição, já que os relays nunca ficaram a mais de 2\,m um do outro. \pendente{resultado a 0,99\,m com M-19 e comparação com 2,24\,m}.
+
+\subsection{O limite de efetividade: latência injetada}
+\label{sec:sweep}
+
+A Tabela~\ref{tab:sweep} e a Fig.~\ref{fig:sweep} mostram o sucesso das rodadas retransmitidas a 0,99\,m quando o Relay~B acrescenta um atraso $D$ a cada desafio. Uma rodada autentica somente se sua resposta chegar dentro do limite de 2\,s. O relay funciona enquanto $D$ somado ao tempo de ida e volta retransmitido honesto permanece abaixo do limite, e falha depois disso. Com a mediana honesta retransmitida de \pendente{mediana em D=0}, o limite esperado é de \pendente{limite esperado} ms, e o limite medido, onde o sucesso cai abaixo de 50\,\%, é de \pendente{D50 ms}.
+
+\begin{table}[t]
+\caption{Sucesso das rodadas retransmitidas a 0,99\,m em função do atraso injetado no Relay~B (uma campanha de 50 rodadas por atraso). Intervalos de Wilson de 95\,\%.}
+\label{tab:sweep}
+\centering
+\footnotesize
+\begin{tabular}{L{1.2cm}L{1.6cm}L{2.2cm}L{2.6cm}}
+\toprule
+\textbf{Atraso (ms)} & \textbf{OK / rodadas} & \textbf{Sucesso (IC de 95\,\%)} & \textbf{Mediana do tempo de ida e volta das OK (ms)} \\
+\midrule
+\pendente{tabela da varredura} & & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure*}[t]
+\centering
+\input{../figures/fig_sweep.tex}
+\caption{Sucesso das rodadas retransmitidas a 0,99\,m em função do atraso que o Relay~B injeta (uma campanha por atraso; as barras são intervalos de Wilson de 95\,\%). A linha tracejada marca 50\,\%. O relay deixa de autenticar quando o atraso injetado somado ao tempo de ida e volta retransmitido honesto ultrapassa o limite de 2\,s do verificador.}
+\label{fig:sweep}
+\end{figure*}
+
+\subsection{Limite de latência e sua replicação}
+\label{sec:bound}
+
+Um limite $T$ sobre o tempo de ida e volta rejeita uma rodada honesta quando seu tempo é maior que $T$ ou quando ela não recebe resposta, e aceita uma rodada retransmitida quando ela é respondida em até $T$. No conjunto na amostra, com oito campanhas por lado, o limite de 150\,ms não rejeitou nenhuma rodada honesta e aceitou 1,5\,\% das rodadas retransmitidas. No conjunto de teste independente, com dez campanhas por lado, registrado depois de fixado o limite de 150\,ms, uma rodada honesta em 500 levou 150,6\,ms; assim, 150\,ms falhou no critério de não rejeitar honestas, enquanto 160\,ms não rejeitou nenhuma e aceitou 1,4\,\% das rodadas retransmitidas. O valor de 160\,ms foi escolhido depois de vermos esse máximo, então o replicamos em um novo conjunto de dez campanhas por lado, com os critérios fixados de antemão. No conjunto de replicação, 160\,ms rejeitou 0 de 500 rodadas honestas (a maior RTT honesta foi de 143,3\,ms) e aceitou 13 de 500 rodadas retransmitidas (2,6\,\%; intervalo de 95\,\% de 1,5 a 4,4\,\%). Nas 28 campanhas diretas e 28 retransmitidas a 2,24\,m, 160\,ms rejeitou 0 de 1400 rodadas honestas e aceitou 26 de 1400 rodadas retransmitidas (1,9\,\%). A Fig.~\ref{fig:bound} mostra a curva de operação no conjunto de replicação.
+
+\begin{figure*}[t]
+\centering
+\input{../figures/fig_bound.tex}
+\caption{Curva de operação do limite de ida e volta no conjunto de replicação (dez campanhas diretas e dez retransmitidas, a 2,24\,m). Rodadas honestas rejeitadas (cinza) e rodadas retransmitidas aceitas (azul) conforme varia o limite $T$. A linha tracejada marca o limite de 160\,ms, fixado antes das campanhas de replicação.}
+\label{fig:bound}
+\end{figure*}
+
+As rodadas retransmitidas que passam no limite vêm de poucas campanhas: em cada um dos dois conjuntos, duas campanhas retransmitidas responderam por todas as rodadas aceitas a 160\,ms, e as outras oito não tiveram nenhuma rodada abaixo de 164\,ms. As distribuições honesta e retransmitida se sobrepõem entre cerca de 107 e 150\,ms, de modo que nenhum limite único elimina os dois erros. Um limite mais baixo rejeita mais rodadas honestas, e um mais alto aceita mais rodadas retransmitidas. A margem acima do máximo honesto em 160\,ms é de cerca de 9\,ms no conjunto de teste independente, o que é estreito, e são necessárias mais campanhas antes de usar o limite fora desta pilha.
+
+\subsection{Discriminação por tempo de ida e volta e RSSI}
+\label{sec:rssi}
+
+A 2,24\,m, as medianas de campanha do tempo de ida e volta separam por completo as duas configurações (AUC de 1,00). As medianas de RSSI também as separam por completo: a conexão direta tem mediana de cerca de $-56$\,dBm e a retransmitida de cerca de $-46$\,dBm. Essa separação não vem do relay: na configuração retransmitida, o verificador conversa com o Relay~B, a 12\,cm do carro; na configuração direta, ele conversa com a chave, a 2,24\,m. O RSSI, portanto, identifica com qual dispositivo o verificador está falando, e não pode ser usado como detector de relay nesta bancada. H3 não é sustentada no sentido que um detector precisaria, e o teste exigiria um layout em que o relay e a chave estejam à mesma distância do carro.
+
+\begin{figure}[t]
+\centering
+\input{../figures/fig_rssi.tex}
+\caption{Mediana de RSSI por campanha nas configurações direta e retransmitida a 2,24\,m (família M-19, 28 campanhas por lado). A separação segue o dispositivo com o qual o verificador conversa: o Relay~B fica a 12\,cm do carro, e a chave a 2,24\,m.}
+\label{fig:rssi}
+\end{figure}
+
+\subsection{Falhas e transporte}
+
+Em \emph{unicast}, em que o relay usa confirmações no nível MAC, nenhuma rodada retransmitida expirou em nenhum layout. O relay em difusão (\emph{broadcast}), que não tem confirmação e foi executado só a 0,52\,m, perdeu 11 de 150 rodadas (7,3\,\%). A falha vem de quadros perdidos sem confirmação, e não da distância, o que sustenta H2. O layout em difusão não consegue separar as duas causas, de modo que isso é evidência sobre o transporte, não um experimento de distância.
+
+\section{Discussão: mitigações frente aos dados medidos}
+\label{sec:discussion}
+
+\textbf{\emph{Distance bounding}.} O \emph{distance bounding} mede o tempo de um desafio--resposta curto e rápido e deriva dele um limite de distância~\cite{b16,b27,b28}. Um relay só pode acrescentar tempo, por isso só pode aumentar a estimativa. O protocolo exige um relógio que resolva o tempo de propagação da troca, que é de cerca de um nanossegundo para 30\,cm. O \emph{stack} BLE do CYD tem um temporizador de resolução de microssegundos e uma grade de conexão de 50\,ms, de modo que este hardware não consegue resolver o tempo que um protocolo de \emph{distance bounding} precisa. O \emph{overhead} medido, de cerca de 280\,ms, é cerca de $3\times10^{8}$ vezes o tempo de propagação em 30\,cm; portanto, um limite apertado o bastante para enxergar o relay o detectaria. O problema é que um limite desses só é tão bom quanto o relógio.
+
+\textbf{Limites de latência.} Um limite sobre o tempo de ida e volta, como na Seção~\ref{sec:bound}, é prático com o temporizador que o verificador já tem. Ele separa as configurações nesta pilha com 0 rejeições honestas e cerca de 2\,\% de aceitações retransmitidas, mas não é uma defesa completa. A distribuição retransmitida tem uma cauda que chega a cerca de 107\,ms em algumas campanhas, e a distribuição honesta tem uma cauda que chega a 150\,ms. O limite, portanto, desloca o problema do atacante para o gerenciamento de fase e para o hardware: um relay que use um intervalo de conexão menor, ou um enlace mais rápido, moveria sua distribuição abaixo do limite. Nossos resultados não permitem excluir isso.
+
+\textbf{O limite de tempo é o orçamento do relay.} A varredura (Seção~\ref{sec:sweep}) mostra que o relay deixa de autenticar quando a latência que ele acrescenta ultrapassa o limite de tempo do verificador menos o tempo de ida e volta retransmitido honesto. Com limite de 2\,s, o relay tolera cerca de \pendente{D50 ms} de latência acrescentada. Um verificador com limite menor força o atacante a ser mais rápido, e um verificador com limite maior facilita o relay. O limite de tempo, portanto, define o orçamento do atacante e deveria ser escolhido a partir da distribuição honesta, e não por convenção. A bancada não pode nos dizer o limite de nenhum veículo real, de modo que este resultado vale para a bancada e para o mecanismo, não para um produto.
+
+\textbf{Ranging por UWB.} A ranging UWB resolve o tempo de propagação, e o CCC Digital Key Release 3.0 inclui a ranging UWB~\cite{b9}. A literatura mostra os dois lados: Singh \emph{et al.} propuseram o reordenamento de pulsos~\cite{b5}, e trabalhos posteriores reduziram a distância medida da medição HRP segura por picos fantasmas e manipulação do relógio~\cite{b6,b7,b8}. A bancada não tem hardware UWB e não o testa, de modo que a discussão é uma comparação, não um resultado.
+
+\textbf{RSSI e detectores multifatoriais.} Nosso resultado de RSSI mostra que a intensidade do sinal carrega informação sobre o dispositivo com o qual o verificador conversa, e não sobre o relay. Detectores que combinam RSSI com tempo de ida e volta e contexto~\cite{b22,b23} podem funcionar, mas este estudo não consegue avaliá-los, porque o layout confunde o sinal.
+
+\section{Ameaças à validade}
+\label{sec:threats}
+
+\textbf{Validade interna.} As campanhas alternaram entre linha de base e retransmitida e não foram randomizadas, e a fase de cada campanha depende do seu horário de início. O deslocamento aleatório de início (M-19) torna independentes as fases de campanhas diferentes, mas não as rodadas dentro de uma campanha. Reduzimos esse efeito tomando a campanha como unidade, mas o número de campanhas por conjunto, de oito a dez, só consegue detectar diferenças grandes: detectar 25\,ms entre duas configurações retransmitidas exigiria cerca de 73 campanhas por configuração, com 80\,\% de poder, porque as medianas das campanhas retransmitidas variam com desvio padrão de 54\,ms. Somente o \emph{overhead} e os resultados do limite de latência são resolvidos neste tamanho.
+
+\textbf{Validade externa.} A chave é um emulador ESP32, não um smartphone. A pilha Bluetooth de um telefone tem latência e escalonamento próprios, de modo que os números não podem ser transferidos para uma chave em telefone sem uma nova medição. O relay é um encaminhador no nível GATT, sem criptografia de enlace; um relay na camada de enlace, como o descrito por Khan~\cite{b4}, ou implementações conformes ao CCC Digital Key~\cite{b9}, não são cobertos. A bancada usa um único PHY (1\,Mbit/s), um único limite de tempo do verificador (2\,s) e distâncias de até 2,24\,m, de modo que os resultados não se estendem a alcances maiores.
+
+\textbf{Validade de construção.} As distâncias são o layout, estimado pelo operador e não medido com instrumento. O RSSI é uma observação auxiliar, não uma medição de distância. O atraso injetado é aplicado apenas ao trecho do desafio, e seu efeito é um tempo acrescentado ao trecho de ida do túnel.
+
+\textbf{Validade de conclusão.} O número de campanhas é pequeno, e os intervalos são intervalos de \emph{bootstrap} sobre campanhas, de modo que descrevem a variação entre campanhas desta bancada. A correção de Holm é aplicada aos valores-p no nível de campanha dos três conjuntos principais. Os modelos logístico e misto não foram ajustados.
+
+\section{Conclusão}
+\label{sec:conclusion}
+
+Montamos uma bancada de quatro placas CYD para medir como um relay BLE altera a autenticação de um desafio--resposta, com um controle sem relay. Um relay acrescenta cerca de 280\,ms ao tempo de ida e volta, muito acima da variação honesta, e toda rodada retransmitida em \emph{unicast} foi respondida dentro do limite do verificador. O relay deixa de autenticar quando a latência que acrescenta ultrapassa o limite menos o tempo de ida e volta honesto, o que situa o orçamento do atacante em cerca de \pendente{D50 ms} nesta bancada. Um limite de latência de 160\,ms não rejeitou nenhuma rodada honesta em 500 num conjunto de replicação e aceitou 2,6\,\% das rodadas retransmitidas, de modo que um limite temporal estreita o ataque sem removê-lo. O RSSI identificou o dispositivo com o qual o verificador conversava, e não o relay. A contribuição são o protocolo, o conjunto de dados e a caracterização do orçamento de latência. Os próximos passos são uma medição com chave em smartphone, um layout que iguale as distâncias do relay e da chave para o teste de RSSI, e um túnel atenuado para o limite de distância.
+
+\section*{Disponibilidade de dados e código}
+
+Os arquivos de firmware, os scripts de análise, os registros brutos com seus manifestos, os planos registrados antes das campanhas de teste independente e de replicação, e a fonte deste artigo estão no repositório do projeto \url{https://github.com/ricardomdcj/cybersec-pkes-relay}. \pendente{o repositório é privado; torná-lo público e definir a licença antes da submissão}
+
+\begin{thebibliography}{00}
+\bibitem{b1} A.~Francillon, B.~Danev, and S.~\v{C}apkun, ``Relay attacks on passive keyless entry and start systems in modern cars,'' in \emph{Proc. Netw. Distrib. Syst. Secur. Symp. (NDSS)}, San Diego, CA, USA, 2011.
+\bibitem{b2} T.~Bianchi, A.~Brighente, M.~Conti, and E.~Pavan, ``SoK: Stealing cars since remote keyless entry introduction and how to defend from it,'' in \emph{Proc. USENIX Symp. Veh. Secur. Privacy (VehicleSec)}, 2025, pp.~161--178.
+\bibitem{b3} P.~Staat, K.~Jansen, C.~Zenger, H.~Elders-Boll, and C.~Paar, ``Analog physical-layer relay attacks with application to Bluetooth and phase-based ranging,'' in \emph{Proc. 15th ACM Conf. Secur. Privacy Wireless Mobile Netw. (WiSec)}, 2022, pp.~60--72.
+\bibitem{b4} S.~Q.~Khan, ``Technical advisory: Tesla BLE phone-as-a-key passive entry vulnerable to relay attacks,'' NCC Group, Manchester, U.K., May 15, 2022.
+\bibitem{b5} M.~Singh, P.~Leu, and S.~\v{C}apkun, ``UWB with pulse reordering: Securing ranging against relay and physical-layer attacks,'' in \emph{Proc. Netw. Distrib. Syst. Secur. Symp. (NDSS)}, 2019.
+\bibitem{b6} M.~Singh, M.~Roeschlin, E.~Zalzala, P.~Leu, and S.~\v{C}apkun, ``Security analysis of IEEE 802.15.4z/HRP UWB time-of-flight distance measurement,'' in \emph{Proc. 14th ACM Conf. Secur. Privacy Wireless Mobile Netw. (WiSec)}, 2021, pp.~227--237.
+\bibitem{b7} P.~Leu, G.~Camurati, A.~Heinrich, M.~Roeschlin, C.~Anliker, M.~Hollick, S.~\v{C}apkun, and J.~Classen, ``Ghost peak: Practical distance reduction attacks against HRP UWB ranging,'' in \emph{Proc. 31st USENIX Secur. Symp.}, 2022, pp.~1343--1359.
+\bibitem{b8} C.~Anliker, G.~Camurati, and S.~\v{C}apkun, ``Time for change: How clocks break UWB secure ranging,'' in \emph{Proc. 32nd USENIX Secur. Symp.}, 2023, pp.~19--36.
+\bibitem{b9} Car Connectivity Consortium, ``Digital key release 3.0,'' Whitepaper, 2022.
+\bibitem{b10} D.~Suresh, P.~V.~Joshi, and P.~Parandkar, ``Mitigating relay attacks in vehicle access systems using BLE and UWB,'' \emph{Eng. Technol. Appl. Sci. Res. (ETASR)}, vol.~15, no.~5, pp.~26965--26970, 2025.
+\bibitem{b16} S.~Drimer and S.~J.~Murdoch, ``Keep your enemies close: Distance bounding against smartcard relay attacks,'' in \emph{Proc. 16th USENIX Secur. Symp.}, Boston, MA, USA, 2007, pp.~87--102.
+\bibitem{b22} J.~Wang, K.~Lounis, and M.~Zulkernine, ``CSKES: A context-based secure keyless entry system,'' in \emph{Proc. IEEE Annu. Comput. Softw. Appl. Conf. (COMPSAC)}, 2019.
+\bibitem{b23} G.~Revadigar, C.~Javali, and S.~K.~Jha, ``ProxiCar: Proximity-based secure digital key solution for cars,'' in \emph{Proc. Int. Conf. Commun. Syst. Netw. (COMSNETS)}, 2020.
+\bibitem{b24} A.~Abidin, M.~El~Soussi, J.~Romme, P.~Boer, D.~Singel\'ee, and C.~Bachmann, ``Secure, accurate, and practical narrow-band ranging system,'' \emph{IACR Trans. Cryptogr. Hardw. Embed. Syst.}, vol.~2021, no.~2, pp.~106--135, 2021.
+\bibitem{b25} X.~Xie, K.~Jiang, R.~Dai, J.~Lu, L.~Wang, Q.~Li, and J.~Yu, ``Access your Tesla without your awareness: Compromising keyless entry system of Model 3,'' in \emph{Proc. Netw. Distrib. Syst. Secur. Symp. (NDSS)}, 2023.
+\bibitem{b26} D.~Suresh, P.~V.~Joshi, P.~Parandkar, A.~Gambhir, and K.~M.~Sudharshan, ``BLE channel sounding: Novel method for enhanced ranging accuracy in vehicle access,'' \emph{IEEE Access}, vol.~13, pp.~67531--67547, 2025.
+\bibitem{b27} S.~Brands and D.~Chaum, ``Distance-bounding protocols,'' in \emph{Advances in Cryptology---EUROCRYPT'93}, LNCS vol.~765, Springer, 1993, pp.~344--359. DOI: 10.1007/3-540-48285-7\_30.
+\bibitem{b28} G.~P.~Hancke and M.~G.~Kuhn, ``An RFID distance bounding protocol,'' in \emph{Proc. IEEE/Create-Net SecureComm}, Athens, Greece, 2005, pp.~67--73. DOI: 10.1109/SECURECOMM.2005.56.
+\bibitem{b29} Espressif Systems, \emph{ESP32 Series Datasheet}, v5.3, Tabelas 5-6 a 5-8 (características de rádio Wi-Fi e Bluetooth).
+\bibitem{b30} IEEE Std 802.15.4z-2020, Amendment to IEEE Std 802.15.4: enhanced ultra-wideband physical layers and ranging techniques, 2020.
+\end{thebibliography}
+
+\EOD
+
+\end{document}
